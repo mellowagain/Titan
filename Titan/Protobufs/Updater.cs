@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 using EasyHttp.Http;
 using log4net;
 using Titan.Protobufs.Json;
@@ -63,11 +62,11 @@ namespace Titan.Protobufs
             var client = new HttpClient();
             client.Request.Accept = "application/vnd.github.v3+json";
             client.Request.UserAgent = "https://github.com/Marc3842h/Titan-Report";
-            var response = client.Get("https://api.github.com/SteamRE/SteamKit/contents/Resources/Protobufs/csgo/engine_gcmessages.proto");
+            var response = client.Get("https://api.github.com/repos/SteamRE/SteamKit/contents/Resources/Protobufs/csgo/engine_gcmessages.proto");
 
             var result = response.StaticBody<GitHubResponse>();
 
-            Log.Debug("Successfully awaited.");
+            Log.DebugFormat("Successfully awaited. SHA Result: {0}", result.Sha);
 
             if(HistoryFile.Exists)
             {
@@ -96,7 +95,7 @@ namespace Titan.Protobufs
             var client = new HttpClient();
             client.Request.Accept = "application/vnd.github.v3+json";
             client.Request.UserAgent = "https://github.com/Marc3842h/Titan-Report";
-            var response = client.Get("https://api.github.com/SteamRE/SteamKit/contents/Resources/Protobufs/csgo/engine_gcmessages.proto");
+            var response = client.Get("https://api.github.com/repos/SteamRE/SteamKit/contents/Resources/Protobufs/csgo/engine_gcmessages.proto");
 
             var result = response.StaticBody<GitHubResponse>();
 
