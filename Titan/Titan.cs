@@ -16,6 +16,7 @@ namespace Titan
 
         public Application EtoApp;
         public Options Options;
+        public bool EnableUI = true;
 
         [STAThread]
         public static void Main(string[] args)
@@ -32,9 +33,14 @@ namespace Titan
                 Options = new Options()
             };
 
+            Log.Info("Parse arguments");
+
+            /* Parse arguments provided with the starting of this */
+            Instance.EnableUI = !CommandLine.Parser.Default.ParseArguments(args, Instance.Options);
+
             Log.Debug("Checking if Protobufs require updates");
 
-            if(Updater.RequiresUpdate())
+            if(Updater.RequiresUpdate() || Instance.Options.ForceUpdate)
             {
                 Log.Info("Protobufs require update. Updating...");
                 try
@@ -49,22 +55,10 @@ namespace Titan
 
             // TODO: Load SteamKit Protobufs & SteamKit-CSGO Protobufs
 
-            Log.Info("Parse arguments");
-
-            /* Parse arguments provided with the starting of this */
-            if(!CommandLine.Parser.Default.ParseArguments(args, Instance.Options))
+            if(Instance.EnableUI)
             {
-                /* One of the required arguments was most likely not given. Open the UI for the user */
+                Instance.EtoApp.Run();
             }
-            else
-            {
-                /* Manual mode: All required arguments were given, go directly to reporting */
-            }
-
-            //if(Instance.Options.ForceUpdate)
-            //{
-              //  Updater.Update();
-            //}
 
         }
     }
