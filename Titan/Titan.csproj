@@ -114,18 +114,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Accounts\Account.cs" />
+    <Compile Include="Core\Hub.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Protobufs\Json\GitHubResponse.cs" />
     <Compile Include="Protobufs\Updater.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Commands\About.cs" />
+    <Compile Include="UI\MainForm.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
