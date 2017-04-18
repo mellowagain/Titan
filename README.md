@@ -11,8 +11,8 @@ A Counter-Strike: Global Offensive report bot written in C#.
 ### Installation
 This project doesn't require installation. The program is directly useable after downloading it.
 
-* **Windows**: Download the `Energy.zip` archive from the [releases](https://github.com/Marc3842h/Energy/releases) tab, unzip it and run the `Energy.exe` file.
-* **Linux**: Download the `Energy.tar.gz` archive from the [releases](https://github.com/Marc3842h/Energy/releases) tab, untar it and run the `Energy.exe` file using Mono.
+* **Windows**: Download the `Titan.zip` archive from the [releases](https://github.com/Marc3842h/Energy/releases) tab, unzip it and run the `Energy.exe` file.
+* **Linux**: Download the `Titan.tar.gz` archive from the [releases](https://github.com/Marc3842h/Energy/releases) tab, untar it and run the `Energy.exe` file using Mono.
 
 ### Usage
 
