@@ -9,7 +9,7 @@ namespace Titan
             HelpText = "The Steam64 ID of that target that should be commended / reported")]
         public string Target { get; set; }
 
-        [Option('i', "id", Required = false,
+        [Option('i', "id", Required = true,
             HelpText = "The CS:GO Match ID with which the target should get to Overwatch")]
         public string MatchId { get; set; } // This is required when the Mode value has been set to REPORT
 
