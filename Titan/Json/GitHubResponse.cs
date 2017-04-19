@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Titan.Protobufs.Json
+namespace Titan.Json
 {
     public class GitHubResponse
     {

@@ -116,8 +116,9 @@
   <ItemGroup>
     <Compile Include="Core\Accounts\Account.cs" />
     <Compile Include="Core\Hub.cs" />
+    <Compile Include="Json\Accounts.cs" />
+    <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="Protobufs\Json\GitHubResponse.cs" />
     <Compile Include="Protobufs\Updater.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,6 +128,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="accounts.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

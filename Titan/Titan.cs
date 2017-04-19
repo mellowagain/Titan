@@ -4,7 +4,9 @@ using System.Threading;
 using Eto.Forms;
 using log4net;
 using log4net.Config;
+using Titan.Core;
 using Titan.Protobufs;
+using Titan.UI;
 
 namespace Titan
 {
@@ -17,6 +19,8 @@ namespace Titan
         public Application EtoApp;
         public Options Options;
         public bool EnableUI = true;
+
+        public MainForm MainForm;
 
         [STAThread]
         public static void Main(string[] args)
@@ -36,7 +40,16 @@ namespace Titan
             Log.Info("Parse arguments");
 
             /* Parse arguments provided with the starting of this */
-            Instance.EnableUI = !CommandLine.Parser.Default.ParseArguments(args, Instance.Options);
+            if(CommandLine.Parser.Default.ParseArguments(args, Instance.Options))
+            {
+                Log.InfoFormat("Skipping UI and going directly to botting - Target: {0} - Match ID: {1}", Instance.Options.Target, Instance.Options.MatchId);
+                Instance.EnableUI = false;
+            }
+            else
+            {
+                Log.Info("The arguments --target (or --id) were omitted - opening the UI.");
+                Instance.EnableUI = true;
+            }
 
             Log.Debug("Checking if Protobufs require updates");
 
@@ -53,11 +66,11 @@ namespace Titan
                 }
             }
 
-            // TODO: Load SteamKit Protobufs & SteamKit-CSGO Protobufs
+            Hub.ReadFile();
 
             if(Instance.EnableUI)
             {
-                Instance.EtoApp.Run();
+                Instance.EtoApp.Run(Instance.MainForm = new MainForm());
             }
 
         }

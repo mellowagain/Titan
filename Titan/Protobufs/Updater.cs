@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using EasyHttp.Http;
 using log4net;
-using Titan.Protobufs.Json;
+using Titan.Json;
 
 namespace Titan.Protobufs
 {

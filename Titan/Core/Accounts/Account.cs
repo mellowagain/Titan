@@ -30,6 +30,7 @@ namespace Titan.Core.Accounts
         public CallbackManager Callbacks { get; }
 
         public bool IsRunning { get; private set; }
+        public bool IsSuccess { get; private set; }
 
         public Account(string username, string password, uint target, ulong matchId)
         {
@@ -50,7 +51,7 @@ namespace Titan.Core.Accounts
             GameCoordinator = SteamClient.GetHandler<SteamGameCoordinator>();
         }
 
-        public void ConnectAndReport()
+        public bool Report()
         {
             Log.Debug("Connecting to Steam");
 
@@ -67,6 +68,8 @@ namespace Titan.Core.Accounts
             {
                 Callbacks.RunWaitCallbacks(TimeSpan.FromSeconds(1));
             }
+
+            return IsSuccess;
         }
 
         // ==========================================
@@ -88,7 +91,6 @@ namespace Titan.Core.Accounts
             else
             {
                 Log.ErrorFormat("Unable to connect to Steam: {0}", callback.Result);
-
                 IsRunning = false;
             }
         }
@@ -104,7 +106,7 @@ namespace Titan.Core.Accounts
             if(callback.Result == EResult.OK)
             {
                 // Success
-                Log.Debug("Successfully logged in.");
+                Log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
 
                 var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
                 playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
@@ -115,6 +117,8 @@ namespace Titan.Core.Accounts
 
                 Thread.Sleep(5000);
 
+                Log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
+
                 var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>((uint) EGCBaseClientMsg.k_EMsgGCClientHello);
                 GameCoordinator.Send(clientHello, 730);
             }
@@ -122,6 +126,7 @@ namespace Titan.Core.Accounts
             {
                 Log.Warn("Account has Steam Guard enabled.");
                 // Steam Guard enabled
+                IsRunning = false;
             }
             else
             {
@@ -152,7 +157,7 @@ namespace Titan.Core.Accounts
 
         public void OnClientWelcome(IPacketGCMsg msg)
         {
-            Log.Debug("Successfully received \"Hello!\" from CS:GO. Sending report...");
+            Log.Debug("Successfully received client hello from CS:GO services. Sending report...");
 
             var sendReport = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>((uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer);
             sendReport.Body.account_id = _target;
@@ -171,6 +176,8 @@ namespace Titan.Core.Accounts
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
             Log.DebugFormat("Successfully reported. Confirmation ID: {0}", response.Body.confirmation_id);
+
+            IsSuccess = true;
 
             SteamUser.LogOff();
             SteamClient.Disconnect();
