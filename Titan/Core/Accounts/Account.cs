@@ -17,12 +17,14 @@ namespace Titan.Core.Accounts
         private readonly string _username;
         private readonly string _password;
 
-        private readonly uint _target;
-        private readonly ulong _matchId;
+        private uint _target;
+        private ulong _matchId;
 
         // TODO: Steam Guard handleing
         public readonly DirectoryInfo SentryDirectory;
         public readonly FileInfo SentryFile;
+
+        public Json.Accounts.JsonAccount Json { get; set; }
 
         public SteamClient SteamClient { get; }
         public SteamUser SteamUser { get; }
@@ -32,13 +34,12 @@ namespace Titan.Core.Accounts
         public bool IsRunning { get; private set; }
         public bool IsSuccess { get; private set; }
 
-        public Account(string username, string password, uint target, ulong matchId)
+        public Account(string username, string password, Json.Accounts.JsonAccount json)
         {
             _username = username;
             _password = password;
 
-            _target = target;
-            _matchId = matchId;
+            Json = json;
 
             SentryDirectory = new DirectoryInfo(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "sentries");
             SentryFile = new FileInfo(Path.Combine(SentryDirectory.ToString(), username + ".sentry.bin"));
@@ -51,8 +52,11 @@ namespace Titan.Core.Accounts
             GameCoordinator = SteamClient.GetHandler<SteamGameCoordinator>();
         }
 
-        public bool Report()
+        public bool Report(uint target, ulong matchId)
         {
+            _target = target;
+            _matchId = matchId;
+
             Log.Debug("Connecting to Steam");
 
             Callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
@@ -70,6 +74,11 @@ namespace Titan.Core.Accounts
             }
 
             return IsSuccess;
+        }
+
+        public void StartThread(uint target, ulong matchId)
+        {
+            Report(target, matchId);
         }
 
         // ==========================================

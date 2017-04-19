@@ -35,7 +35,7 @@ namespace Titan.UI
                     ),
                     new TableRow(
                         new Label { Text = "Match ID" },
-                        new TextBox { PlaceholderText = "steam://rungame/730/76561202255233023/+csgo_download_match%20CSGO-H5ckH-MPzEw-bHML3-RSn68-6pe8E" }
+                        new TextBox { PlaceholderText = "3203363151840018511" }
                     ),
                     new TableRow(new TableCell(), new TableCell()),
                     new TableRow(new TableCell(), new TableCell()),

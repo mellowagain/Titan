@@ -25,6 +25,7 @@ namespace Titan
         [STAThread]
         public static void Main(string[] args)
         {
+
             Thread.CurrentThread.Name = "Main";
             BasicConfigurator.Configure();
 
@@ -47,7 +48,7 @@ namespace Titan
             }
             else
             {
-                Log.Info("The arguments --target (or --id) were omitted - opening the UI.");
+                Log.Info("The arguments --target and --id were omitted - opening the UI.");
                 Instance.EnableUI = true;
             }
 
@@ -72,6 +73,12 @@ namespace Titan
             {
                 Instance.EtoApp.Run(Instance.MainForm = new MainForm());
             }
+            else
+            {
+
+            }
+
+
 
         }
     }
