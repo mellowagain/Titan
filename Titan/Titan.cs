@@ -75,7 +75,7 @@ namespace Titan
             }
             else
             {
-
+                Hub.StartBotting(Instance.Options.Target, Instance.Options.MatchId);
             }
 
 

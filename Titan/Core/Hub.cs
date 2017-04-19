@@ -24,6 +24,8 @@ namespace Titan.Core
             var tar = Convert.ToUInt32(target);
             var mId = Convert.ToUInt64(matchId);
 
+            Log.Info("== STARTING BOTTING ==");
+
             foreach(var a in Accounts)
             {
                 try
@@ -39,6 +41,8 @@ namespace Titan.Core
                     Log.Error(ex);
                 }
             }
+
+            Log.Info("== FINISHED BOTTING ==");
         }
 
         public static void ReadFile()
