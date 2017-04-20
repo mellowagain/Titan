@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using Eto.Forms;
 using log4net;
 using Newtonsoft.Json;
@@ -31,10 +30,7 @@ namespace Titan.Core
             {
                 try
                 {
-                    if(!a.Report(tar, mId))
-                    {
-                        Log.WarnFormat("Report for {0} failed. Is the user in-game or the credicentials wrong?", a.Json.Username);
-                    }
+                    ThreadManager.StartThread(a, tar, mId);
                 }
                 catch (Exception ex)
                 {

@@ -116,6 +116,7 @@
   <ItemGroup>
     <Compile Include="Core\Accounts\Account.cs" />
     <Compile Include="Core\Hub.cs" />
+    <Compile Include="Core\ThreadManager.cs" />
     <Compile Include="Json\Accounts.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Options.cs" />

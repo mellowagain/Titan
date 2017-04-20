@@ -17,8 +17,8 @@ namespace Titan.Core.Accounts
         private readonly string _username;
         private readonly string _password;
 
-        private uint _target;
-        private ulong _matchId;
+        public uint Target { get; set; }
+        public ulong MatchID { get; set; }
 
         // TODO: Steam Guard handleing
         public readonly DirectoryInfo SentryDirectory;
@@ -52,10 +52,9 @@ namespace Titan.Core.Accounts
             GameCoordinator = SteamClient.GetHandler<SteamGameCoordinator>();
         }
 
-        public bool Report(uint target, ulong matchId)
+        public void Report()
         {
-            _target = target;
-            _matchId = matchId;
+            Thread.CurrentThread.Name = _username + " - Report";
 
             Log.Debug("Connecting to Steam");
 
@@ -72,13 +71,6 @@ namespace Titan.Core.Accounts
             {
                 Callbacks.RunWaitCallbacks(TimeSpan.FromSeconds(1));
             }
-
-            return IsSuccess;
-        }
-
-        public void StartThread(uint target, ulong matchId)
-        {
-            Report(target, matchId);
         }
 
         // ==========================================
@@ -169,8 +161,8 @@ namespace Titan.Core.Accounts
             Log.Debug("Successfully received client hello from CS:GO services. Sending report...");
 
             var sendReport = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>((uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer);
-            sendReport.Body.account_id = _target;
-            sendReport.Body.match_id = _matchId;
+            sendReport.Body.account_id = Target;
+            sendReport.Body.match_id = MatchID;
             sendReport.Body.rpt_aimbot = 2;
             sendReport.Body.rpt_wallhack = 3;
             sendReport.Body.rpt_speedhack = 4;
