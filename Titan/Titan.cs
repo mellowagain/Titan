@@ -78,8 +78,13 @@ namespace Titan
                 Hub.StartBotting(Instance.Options.Target, Instance.Options.MatchId);
             }
 
-
-
         }
+
+        /* Limitations of this report bot
+         * > The CS:GO game coordinator doesn't accepts games 10 minutes after game end.
+         * > The Share Code parser is a Node.js library (node-csgo) and hasn't been ported to C#.
+         * You need to parse the Match ID from Sharecode by yourself. The "links" tab provides a website for that.
+         */
+
     }
 }

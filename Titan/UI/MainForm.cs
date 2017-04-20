@@ -67,7 +67,8 @@ namespace Titan.UI
                 {
                     new ButtonMenuItem { Text = "&Links", Items = {
                         new SteamIO(),
-                        new JsonValidator()
+                        new JsonValidator(),
+                        new SharecodeFinder()
                     }}
                 },
                 AboutItem = new Commands.About(),

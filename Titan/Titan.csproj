@@ -125,6 +125,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Commands\About.cs" />
     <Compile Include="UI\Commands\Links\JsonValidator.cs" />
+    <Compile Include="UI\Commands\Links\SharecodeFinder.cs" />
     <Compile Include="UI\Commands\Links\SteamIO.cs" />
     <Compile Include="UI\Commands\Quit.cs" />
     <Compile Include="UI\MainForm.cs" />
