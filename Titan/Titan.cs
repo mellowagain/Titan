@@ -69,6 +69,8 @@ namespace Titan
 
             Hub.ReadFile();
 
+            Log.Info("Welcome to Titan v1.0.0.");
+
             if(Instance.EnableUI)
             {
                 Instance.EtoApp.Run(Instance.MainForm = new MainForm());
