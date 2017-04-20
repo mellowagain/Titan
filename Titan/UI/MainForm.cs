@@ -27,7 +27,7 @@ namespace Titan.UI
             Icon = new Icon(File.Open(_icon, FileMode.Open));
 
             // Selected arguments for the UI
-            _targetBox = new TextBox { PlaceholderText = "76561198224231904" };
+            _targetBox = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
             _matchIDBox = new TextBox { PlaceholderText = "3203363151840018511" };
             var bombBtn = new Button { Text = "Bomb!" };
             bombBtn.Click += OnBombButtonClick;
@@ -82,7 +82,7 @@ namespace Titan.UI
             {
                 Log.InfoFormat("Bomb! Button has been pressed. Starting bombing to {0} in match {1}.", _targetBox.Text, _matchIDBox.Text);
 
-                // Hub.StartBotting(_targetBox.Text, _matchIDBox.Text);
+                Hub.StartBotting(_targetBox.Text, _matchIDBox.Text);
             }
             else
             {

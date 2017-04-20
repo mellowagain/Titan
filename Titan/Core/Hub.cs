@@ -5,6 +5,7 @@ using System.Threading;
 using Eto.Forms;
 using log4net;
 using Newtonsoft.Json;
+using SteamKit2;
 using Titan.Core.Accounts;
 
 namespace Titan.Core
@@ -21,7 +22,7 @@ namespace Titan.Core
 
         public static void StartBotting(string target, string matchId)
         {
-            var tar = Convert.ToUInt32(target);
+            var tar = new SteamID(target).AccountID;
             var mId = Convert.ToUInt64(matchId);
 
             Log.Info("== STARTING BOTTING ==");
