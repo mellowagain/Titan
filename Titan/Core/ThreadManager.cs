@@ -12,10 +12,11 @@ namespace Titan.Core
 
         public static Dictionary<Account, Thread> Dictionary = new Dictionary<Account, Thread>();
 
-        public static void StartThread(Account acc, uint target, ulong matchId)
+        public static void StartThread(Account acc, uint target, ulong matchId, BotMode mode)
         {
             acc.Target = target;
             acc.MatchID = matchId;
+            acc.Mode = mode;
 
             Log.DebugFormat("Starting reporting thread for {0}.", acc.Json.Username);
             var thread = new Thread(acc.Report);

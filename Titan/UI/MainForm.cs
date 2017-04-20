@@ -16,6 +16,7 @@ namespace Titan.UI
 
         public readonly ILog Log = LogManager.GetLogger(typeof(MainForm));
 
+        private readonly DropDown _dropDown;
         private readonly TextBox _targetBox;
         private readonly TextBox _matchIDBox;
 
@@ -29,6 +30,7 @@ namespace Titan.UI
             // Selected arguments for the UI
             _targetBox = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
             _matchIDBox = new TextBox { PlaceholderText = "3203363151840018511" };
+            _dropDown = new DropDown { Items = { "Report", "Commend" }, SelectedIndex = 0 };
             var bombBtn = new Button { Text = "Bomb!" };
             bombBtn.Click += OnBombButtonClick;
 
@@ -40,7 +42,7 @@ namespace Titan.UI
                 {
                     new TableRow(
                         new TableCell(new Label { Text = "Mode" }, true),
-                        new TableCell(new DropDown { Items = { "Report"/*, "Commend"*/ }, SelectedIndex = 0 }, true)
+                        new TableCell(_dropDown, true)
                     ),
                     new TableRow(
                         new Label { Text = "Target" },
@@ -79,11 +81,25 @@ namespace Titan.UI
 
         public void OnBombButtonClick(object sender, EventArgs args)
         {
-            if(!string.IsNullOrWhiteSpace(_targetBox.Text) || !string.IsNullOrEmpty(_matchIDBox.Text))
+            BotMode mode;
+            switch(_dropDown.SelectedIndex)
+            {
+                case 0:
+                    mode = BotMode.Report;
+                    break;
+                case 1:
+                    mode = BotMode.Commend;
+                    break;
+                default:
+                    mode = BotMode.Report;
+                    break;
+            }
+
+            if(!string.IsNullOrWhiteSpace(_targetBox.Text) || (!string.IsNullOrEmpty(_matchIDBox.Text) && mode != BotMode.Commend))
             {
                 Log.InfoFormat("Bomb! Button has been pressed. Starting bombing to {0} in match {1}.", _targetBox.Text, _matchIDBox.Text);
 
-                Hub.StartBotting(_targetBox.Text, _matchIDBox.Text);
+                Hub.StartBotting(_targetBox.Text, _matchIDBox.Text, mode);
             }
             else
             {

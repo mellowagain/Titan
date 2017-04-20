@@ -17,6 +17,7 @@ namespace Titan.Core.Accounts
         private readonly string _username;
         private readonly string _password;
 
+        public BotMode Mode { get; set; }
         public uint Target { get; set; }
         public ulong MatchID { get; set; }
 
@@ -146,7 +147,8 @@ namespace Titan.Core.Accounts
             var map = new Dictionary<uint, Action<IPacketGCMsg>>
             {
                 { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
-                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse }
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnReportResponse }
             };
 
             Action<IPacketGCMsg> func;
@@ -160,16 +162,37 @@ namespace Titan.Core.Accounts
         {
             Log.Debug("Successfully received client hello from CS:GO services. Sending report...");
 
-            var sendReport = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>((uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer);
-            sendReport.Body.account_id = Target;
-            sendReport.Body.match_id = MatchID;
-            sendReport.Body.rpt_aimbot = 2;
-            sendReport.Body.rpt_wallhack = 3;
-            sendReport.Body.rpt_speedhack = 4;
-            sendReport.Body.rpt_teamharm = 5;
-            sendReport.Body.rpt_textabuse = 6;
-            sendReport.Body.rpt_voiceabuse = 7;
-            GameCoordinator.Send(sendReport, 730);
+            if(Mode == BotMode.Report)
+            {
+                var sendReport =
+                    new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>((uint) ECsgoGCMsg
+                        .k_EMsgGCCStrike15_v2_ClientReportPlayer);
+                sendReport.Body.account_id = Target;
+                sendReport.Body.match_id = MatchID;
+                sendReport.Body.rpt_aimbot = 2;
+                sendReport.Body.rpt_wallhack = 3;
+                sendReport.Body.rpt_speedhack = 4;
+                sendReport.Body.rpt_teamharm = 5;
+                sendReport.Body.rpt_textabuse = 6;
+                sendReport.Body.rpt_voiceabuse = 7;
+                GameCoordinator.Send(sendReport, 730);
+            }
+            else
+            {
+                var commend =
+                    new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer>((uint) ECsgoGCMsg
+                        .k_EMsgGCCStrike15_v2_ClientCommendPlayer);
+                commend.Body.account_id = Target;
+                commend.Body.match_id = 8;
+                commend.Body.commendation = new PlayerCommendationInfo
+                {
+                    cmd_friendly = 1,
+                    cmd_teaching = 2,
+                    cmd_leader = 4
+                };
+                commend.Body.tokens = 10;
+                GameCoordinator.Send(commend, 730);
+            }
         }
 
         public void OnReportResponse(IPacketGCMsg msg)
@@ -177,6 +200,16 @@ namespace Titan.Core.Accounts
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
             Log.DebugFormat("Successfully reported. Confirmation ID: {0}", response.Body.confirmation_id);
+
+            IsSuccess = true;
+
+            SteamUser.LogOff();
+            SteamClient.Disconnect();
+        }
+
+        public void OnCommendResponse(IPacketGCMsg msg)
+        {
+            Log.Debug("Successfully commended target.");
 
             IsSuccess = true;
 
