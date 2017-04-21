@@ -86,7 +86,7 @@ namespace Titan.UI
 
         public void OnBombButtonClick(object sender, EventArgs args)
         {
-            var mode = ModeParser.Parse((string) _dropDown.SelectedValue);
+            var mode = ModeParser.Parse(_dropDown.SelectedIndex);
 
             if(!string.IsNullOrWhiteSpace(_targetBox.Text) || (!string.IsNullOrEmpty(_matchIDBox.Text) && mode != BotMode.Commend))
             {
