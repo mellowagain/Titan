@@ -19,6 +19,7 @@ namespace Titan.UI
         private readonly DropDown _dropDown;
         private readonly TextBox _targetBox;
         private readonly TextBox _matchIDBox;
+        private readonly Label _matchIDLabel;
 
         public MainForm()
         {
@@ -30,7 +31,11 @@ namespace Titan.UI
             // Selected arguments for the UI
             _targetBox = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
             _matchIDBox = new TextBox { PlaceholderText = "3203363151840018511" };
+            _matchIDLabel = new Label { Text = "Match ID" };
+
             _dropDown = new DropDown { Items = { "Report", "Commend" }, SelectedIndex = 0 };
+            _dropDown.SelectedIndexChanged += OnDropDownIndexChange;
+
             var bombBtn = new Button { Text = "Bomb!" };
             bombBtn.Click += OnBombButtonClick;
 
@@ -49,7 +54,7 @@ namespace Titan.UI
                         _targetBox
                     ),
                     new TableRow(
-                        new Label { Text = "Match ID" },
+                        _matchIDLabel,
                         _matchIDBox
                     ),
                     new TableRow(new TableCell(), new TableCell()),
@@ -103,7 +108,25 @@ namespace Titan.UI
             }
             else
             {
-                MessageBox.Show("Please provide the Target and the Match ID.", "Error - Titan", MessageBoxType.Error);
+                MessageBox.Show(
+                    mode == BotMode.Commend
+                        ? "Please provide the Target."
+                        : "Please provide the Target and the Match ID.", "Error - Titan",
+                    MessageBoxType.Error);
+            }
+        }
+
+        public void OnDropDownIndexChange(object sender, EventArgs args)
+        {
+            if(_dropDown.SelectedIndex == 0)
+            {
+                _matchIDLabel.Visible = true;
+                _matchIDBox.Visible = true;
+            }
+            else if(_dropDown.SelectedIndex == 1)
+            {
+                _matchIDLabel.Visible = false;
+                _matchIDBox.Visible = false;
             }
         }
 
