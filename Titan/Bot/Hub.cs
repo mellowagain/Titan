@@ -5,9 +5,10 @@ using Eto.Forms;
 using log4net;
 using Newtonsoft.Json;
 using SteamKit2;
-using Titan.Core.Accounts;
+using Titan.Bot.Mode;
+using Titan.Bot.Threads;
 
-namespace Titan.Core
+namespace Titan.Bot
 {
     public class Hub
     {

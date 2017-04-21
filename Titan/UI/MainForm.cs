@@ -3,7 +3,8 @@ using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 using log4net;
-using Titan.Core;
+using Titan.Bot;
+using Titan.Bot.Mode;
 using Titan.UI.Commands.Links;
 
 namespace Titan.UI

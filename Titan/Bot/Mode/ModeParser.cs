@@ -1,6 +1,6 @@
 ﻿using Eto.Forms;
 
-namespace Titan.Core
+namespace Titan.Bot.Mode
 {
     public class ModeParser
     {

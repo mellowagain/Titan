@@ -7,8 +7,9 @@ using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using SteamKit2.Internal;
+using Titan.Bot.Mode;
 
-namespace Titan.Core.Accounts
+namespace Titan.Bot.Threads
 {
     public class Account
     {

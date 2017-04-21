@@ -1,4 +1,4 @@
-﻿namespace Titan.Core
+﻿namespace Titan.Bot.Mode
 {
     public enum BotMode
     {

@@ -114,11 +114,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Accounts\Account.cs" />
-    <Compile Include="Core\BotMode.cs" />
-    <Compile Include="Core\Hub.cs" />
-    <Compile Include="Core\ModeParser.cs" />
-    <Compile Include="Core\ThreadManager.cs" />
+    <Compile Include="Bot\Hub.cs" />
+    <Compile Include="Bot\Mode\BotMode.cs" />
+    <Compile Include="Bot\Mode\ModeParser.cs" />
+    <Compile Include="Bot\Threads\Account.cs" />
+    <Compile Include="Bot\Threads\ThreadManager.cs" />
     <Compile Include="Json\Accounts.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Options.cs" />

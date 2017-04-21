@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using log4net;
-using Titan.Core.Accounts;
+using Titan.Bot.Mode;
 
-namespace Titan.Core
+namespace Titan.Bot.Threads
 {
     public class ThreadManager
     {

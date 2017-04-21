@@ -4,7 +4,8 @@ using System.Threading;
 using Eto.Forms;
 using log4net;
 using log4net.Config;
-using Titan.Core;
+using Titan.Bot;
+using Titan.Bot.Mode;
 using Titan.Protobufs;
 using Titan.UI;
 
