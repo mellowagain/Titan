@@ -2,7 +2,7 @@
 using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
-using log4net;
+using NLog;
 using Titan.Bot;
 using Titan.Bot.Mode;
 using Titan.UI.Commands.Links;
@@ -15,7 +15,7 @@ namespace Titan.UI
         private readonly string _icon = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Resources" +
                                         Path.DirectorySeparatorChar + "Logo.ico";
 
-        public readonly ILog Log = LogManager.GetLogger(typeof(MainForm));
+        private Logger _log = LogManager.GetCurrentClassLogger();
 
         private readonly DropDown _dropDown;
         private readonly TextBox _targetBox;
@@ -91,7 +91,7 @@ namespace Titan.UI
 
             if(!string.IsNullOrWhiteSpace(_targetBox.Text) || (!string.IsNullOrEmpty(_matchIDBox.Text) && mode != BotMode.Commend))
             {
-                Log.InfoFormat("Bomb! Button has been pressed. Starting bombing to {0} in match {1}.", _targetBox.Text, _matchIDBox.Text);
+                _log.Info("Bomb! Button has been pressed. Starting bombing to {0} in match {1}.", _targetBox.Text, _matchIDBox.Text);
 
                 Hub.StartBotting(_targetBox.Text, _matchIDBox.Text, mode);
             }

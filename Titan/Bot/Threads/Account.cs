@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
-using log4net;
+using NLog;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
@@ -15,7 +15,7 @@ namespace Titan.Bot.Threads
 {
     public class Account
     {
-        public readonly ILog Log;
+        private Logger _log;
 
         private readonly string _username;
         private readonly string _password;
@@ -56,7 +56,7 @@ namespace Titan.Bot.Threads
             SentryDirectory = new DirectoryInfo(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "sentries");
             SentryFile = new FileInfo(Path.Combine(SentryDirectory.ToString(), username + ".sentry.bin"));
 
-            Log = LogManager.GetLogger("Account - " + username);
+            _log = LogManager.GetLogger("Account: " + username);
 
             SteamClient = new SteamClient();
             Callbacks = new CallbackManager(SteamClient);
@@ -68,7 +68,7 @@ namespace Titan.Bot.Threads
         {
             Thread.CurrentThread.Name = _username + " - " + Mode;
 
-            Log.Debug("Connecting to Steam");
+            _log.Debug("Connecting to Steam");
 
             Callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             Callbacks.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
@@ -94,7 +94,7 @@ namespace Titan.Bot.Threads
         {
             if(callback.Result == EResult.OK)
             {
-                Log.Debug("Successfully connected to Steam. Logging in...");
+                _log.Debug("Successfully connected to Steam. Logging in...");
 
                 byte[] sentryHash = null;
                 if(SentryFile.Exists)
@@ -114,7 +114,7 @@ namespace Titan.Bot.Threads
             }
             else
             {
-                Log.ErrorFormat("Unable to connect to Steam: {0}", callback.Result);
+                _log.Error("Unable to connect to Steam: {0}", callback.Result);
                 IsRunning = false;
             }
         }
@@ -124,7 +124,7 @@ namespace Titan.Bot.Threads
             ReconnectTries++;
             if(ReconnectTries <= 5 && !IsSuccess)
             {
-                Log.DebugFormat("Disconnected from Steam. Retrying in 5 seconds... ({0}/5)", ReconnectTries);
+                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({0}/5)", ReconnectTries);
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
 
@@ -132,7 +132,7 @@ namespace Titan.Bot.Threads
             }
             else
             {
-                Log.Debug("Successfully disconnected from Steam.");
+                _log.Debug("Successfully disconnected from Steam.");
                 IsRunning = false;
             }
         }
@@ -142,7 +142,7 @@ namespace Titan.Bot.Threads
             switch(callback.Result)
             {
                 case EResult.OK:
-                    Log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
+                    _log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
 
                     var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
                     playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
@@ -153,25 +153,25 @@ namespace Titan.Bot.Threads
 
                     Thread.Sleep(5000);
 
-                    Log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
+                    _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
 
                     var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>((uint) EGCBaseClientMsg.k_EMsgGCClientHello);
                     GameCoordinator.Send(clientHello, 730);
                     break;
                 case EResult.AccountLogonDenied:
-                    Log.Info("Please enter the 2FA code from the Steam App:");
+                    _log.Info("Please enter the 2FA code from the Steam App:");
                     AuthCode = Console.ReadLine();
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    Log.InfoFormat("Please enter the auth code sent to email at {0}:", callback.EmailDomain);
+                    _log.Info("Please enter the auth code sent to email at {0}:", callback.EmailDomain);
                     TwoFactorCode = Console.ReadLine();
                     break;
                 case EResult.ServiceUnavailable:
-                    Log.Error("Steam is currently offline. Please try again later.");
+                    _log.Error("Steam is currently offline. Please try again later.");
                     IsRunning = false;
                     break;
                 default:
-                    Log.ErrorFormat("Unable to logon to account: {0}: {1}", callback.Result, callback.ExtendedResult);
+                    _log.Error("Unable to logon to account: {0}: {1}", callback.Result, callback.ExtendedResult);
                     IsRunning = false;
                     break;
             }
@@ -179,12 +179,12 @@ namespace Titan.Bot.Threads
 
         public void OnLoggedOff(SteamUser.LoggedOffCallback callback)
         {
-            Log.DebugFormat("Successfully logged off from Steam: {0}", callback.Result);
+            _log.Debug("Successfully logged off from Steam: {0}", callback.Result);
         }
 
         public void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
         {
-            Log.Debug("Updating Sentry file...");
+            _log.Debug("Updating Sentry file...");
 
             int size;
             byte[] hash;
@@ -214,7 +214,7 @@ namespace Titan.Bot.Threads
                 SentryFileHash = hash
             });
 
-            Log.Debug("Successfully updated Sentry hash file.");
+            _log.Debug("Successfully updated Sentry hash file.");
         }
 
         public void OnGcMessage(SteamGameCoordinator.MessageCallback callback)
@@ -235,7 +235,7 @@ namespace Titan.Bot.Threads
 
         public void OnClientWelcome(IPacketGCMsg msg)
         {
-            Log.DebugFormat("Successfully received client hello from CS:GO services. Sending {0}...", Mode);
+            _log.Debug("Successfully received client hello from CS:GO services. Sending {0}...", Mode);
 
             if(Mode == BotMode.Report)
             {
@@ -274,7 +274,7 @@ namespace Titan.Bot.Threads
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            Log.DebugFormat("Successfully reported. Confirmation ID: {0}", response.Body.confirmation_id);
+            _log.Debug("Successfully reported. Confirmation ID: {0}", response.Body.confirmation_id);
 
             IsSuccess = true;
 
@@ -284,7 +284,7 @@ namespace Titan.Bot.Threads
 
         public void OnCommendResponse(IPacketGCMsg msg)
         {
-            Log.Debug("Successfully commended target.");
+            _log.Debug("Successfully commended target.");
 
             IsSuccess = true;
 

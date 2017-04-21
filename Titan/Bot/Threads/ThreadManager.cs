@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using log4net;
+using NLog;
 using Titan.Bot.Mode;
 
 namespace Titan.Bot.Threads
@@ -8,7 +8,7 @@ namespace Titan.Bot.Threads
     public class ThreadManager
     {
 
-        public static readonly ILog Log = LogManager.GetLogger(typeof(ThreadManager));
+        private static Logger _log = LogManager.GetCurrentClassLogger();
 
         public static Dictionary<Account, Thread> Dictionary = new Dictionary<Account, Thread>();
 
@@ -18,7 +18,7 @@ namespace Titan.Bot.Threads
             acc.MatchID = matchId;
             acc.Mode = mode;
 
-            Log.DebugFormat("Starting reporting thread for {0}.", acc.Json.Username);
+            _log.Debug("Starting reporting thread for {0}.", acc.Json.Username);
             var thread = new Thread(acc.Process);
             thread.Start();
 
@@ -32,11 +32,11 @@ namespace Titan.Bot.Threads
             if(Dictionary.TryGetValue(acc, out output))
             {
                 output.Abort();
-                Log.DebugFormat("The reporting thread for {0} has been aborted.", acc.Json.Username);
+                _log.Debug("The reporting thread for {0} has been aborted.", acc.Json.Username);
             }
             else
             {
-                Log.ErrorFormat("Could not find thread for {0}, but it has tried to be aborted!", acc.Json.Username);
+                _log.Error("Could not find thread for {0}, but it has tried to be aborted!", acc.Json.Username);
             }
         }
 

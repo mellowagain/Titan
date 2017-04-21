@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using Eto.Forms;
-using log4net;
 using Newtonsoft.Json;
+using NLog;
 using SteamKit2;
 using Titan.Bot.Mode;
 using Titan.Bot.Threads;
@@ -13,7 +13,7 @@ namespace Titan.Bot
     public class Hub
     {
 
-        public static readonly ILog Log = LogManager.GetLogger(typeof(Hub));
+        private static Logger _log = LogManager.GetCurrentClassLogger();
 
         public static readonly List<Account> Accounts = new List<Account>();
 
@@ -25,8 +25,6 @@ namespace Titan.Bot
             var tar = new SteamID(target).AccountID;
             var mId = mode == BotMode.Report ? Convert.ToUInt64(matchId) : 0;
 
-            Log.Info("== STARTING BOTTING ==");
-
             foreach(var a in Accounts)
             {
                 try
@@ -35,12 +33,9 @@ namespace Titan.Bot
                 }
                 catch (Exception ex)
                 {
-                    Log.ErrorFormat("{0} for {1} failed. A error occured.", mode, a.Json.Username);
-                    Log.Error(ex);
+                    _log.Error(ex, "{0} for {1} failed. A error occured.", mode, a.Json.Username);
                 }
             }
-
-            Log.Info("== FINISHED BOTTING ==");
 
             MessageBox.Show("Successfully bombed " + target + " " + Accounts.Count + "x using method \"" + mode + "\".");
         }
@@ -51,7 +46,7 @@ namespace Titan.Bot
             {
                 MessageBox.Show("Could not read account.json file. \nPlease create it or check it using a Json Validator.",
                     "Titan - Error", MessageBoxType.Error);
-                Log.Error("Can't read Account file. Does it exist?");
+                _log.Error("Can't read Account file. Does it exist?");
                 return false;
             }
 
@@ -64,7 +59,7 @@ namespace Titan.Bot
             foreach(var a in JsonAccounts.JsonAccounts)
             {
                 Accounts.Add(new Account(a.Username, a.Password, a));
-                Log.Debug("Account specified - U: " + a.Username + " P: " + a.Password);
+                _log.Debug("Account specified - U: " + a.Username + " P: " + a.Password);
             }
 
             if(Accounts.Count < 11)

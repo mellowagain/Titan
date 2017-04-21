@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 using EasyHttp.Http;
-using log4net;
+using NLog;
 using Titan.Json;
 
 namespace Titan.Protobufs
@@ -10,7 +10,7 @@ namespace Titan.Protobufs
     public class Updater
     {
 
-        public static readonly ILog Log = LogManager.GetLogger(typeof(Updater));
+        private static Logger _log = LogManager.GetCurrentClassLogger();
 
         public static string Base = "https://raw.githubusercontent.com/SteamRE/SteamKit/master/Resources/Protobufs/csgo/";
 
@@ -30,7 +30,7 @@ namespace Titan.Protobufs
         {
             if(!ProtoDir.Exists)
             {
-                Log.Debug("Protobuf directory doesn't exist. Creating it...");
+                _log.Debug("Protobuf directory doesn't exist. Creating it...");
                 ProtoDir.Create();
             }
 
@@ -44,20 +44,20 @@ namespace Titan.Protobufs
 
                 using(var webClient = new WebClient())
                 {
-                    Log.DebugFormat("Downloading \"{0}\" Protobuf file.", proto);
+                    _log.Debug("Downloading \"{0}\" Protobuf file.", proto);
                     webClient.DownloadFile(new Uri(Base + proto), Path.Combine(ProtoDir.ToString(), proto));
                 }
             }
 
-            Log.Debug("Saving hash for update checking.");
+            _log.Debug("Saving hash for update checking.");
             SaveHash();
 
-            Log.Info("Successfully updated Protobufs.");
+            _log.Info("Successfully updated Protobufs.");
         }
 
         public static bool RequiresUpdate()
         {
-            Log.Debug("Sending Request to GitHub.");
+            _log.Debug("Sending Request to GitHub.");
 
             var client = new HttpClient();
             client.Request.Accept = "application/vnd.github.v3+json";
@@ -66,7 +66,7 @@ namespace Titan.Protobufs
 
             var result = response.StaticBody<GitHubResponse>();
 
-            Log.DebugFormat("Successfully awaited. SHA Result: {0}", result.Sha);
+            _log.Debug("Successfully awaited. SHA Result: {0}", result.Sha);
 
             if(HistoryFile.Exists)
             {
