@@ -27,10 +27,10 @@ namespace Titan.Core.Accounts
 
         public Json.Accounts.JsonAccount Json { get; set; }
 
-        public SteamClient SteamClient { get; }
-        public SteamUser SteamUser { get; }
-        public SteamGameCoordinator GameCoordinator { get; }
-        public CallbackManager Callbacks { get; }
+        public SteamClient SteamClient { get; private set; }
+        public SteamUser SteamUser { get; private set; }
+        public SteamGameCoordinator GameCoordinator { get; private set; }
+        public CallbackManager Callbacks { get; private set; }
 
         public bool IsRunning { get; private set; }
         public bool IsSuccess { get; private set; }
