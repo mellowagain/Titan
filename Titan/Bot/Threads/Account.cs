@@ -149,7 +149,7 @@ namespace Titan.Bot.Threads
             {
                 { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
-                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnReportResponse }
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse }
             };
 
             Action<IPacketGCMsg> func;
