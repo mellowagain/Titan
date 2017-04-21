@@ -53,9 +53,9 @@ namespace Titan.Core.Accounts
             GameCoordinator = SteamClient.GetHandler<SteamGameCoordinator>();
         }
 
-        public void Report()
+        public void Process()
         {
-            Thread.CurrentThread.Name = _username + " - Report";
+            Thread.CurrentThread.Name = _username + " - " + Mode;
 
             Log.Debug("Connecting to Steam");
 
@@ -160,7 +160,7 @@ namespace Titan.Core.Accounts
 
         public void OnClientWelcome(IPacketGCMsg msg)
         {
-            Log.Debug("Successfully received client hello from CS:GO services. Sending report...");
+            Log.DebugFormat("Successfully received client hello from CS:GO services. Sending {0}...", Mode);
 
             if(Mode == BotMode.Report)
             {

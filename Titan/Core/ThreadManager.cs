@@ -19,7 +19,7 @@ namespace Titan.Core
             acc.Mode = mode;
 
             Log.DebugFormat("Starting reporting thread for {0}.", acc.Json.Username);
-            var thread = new Thread(acc.Report);
+            var thread = new Thread(acc.Process);
             thread.Start();
 
             Dictionary.Add(acc, thread);

@@ -34,7 +34,7 @@ namespace Titan.Core
                 }
                 catch (Exception ex)
                 {
-                    Log.ErrorFormat("Report for {0} failed. A error occured.", a.Json.Username);
+                    Log.ErrorFormat("{0} for {1} failed. A error occured.", mode, a.Json.Username);
                     Log.Error(ex);
                 }
             }
