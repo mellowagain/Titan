@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.ComponentModel;
+using CommandLine;
 
 namespace Titan
 {
@@ -19,11 +20,13 @@ namespace Titan
 
         [Option('f', "file", Required = false,
             HelpText = "The file containg a list of Steam accounts owning CS:GO that should be used")]
-        public string File { get; set; } = "accounts.json";
+        [DefaultValue("accounts.json")]
+        public string File { get; set; }
 
         [Option('u', "update", Required = false,
             HelpText = "Force a update of the CS:GO Protobufs from the SteamKit GitHub repository")]
-        public bool ForceUpdate { get; set; } = false;
+        [DefaultValue(false)]
+        public bool ForceUpdate { get; set; }
 
     }
 }
