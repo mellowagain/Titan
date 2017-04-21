@@ -86,19 +86,7 @@ namespace Titan.UI
 
         public void OnBombButtonClick(object sender, EventArgs args)
         {
-            BotMode mode;
-            switch(_dropDown.SelectedIndex)
-            {
-                case 0:
-                    mode = BotMode.Report;
-                    break;
-                case 1:
-                    mode = BotMode.Commend;
-                    break;
-                default:
-                    mode = BotMode.Report;
-                    break;
-            }
+            var mode = ModeParser.Parse((string) _dropDown.SelectedValue);
 
             if(!string.IsNullOrWhiteSpace(_targetBox.Text) || (!string.IsNullOrEmpty(_matchIDBox.Text) && mode != BotMode.Commend))
             {

@@ -77,7 +77,21 @@ namespace Titan
                 }
                 else
                 {
-                    //Hub.StartBotting(Instance.Options.Target, Instance.Options.MatchId);
+                    var mode = ModeParser.Parse(Instance.Options.Mode);
+
+                    if(mode == BotMode.Report)
+                    {
+                        if(string.IsNullOrEmpty(Instance.Options.MatchId))
+                        {
+                            MessageBox.Show("Please provide a Match ID when starting " +
+                                            "via command line and mode \"REPORT\".",
+                                "Titan - Error", MessageBoxType.Error);
+                            Instance.EtoApp.Run(Instance.MainForm = new MainForm());
+                            return;
+                        }
+                    }
+
+                    Hub.StartBotting(Instance.Options.Target, Instance.Options.MatchId, mode);
                 }
             }
 
@@ -87,6 +101,7 @@ namespace Titan
          * > The CS:GO game coordinator doesn't accepts games 10 minutes after game end.
          * > The Share Code parser is a Node.js library (node-csgo) and hasn't been ported to C#.
          * You need to parse the Match ID from Sharecode by yourself. The "links" tab provides a website for that.
+         * > Reports and Commendations are only possible once per 6 hours.
          */
 
     }
