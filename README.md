@@ -13,12 +13,12 @@ Accounts need to be provided by the user (you).
 ### Installation
 This project doesn't require installation. The program is directly useable after downloading it.
 
-* **Windows**: Download the `Titan.zip` archive from the [releases](https://github.com/Marc3842h/Energy/releases) tab, unzip it and run the `Energy.exe` file.
-* **Linux**: Download the `Titan.tar.gz` archive from the [releases](https://github.com/Marc3842h/Energy/releases) tab, untar it and run the `Energy.exe` file using Mono.
+* **Windows**: Download the `Titan.zip` archive from the [releases](https://github.com/Marc3842h/Titan/releases) tab, unzip it and run the `Titan.exe` file.
+* **Linux**: Download the `Titan.tar.gz` archive from the [releases](https://github.com/Marc3842h/Titan/releases) tab, untar it and run the `Titan.exe` file using Mono.
 
 ### Usage
 
-The usage and configuration of this project has been documented in the [Wiki](https://github.com/Marc3842h/Energy/wiki).
+The usage and configuration of this project has been documented in the [Wiki](https://github.com/Marc3842h/Titan/wiki).
 
 ### Developement / Contributing
 
