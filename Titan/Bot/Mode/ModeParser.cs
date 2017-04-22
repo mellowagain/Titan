@@ -18,7 +18,7 @@ namespace Titan.Bot.Mode
                 case "report":
                     return BotMode.Report;
                 default:
-                    _log.Information("Could not parse {mode} to BotMode. Please change it to either \"Commend\" or \"Report\".",
+                    _log.Information("Could not parse {Mode} to BotMode. Please change it to either \"Commend\" or \"Report\".",
                         mode);
                     MessageBox.Show("Could not parse \"" + mode + "\" to BotMode. " +
                                     "Please change it to either \"Commend\" or \"Report\".",

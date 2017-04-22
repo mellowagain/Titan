@@ -45,7 +45,7 @@ namespace Titan.Protobufs
 
                 using(var webClient = new WebClient())
                 {
-                    _log.Debug("Downloading \"{0}\" Protobuf file.", proto);
+                    _log.Debug("Downloading {File} Protobuf file.", proto);
                     webClient.DownloadFile(new Uri(Base + proto), Path.Combine(ProtoDir.ToString(), proto));
                 }
             }
@@ -67,7 +67,7 @@ namespace Titan.Protobufs
 
             var result = response.StaticBody<GitHubResponse>();
 
-            _log.Debug("Successfully awaited. SHA Result: {0}", result.Sha);
+            _log.Debug("Successfully awaited. SHA Result: {Sha}", result.Sha);
 
             if(HistoryFile.Exists)
             {

@@ -23,7 +23,8 @@ namespace Titan.Bootstrap
 
         public static void Hook()
         {
-            _log.Debug("Running Titan on {0}. ({1})", IsUnix ? "Linux" : "Windows");
+            _log.Debug("Detected operating system: {System} - Running Titan in {Mode} mode.",
+                IsUnix ? "Linux" : "Windows", IsUnix ? "Mono" : "Native");
 
             ExitSignal = IsUnix ? (IExitSignal) new UnixExitSignal() : new WinExitSignal();
             ExitSignal.Exit += OnShutdown;
@@ -31,7 +32,7 @@ namespace Titan.Bootstrap
 
         public static void OnShutdown(object sender, EventArgs args)
         {
-            _log.Information("Thank you and goodbye.");
+            _log.Information("Thank you. Have a nice day.");
 
             Log.CloseAndFlush();
             // TODO: Shutdown handeling

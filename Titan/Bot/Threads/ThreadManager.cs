@@ -19,7 +19,7 @@ namespace Titan.Bot.Threads
             acc.MatchID = matchId;
             acc.Mode = mode;
 
-            _log.Debug("Starting reporting thread for {0}.", acc.Json.Username);
+            _log.Debug("Starting reporting thread for {Username}.", acc.Json.Username);
             var thread = new Thread(acc.Process);
             thread.Start();
 
@@ -33,11 +33,11 @@ namespace Titan.Bot.Threads
             if(Dictionary.TryGetValue(acc, out output))
             {
                 output.Abort();
-                _log.Debug("The reporting thread for {0} has been aborted.", acc.Json.Username);
+                _log.Debug("The reporting thread for {Username} has been aborted.", acc.Json.Username);
             }
             else
             {
-                _log.Error("Could not find thread for {0}, but it has tried to be aborted!", acc.Json.Username);
+                _log.Error("Could not find thread for {Username}, but it has tried to be aborted!", acc.Json.Username);
             }
         }
 

@@ -92,7 +92,7 @@ namespace Titan.UI
 
             if(!string.IsNullOrWhiteSpace(_targetBox.Text) || (!string.IsNullOrEmpty(_matchIDBox.Text) && mode != BotMode.Commend))
             {
-                _log.Information("Bomb! Button has been pressed. Starting bombing to {0} in match {1}.", _targetBox.Text, _matchIDBox.Text);
+                _log.Information("Bomb! Button has been pressed. Starting bombing to {Target} in match {Match}.", _targetBox.Text, _matchIDBox.Text);
 
                 Hub.StartBotting(_targetBox.Text, _matchIDBox.Text, mode);
             }

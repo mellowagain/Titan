@@ -44,7 +44,7 @@ namespace Titan
             /* Parse arguments provided with the starting of this */
             if(CommandLine.Parser.Default.ParseArguments(args, Instance.Options))
             {
-                Logger.Information("Skipping UI and going directly to botting - Target: {0} - Match ID: {1}", Instance.Options.Target, Instance.Options.MatchId);
+                Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {Id}", Instance.Options.Target, Instance.Options.MatchId);
                 Instance.EnableUI = false;
             }
             else

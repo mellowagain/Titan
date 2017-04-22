@@ -127,7 +127,7 @@ namespace Titan.Bot.Threads
             }
             else
             {
-                _log.Error("Unable to connect to Steam: {0}", callback.Result);
+                _log.Error("Unable to connect to Steam: {Result}", callback.Result);
                 IsRunning = false;
             }
         }
@@ -137,7 +137,7 @@ namespace Titan.Bot.Threads
             ReconnectTries++;
             if(ReconnectTries <= 5 && !IsSuccess)
             {
-                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({0}/5)", ReconnectTries);
+                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", ReconnectTries);
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
 
@@ -181,7 +181,7 @@ namespace Titan.Bot.Threads
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                     if(Json.Sentry)
                     {
-                        _log.Information("Please enter the auth code sent to email at {0}:", callback.EmailDomain);
+                        _log.Information("Please enter the auth code sent to email at {Mail}:", callback.EmailDomain);
                         TwoFactorCode = Console.ReadLine();
                     }
                     break;
@@ -190,7 +190,7 @@ namespace Titan.Bot.Threads
                     IsRunning = false;
                     break;
                 default:
-                    _log.Error("Unable to logon to account: {0}: {1}", callback.Result, callback.ExtendedResult);
+                    _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
                     IsRunning = false;
                     break;
             }
@@ -198,7 +198,7 @@ namespace Titan.Bot.Threads
 
         public void OnLoggedOff(SteamUser.LoggedOffCallback callback)
         {
-            _log.Debug("Successfully logged off from Steam: {0}", callback.Result);
+            _log.Debug("Successfully logged off from Steam: {Result}", callback.Result);
         }
 
         public void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
@@ -257,7 +257,7 @@ namespace Titan.Bot.Threads
 
         public void OnClientWelcome(IPacketGCMsg msg)
         {
-            _log.Debug("Successfully received client hello from CS:GO services. Sending {0}...", Mode);
+            _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...", Mode);
 
             if(Mode == BotMode.Report)
             {
@@ -296,7 +296,7 @@ namespace Titan.Bot.Threads
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            _log.Debug("Successfully reported. Confirmation ID: {0}", response.Body.confirmation_id);
+            _log.Debug("Successfully reported. Confirmation ID: {Id}", response.Body.confirmation_id);
 
             IsSuccess = true;
 

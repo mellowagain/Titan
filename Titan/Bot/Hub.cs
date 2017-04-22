@@ -34,7 +34,7 @@ namespace Titan.Bot
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "{0} for {1} failed. A error occured.", mode, a.Json.Username);
+                    _log.Error(ex, "{Mode} for {Username} failed. A error occured.", mode, a.Json.Username);
                 }
             }
 
@@ -60,13 +60,19 @@ namespace Titan.Bot
             foreach(var a in JsonAccounts.JsonAccounts)
             {
                 Accounts.Add(new Account(a));
-                _log.Debug("Account specified - U: " + a.Username + " P: " + a.Password);
+                _log.Debug("Found account in accounts.json: Username: {Username} / Password: {Password}",
+                    a.Username, a.Password);
             }
 
             if(Accounts.Count < 11)
             {
                 MessageBox.Show("You have less than 11 accounts specified. " +
-                                "There are atleast 11 reports needed to get a target into Overwatch.", MessageBoxType.Warning);
+                                "There are atleast 11 reports needed to get a target into Overwatch.",
+                    MessageBoxType.Warning);
+            }
+            else
+            {
+                _log.Information("accounts.json successfully read. {Count} accounts have been specified.", Accounts.Count);
             }
 
             return true;
