@@ -15,9 +15,9 @@ namespace Titan.Logging
         public static Logger Create(string name)
         {
             return new LoggerConfiguration()
-                .WriteTo.LiterateConsole()
+                .WriteTo.LiterateConsole(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}")
                 .WriteTo.RollingFile(Path.Combine(LogDirectory.ToString(),
-                        name + "-{Date}.log"))
+                        name + "-{Date}.log"), outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}")
                 .MinimumLevel.Debug() // TODO: Change this to "INFO" on release.
                 .CreateLogger();
         }
