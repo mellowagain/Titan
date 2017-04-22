@@ -128,13 +128,15 @@
     <Compile Include="Bootstrap\Exit\WinExitSignal.cs" />
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\ShutdownHook.cs" />
-    <Compile Include="Bot\Hub.cs" />
+    <Compile Include="Bot\AccountManager.cs" />
     <Compile Include="Bot\Mode\BotMode.cs" />
     <Compile Include="Bot\Mode\ModeParser.cs" />
     <Compile Include="Bot\Threads\Account.cs" />
     <Compile Include="Bot\Threads\ThreadManager.cs" />
+    <Compile Include="Bot\Threads\Watchdog.cs" />
     <Compile Include="Json\Accounts.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
+    <Compile Include="Json\Index.cs" />
     <Compile Include="Logging\LogCreator.cs" />
     <Compile Include="Protobufs\Updater.cs" />
     <Compile Include="Titan.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="UI\Commands\Links\SteamIO.cs" />
     <Compile Include="UI\Commands\Quit.cs" />
     <Compile Include="UI\MainForm.cs" />
+    <Compile Include="Util\ArrayUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -152,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="accounts.json" />
+    <Content Include="index.json" />
     <Content Include="Resources\CREDIT.txt" />
     <EmbeddedResource Include="Resources\Exit.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

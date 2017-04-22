@@ -94,7 +94,7 @@ namespace Titan.UI
             {
                 _log.Information("Bomb! Button has been pressed. Starting bombing to {Target} in match {Match}.", _targetBox.Text, _matchIDBox.Text);
 
-                Hub.StartBotting(_targetBox.Text, _matchIDBox.Text, mode);
+                Titan.Instance.AccountManager.StartBotting(mode, _targetBox.Text, _matchIDBox.Text);
             }
             else
             {

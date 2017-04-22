@@ -11,6 +11,7 @@ namespace Titan.Bot.Threads
 
         private static Logger _log = LogCreator.Create();
 
+        public static Thread WatchdogThread;
         public static Dictionary<Account, Thread> Dictionary = new Dictionary<Account, Thread>();
 
         public static void StartThread(Account acc, uint target, ulong matchId, BotMode mode)
@@ -24,6 +25,12 @@ namespace Titan.Bot.Threads
             thread.Start();
 
             Dictionary.Add(acc, thread);
+        }
+
+        public static void StartWatchdogThread()
+        {
+            WatchdogThread = new Thread(Watchdog.OverwatchThreads);
+            WatchdogThread.Start();
         }
 
         public static void Abort(Account acc)

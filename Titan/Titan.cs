@@ -1,11 +1,14 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 using Eto.Forms;
+using Serilog;
 using Serilog.Core;
 using Titan.Bootstrap;
 using Titan.Bot;
 using Titan.Bot.Mode;
+using Titan.Bot.Threads;
 using Titan.Logging;
 using Titan.Protobufs;
 using Titan.UI;
@@ -22,6 +25,8 @@ namespace Titan
         public Options Options;
         public bool EnableUI = true;
 
+        public AccountManager AccountManager;
+
         public MainForm MainForm;
 
         [STAThread]
@@ -30,7 +35,7 @@ namespace Titan
             ShutdownHook.Hook();
             Thread.CurrentThread.Name = "Main";
 
-            Logger.Information("Initializing libraries...");
+            Logger.Debug("Initializing libraries...");
 
             /* Initialize libraries: Eto.Forms, SteamKit2, SteamKit-CSGO */
             Instance = new Titan
@@ -39,7 +44,7 @@ namespace Titan
                 Options = new Options()
             };
 
-            Logger.Information("Parse arguments");
+            Logger.Debug("Parsing arguments");
 
             /* Parse arguments provided with the starting of this */
             if(CommandLine.Parser.Default.ParseArguments(args, Instance.Options))
@@ -68,13 +73,18 @@ namespace Titan
                 }
             }
 
-            if(Hub.ReadFile())
+            Instance.MainForm = new MainForm();
+
+            var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
+            Instance.AccountManager = new AccountManager(new FileInfo(Path.Combine(Environment.CurrentDirectory, file)));
+
+            if(Instance.AccountManager.ParseAccountFile())
             {
-                Logger.Information("Welcome to Titan v1.0.0.");
+                Logger.Information("Hello and welcome to Titan.");
 
                 if(Instance.EnableUI)
                 {
-                    Instance.EtoApp.Run(Instance.MainForm = new MainForm());
+                    Instance.EtoApp.Run(Instance.MainForm);
                 }
                 else
                 {
@@ -84,18 +94,24 @@ namespace Titan
                     {
                         if(string.IsNullOrEmpty(Instance.Options.MatchId))
                         {
+                            Logger.Error("Match ID was not provided when starting Titan!");
                             MessageBox.Show("Please provide a Match ID when starting " +
-                                            "via command line and mode \"REPORT\".",
-                                "Titan - Error", MessageBoxType.Error);
-                            Instance.EtoApp.Run(Instance.MainForm = new MainForm());
+                                            "via command line and mode REPORT.",
+                                "<!> Titan <!>", MessageBoxType.Error);
+                            Instance.EtoApp.Run(Instance.MainForm);
                             return;
                         }
-                    }
 
-                    Hub.StartBotting(Instance.Options.Target, Instance.Options.MatchId, mode);
+                        Instance.AccountManager.StartBotting(mode, Instance.Options.Target, Instance.Options.MatchId);
+                    }
                 }
             }
 
+            Instance.AccountManager.SaveIndexFile();
+
+            Logger.Information("Thank you and have a nice day.");
+
+            Log.CloseAndFlush();
         }
 
         /*
