@@ -1,12 +1,13 @@
 ﻿using Eto.Forms;
-using NLog;
+using Serilog.Core;
+using Titan.Logging;
 
 namespace Titan.Bot.Mode
 {
     public class ModeParser
     {
 
-        private static Logger _log = LogManager.GetCurrentClassLogger();
+        private static Logger _log = LogCreator.Create();
 
         public static BotMode Parse(string mode)
         {
@@ -17,7 +18,7 @@ namespace Titan.Bot.Mode
                 case "report":
                     return BotMode.Report;
                 default:
-                    _log.Info("Could not parse {0} to BotMode. Please change it to either \"Commend\" or \"Report\".",
+                    _log.Information("Could not parse {mode} to BotMode. Please change it to either \"Commend\" or \"Report\".",
                         mode);
                     MessageBox.Show("Could not parse \"" + mode + "\" to BotMode. " +
                                     "Please change it to either \"Commend\" or \"Report\".",

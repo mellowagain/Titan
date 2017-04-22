@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using Eto.Forms;
 using Newtonsoft.Json;
-using NLog;
+using Serilog.Core;
 using SteamKit2;
 using Titan.Bot.Mode;
 using Titan.Bot.Threads;
+using Titan.Logging;
 
 namespace Titan.Bot
 {
     public class Hub
     {
 
-        private static Logger _log = LogManager.GetCurrentClassLogger();
+        private static Logger _log = LogCreator.Create();
 
         public static readonly List<Account> Accounts = new List<Account>();
 

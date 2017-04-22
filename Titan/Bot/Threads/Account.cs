@@ -4,12 +4,13 @@ using System.ComponentModel;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
-using NLog;
+using Serilog.Core;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using SteamKit2.Internal;
 using Titan.Bot.Mode;
+using Titan.Logging;
 
 namespace Titan.Bot.Threads
 {
@@ -56,7 +57,7 @@ namespace Titan.Bot.Threads
             SentryDirectory = new DirectoryInfo(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "sentries");
             SentryFile = new FileInfo(Path.Combine(SentryDirectory.ToString(), username + ".sentry.bin"));
 
-            _log = LogManager.GetLogger("Account: " + username);
+            _log = LogCreator.Create("Account: " + username);
 
             SteamClient = new SteamClient();
             Callbacks = new CallbackManager(SteamClient);
@@ -159,11 +160,11 @@ namespace Titan.Bot.Threads
                     GameCoordinator.Send(clientHello, 730);
                     break;
                 case EResult.AccountLogonDenied:
-                    _log.Info("Please enter the 2FA code from the Steam App:");
+                    _log.Information("Please enter the 2FA code from the Steam App:");
                     AuthCode = Console.ReadLine();
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    _log.Info("Please enter the auth code sent to email at {0}:", callback.EmailDomain);
+                    _log.Information("Please enter the auth code sent to email at {0}:", callback.EmailDomain);
                     TwoFactorCode = Console.ReadLine();
                     break;
                 case EResult.ServiceUnavailable:

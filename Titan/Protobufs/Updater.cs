@@ -2,15 +2,16 @@
 using System.IO;
 using System.Net;
 using EasyHttp.Http;
-using NLog;
+using Serilog.Core;
 using Titan.Json;
+using Titan.Logging;
 
 namespace Titan.Protobufs
 {
     public class Updater
     {
 
-        private static Logger _log = LogManager.GetCurrentClassLogger();
+        private static Logger _log = LogCreator.Create();
 
         public static string Base = "https://raw.githubusercontent.com/SteamRE/SteamKit/master/Resources/Protobufs/csgo/";
 
@@ -52,7 +53,7 @@ namespace Titan.Protobufs
             _log.Debug("Saving hash for update checking.");
             SaveHash();
 
-            _log.Info("Successfully updated Protobufs.");
+            _log.Information("Successfully updated Protobufs.");
         }
 
         public static bool RequiresUpdate()

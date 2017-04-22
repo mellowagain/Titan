@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using NLog;
+using Serilog.Core;
 using Titan.Bot.Mode;
+using Titan.Logging;
 
 namespace Titan.Bot.Threads
 {
     public class ThreadManager
     {
 
-        private static Logger _log = LogManager.GetCurrentClassLogger();
+        private static Logger _log = LogCreator.Create();
 
         public static Dictionary<Account, Thread> Dictionary = new Dictionary<Account, Thread>();
 

@@ -2,9 +2,11 @@
 using System.Net;
 using System.Threading;
 using Eto.Forms;
-using NLog;
+using Serilog.Core;
+using Titan.Bootstrap;
 using Titan.Bot;
 using Titan.Bot.Mode;
+using Titan.Logging;
 using Titan.Protobufs;
 using Titan.UI;
 
@@ -13,7 +15,7 @@ namespace Titan
     public sealed class Titan
     {
 
-        public static readonly Logger Logger = LogManager.GetCurrentClassLogger(); // Global logger
+        public static readonly Logger Logger = LogCreator.Create(); // Global logger
         public static Titan Instance;
 
         public Application EtoApp;
@@ -25,10 +27,10 @@ namespace Titan
         [STAThread]
         public static void Main(string[] args)
         {
-
+            ShutdownHook.Hook();
             Thread.CurrentThread.Name = "Main";
 
-            Logger.Info("Initializing libraries...");
+            Logger.Information("Initializing libraries...");
 
             /* Initialize libraries: Eto.Forms, SteamKit2, SteamKit-CSGO */
             Instance = new Titan
@@ -37,17 +39,17 @@ namespace Titan
                 Options = new Options()
             };
 
-            Logger.Info("Parse arguments");
+            Logger.Information("Parse arguments");
 
             /* Parse arguments provided with the starting of this */
             if(CommandLine.Parser.Default.ParseArguments(args, Instance.Options))
             {
-                Logger.Info("Skipping UI and going directly to botting - Target: {0} - Match ID: {1}", Instance.Options.Target, Instance.Options.MatchId);
+                Logger.Information("Skipping UI and going directly to botting - Target: {0} - Match ID: {1}", Instance.Options.Target, Instance.Options.MatchId);
                 Instance.EnableUI = false;
             }
             else
             {
-                Logger.Info("The arguments --target and --id were omitted - opening the UI.");
+                Logger.Information("The arguments --target and --id were omitted - opening the UI.");
                 Instance.EnableUI = true;
             }
 
@@ -55,7 +57,7 @@ namespace Titan
 
             if(Updater.RequiresUpdate() || Instance.Options.ForceUpdate)
             {
-                Logger.Info("Protobufs require update. Updating...");
+                Logger.Information("Protobufs require update. Updating...");
                 try
                 {
                     Updater.Update();
@@ -68,7 +70,7 @@ namespace Titan
 
             if(Hub.ReadFile())
             {
-                Logger.Info("Welcome to Titan v1.0.0.");
+                Logger.Information("Welcome to Titan v1.0.0.");
 
                 if(Instance.EnableUI)
                 {
@@ -96,7 +98,8 @@ namespace Titan
 
         }
 
-        /* Limitations of this report bot
+        /*
+         * Limitations of this report bot
          * > The CS:GO game coordinator doesn't accepts games 10 minutes after game end.
          * > The Share Code parser is a Node.js library (node-csgo) and hasn't been ported to C#.
          * You need to parse the Match ID from Sharecode by yourself. The "links" tab provides a website for that.
