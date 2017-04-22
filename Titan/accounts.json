@@ -1,12 +1,14 @@
 {
     "accounts": [
         {
-            "username": "titan-sample1",
-            "password": "account123"
+            "password": "Sample_Acc",
+            "username": "ount_1",
+            "sentry": false // The "sentry" point should be set to true if the account has Steam Guard enabled.
         },
         {
-            "username": "titan-sample2",
-            "password": "account123"
+            "password": "Sample_Acc",
+            "username": "ount_2",
+            "sentry": false // The "sentry" point should be set to true if the account has Steam Guard enabled.
         }
     ]
 }

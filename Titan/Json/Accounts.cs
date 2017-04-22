@@ -17,6 +17,9 @@ namespace Titan.Json
             [JsonProperty("password")]
             public string Password { get; set; }
 
+            [JsonProperty("sentry")]
+            public bool Sentry { get; set; }
+
         }
 
     }

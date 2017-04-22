@@ -16,6 +16,7 @@ namespace Titan.Bot.Threads
 {
     public class Account
     {
+
         private Logger _log;
 
         private readonly string _username;
@@ -45,19 +46,19 @@ namespace Titan.Bot.Threads
         public bool IsRunning { get; private set; }
         public bool IsSuccess { get; private set; }
 
-        public Account(string username, string password, Json.Accounts.JsonAccount json)
+        public Account(Json.Accounts.JsonAccount json)
         {
-            _username = username;
-            _password = password;
+            _username = json.Username;
+            _password = json.Password;
 
             ReconnectTries = 0;
 
             Json = json;
 
             SentryDirectory = new DirectoryInfo(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "sentries");
-            SentryFile = new FileInfo(Path.Combine(SentryDirectory.ToString(), username + ".sentry.bin"));
+            SentryFile = new FileInfo(Path.Combine(SentryDirectory.ToString(), json.Username + ".sentry.bin"));
 
-            _log = LogCreator.Create("Account: " + username);
+            _log = LogCreator.Create("Account: " + json.Username);
 
             SteamClient = new SteamClient();
             Callbacks = new CallbackManager(SteamClient);
@@ -76,7 +77,7 @@ namespace Titan.Bot.Threads
             Callbacks.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
             Callbacks.Subscribe<SteamUser.LoggedOffCallback>(OnLoggedOff);
             Callbacks.Subscribe<SteamGameCoordinator.MessageCallback>(OnGcMessage);
-            Callbacks.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
+            if(Json.Sentry) { Callbacks.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth); }
 
             IsRunning = true;
             SteamClient.Connect();
@@ -97,21 +98,32 @@ namespace Titan.Bot.Threads
             {
                 _log.Debug("Successfully connected to Steam. Logging in...");
 
-                byte[] sentryHash = null;
-                if(SentryFile.Exists)
+                if(Json.Sentry)
                 {
-                    var fileBytes = File.ReadAllBytes(SentryFile.ToString());
-                    sentryHash = CryptoHelper.SHAHash(fileBytes);
-                }
+                    byte[] sentryHash = null;
+                    if(SentryFile.Exists)
+                    {
+                        var fileBytes = File.ReadAllBytes(SentryFile.ToString());
+                        sentryHash = CryptoHelper.SHAHash(fileBytes);
+                    }
 
-                SteamUser.LogOn(new SteamUser.LogOnDetails
+                    SteamUser.LogOn(new SteamUser.LogOnDetails
+                    {
+                        Username = _username,
+                        Password = _password,
+                        AuthCode = this.AuthCode,
+                        TwoFactorCode = this.TwoFactorCode,
+                        SentryFileHash = sentryHash
+                    });
+                }
+                else
                 {
-                    Username = _username,
-                    Password = _password,
-                    AuthCode = this.AuthCode,
-                    TwoFactorCode = this.TwoFactorCode,
-                    SentryFileHash = sentryHash
-                });
+                    SteamUser.LogOn(new SteamUser.LogOnDetails
+                    {
+                        Username = _username,
+                        Password = _password
+                    });
+                }
             }
             else
             {
@@ -160,12 +172,18 @@ namespace Titan.Bot.Threads
                     GameCoordinator.Send(clientHello, 730);
                     break;
                 case EResult.AccountLogonDenied:
-                    _log.Information("Please enter the 2FA code from the Steam App:");
-                    AuthCode = Console.ReadLine();
+                    if(Json.Sentry)
+                    {
+                        _log.Information("Please enter the 2FA code from the Steam App:");
+                        AuthCode = Console.ReadLine();
+                    }
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    _log.Information("Please enter the auth code sent to email at {0}:", callback.EmailDomain);
-                    TwoFactorCode = Console.ReadLine();
+                    if(Json.Sentry)
+                    {
+                        _log.Information("Please enter the auth code sent to email at {0}:", callback.EmailDomain);
+                        TwoFactorCode = Console.ReadLine();
+                    }
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");
@@ -185,37 +203,40 @@ namespace Titan.Bot.Threads
 
         public void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
         {
-            _log.Debug("Updating Sentry file...");
-
-            int size;
-            byte[] hash;
-            using(var fwr = File.Open(SentryFile.ToString(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            if(Json.Sentry)
             {
-                fwr.Seek(callback.Offset, SeekOrigin.Begin);
-                fwr.Write(callback.Data, 0, callback.BytesToWrite);
-                size = (int) fwr.Length;
+                _log.Debug("Updating Sentry file...");
 
-                fwr.Seek(0, SeekOrigin.Begin);
-                using(var sha = SHA1.Create())
+                int size;
+                byte[] hash;
+                using(var fwr = File.Open(SentryFile.ToString(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
-                    hash = sha.ComputeHash(fwr);
+                    fwr.Seek(callback.Offset, SeekOrigin.Begin);
+                    fwr.Write(callback.Data, 0, callback.BytesToWrite);
+                    size = (int) fwr.Length;
+
+                    fwr.Seek(0, SeekOrigin.Begin);
+                    using(var sha = SHA1.Create())
+                    {
+                        hash = sha.ComputeHash(fwr);
+                    }
                 }
+
+                SteamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
+                {
+                    JobID = callback.JobID,
+                    FileName = callback.FileName,
+                    BytesWritten = callback.BytesToWrite,
+                    FileSize = size,
+                    Offset = callback.Offset,
+                    Result = EResult.OK,
+                    LastError = 0,
+                    OneTimePassword = callback.OneTimePassword,
+                    SentryFileHash = hash
+                });
+
+                _log.Debug("Successfully updated Sentry hash file.");
             }
-
-            SteamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
-            {
-                JobID = callback.JobID,
-                FileName = callback.FileName,
-                BytesWritten = callback.BytesToWrite,
-                FileSize = size,
-                Offset = callback.Offset,
-                Result = EResult.OK,
-                LastError = 0,
-                OneTimePassword = callback.OneTimePassword,
-                SentryFileHash = hash
-            });
-
-            _log.Debug("Successfully updated Sentry hash file.");
         }
 
         public void OnGcMessage(SteamGameCoordinator.MessageCallback callback)

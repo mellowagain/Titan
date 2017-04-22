@@ -59,7 +59,7 @@ namespace Titan.Bot
 
             foreach(var a in JsonAccounts.JsonAccounts)
             {
-                Accounts.Add(new Account(a.Username, a.Password, a));
+                Accounts.Add(new Account(a));
                 _log.Debug("Account specified - U: " + a.Username + " P: " + a.Password);
             }
 
