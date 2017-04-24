@@ -69,6 +69,12 @@
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
       <HintPath>..\packages\Serilog.2.4.0\lib\net45\Serilog.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog.Enrichers.Thread, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
+      <HintPath>..\packages\Serilog.Enrichers.Thread.3.0.0\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Async, Version=1.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
+      <HintPath>..\packages\Serilog.Sinks.Async.1.0.1\lib\net45\Serilog.Sinks.Async.dll</HintPath>
+    </Reference>
     <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
       <HintPath>..\packages\Serilog.Sinks.File.3.2.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
     </Reference>
@@ -134,9 +140,8 @@
     <Compile Include="Bot\Threads\Account.cs" />
     <Compile Include="Bot\Threads\ThreadManager.cs" />
     <Compile Include="Bot\Threads\Watchdog.cs" />
-    <Compile Include="Json\Accounts.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
-    <Compile Include="Json\Index.cs" />
+    <Compile Include="Json\JsonAccounts.cs" />
     <Compile Include="Logging\LogCreator.cs" />
     <Compile Include="Protobufs\Updater.cs" />
     <Compile Include="Titan.cs" />
@@ -147,7 +152,6 @@
     <Compile Include="UI\Commands\Links\SteamIO.cs" />
     <Compile Include="UI\Commands\Quit.cs" />
     <Compile Include="UI\MainForm.cs" />
-    <Compile Include="Util\ArrayUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -155,7 +159,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="accounts.json" />
-    <Content Include="index.json" />
     <Content Include="Resources\CREDIT.txt" />
     <EmbeddedResource Include="Resources\Exit.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -18,7 +18,7 @@ namespace Titan
     public sealed class Titan
     {
 
-        public static readonly Logger Logger = LogCreator.Create(); // Global logger
+        public static Logger Logger = LogCreator.Create(); // Global logger
         public static Titan Instance;
 
         public Application EtoApp;
@@ -107,7 +107,7 @@ namespace Titan
                 }
             }
 
-            Instance.AccountManager.SaveIndexFile();
+            //Instance.AccountManager.SaveIndexFile();
 
             Logger.Information("Thank you and have a nice day.");
 

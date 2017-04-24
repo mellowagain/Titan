@@ -3,7 +3,6 @@ using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
-using Titan.Bot;
 using Titan.Bot.Mode;
 using Titan.Logging;
 using Titan.UI.Commands.Links;

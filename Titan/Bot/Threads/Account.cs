@@ -10,6 +10,7 @@ using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using SteamKit2.Internal;
 using Titan.Bot.Mode;
+using Titan.Json;
 using Titan.Logging;
 
 namespace Titan.Bot.Threads
@@ -36,7 +37,7 @@ namespace Titan.Bot.Threads
         [DefaultValue(0)]
         public int ReconnectTries { get; private set; }
 
-        public Json.Accounts.JsonAccount Json { get; set; }
+        public JsonAccounts.JsonAccount Json { get; set; }
 
         public SteamClient SteamClient { get; private set; }
         public SteamUser SteamUser { get; private set; }
@@ -46,7 +47,7 @@ namespace Titan.Bot.Threads
         public bool IsRunning { get; private set; }
         public bool IsSuccess { get; private set; }
 
-        public Account(Json.Accounts.JsonAccount json)
+        public Account(JsonAccounts.JsonAccount json)
         {
             _username = json.Username;
             _password = json.Password;

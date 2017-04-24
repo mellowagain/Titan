@@ -1,14 +1,33 @@
 {
-    "accounts": [
+    // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
+    "indexes": [
         {
-            "password": "Sample_Acc",
-            "username": "ount_1",
-            "sentry": false // The "sentry" point should be set to true if the account has Steam Guard enabled.
+            "accounts": [
+                {
+                    "username": "username1",
+                    "password": "password1",
+                    "sentry": false
+                },
+                {
+                    "username": "username2",
+                    "password": "password2",
+                    "sentry": false
+                }
+            ]
         },
         {
-            "password": "Sample_Acc",
-            "username": "ount_2",
-            "sentry": false // The "sentry" point should be set to true if the account has Steam Guard enabled.
+            "accounts": [
+                {
+                    "username": "username3",
+                    "password": "password3",
+                    "sentry": false
+                },
+                {
+                    "username": "username4",
+                    "password": "password4",
+                    "sentry": false
+                }
+            ]
         }
     ]
 }

@@ -2,11 +2,19 @@
 
 namespace Titan.Json
 {
-    public class Accounts
+    public class JsonAccounts
     {
 
-        [JsonProperty("accounts")]
-        public JsonAccount[] JsonAccounts { get; set; }
+        [JsonProperty("indexes")]
+        public JsonIndex[] Indexes { get; set; }
+
+        public class JsonIndex
+        {
+
+            [JsonProperty("accounts")]
+            public JsonAccount[] Accounts { get; set; }
+
+        }
 
         public class JsonAccount
         {
