@@ -35,7 +35,8 @@ namespace Titan.Bootstrap
             _log.Information("Thank you. Have a nice day.");
 
             Log.CloseAndFlush();
-            // TODO: Shutdown handeling
+
+            // TODO: FIXME 25.04.17 @ 13:15
         }
     }
 }

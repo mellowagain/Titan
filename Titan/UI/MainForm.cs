@@ -89,7 +89,7 @@ namespace Titan.UI
         {
             var mode = ModeParser.Parse(_dropDown.SelectedIndex);
 
-            if(!string.IsNullOrWhiteSpace(_targetBox.Text) || (!string.IsNullOrEmpty(_matchIDBox.Text) && mode != BotMode.Commend))
+            if(IsValid(mode, _targetBox.Text, _matchIDBox.Text))
             {
                 _log.Information("Bomb! Button has been pressed. Starting bombing to {Target} in match {Match}.", _targetBox.Text, _matchIDBox.Text);
 
@@ -117,6 +117,18 @@ namespace Titan.UI
                 _matchIDLabel.Visible = false;
                 _matchIDBox.Visible = false;
             }
+        }
+
+        private bool IsValid(BotMode mode, string target, string matchId)
+        {
+            switch(mode)
+            {
+                case BotMode.Report:
+                    return !string.IsNullOrWhiteSpace(target) && !string.IsNullOrWhiteSpace(matchId);
+                case BotMode.Commend:
+                    return !string.IsNullOrWhiteSpace(target);
+            }
+            return false;
         }
 
     }

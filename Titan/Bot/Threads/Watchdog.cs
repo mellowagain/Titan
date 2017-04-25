@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Titan.Logging;
 
 namespace Titan.Bot.Threads

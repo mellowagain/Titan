@@ -1,5 +1,4 @@
-﻿using Eto.Forms;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Titan.Logging;
 
 namespace Titan.Bot.Mode
@@ -18,11 +17,9 @@ namespace Titan.Bot.Mode
                 case "report":
                     return BotMode.Report;
                 default:
-                    _log.Information("Could not parse {Mode} to BotMode. Please change it to either \"Commend\" or \"Report\".",
+                    _log.Error("Could not parse {Mode} to BotMode. Please change it to " +
+                               "either \"Commend\" or \"Report\".",
                         mode);
-                    MessageBox.Show("Could not parse \"" + mode + "\" to BotMode. " +
-                                    "Please change it to either \"Commend\" or \"Report\".",
-                        "Titan - Error", MessageBoxType.Error);
                     return BotMode.Report;
             }
         }
@@ -36,9 +33,8 @@ namespace Titan.Bot.Mode
                 case 0:
                     return BotMode.Report;
                 default:
-                    MessageBox.Show("Could not parse \"" + index + "\" to BotMode. " +
-                                    "Please change it to either \"1\" or \"0\".",
-                        "Titan - Error", MessageBoxType.Error);
+                    _log.Error("Could not parse {Index} to BotMode. Please change it to either " +
+                               "0 for Report or 1 for Commend.");
                     return BotMode.Report;
             }
         }

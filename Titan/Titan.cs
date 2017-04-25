@@ -94,9 +94,6 @@ namespace Titan
                         if(string.IsNullOrEmpty(Instance.Options.MatchId))
                         {
                             Logger.Error("Match ID was not provided when starting Titan!");
-                            MessageBox.Show("Please provide a Match ID when starting " +
-                                            "via command line and mode REPORT.",
-                                "<!> Titan <!>", MessageBoxType.Error);
                             Instance.EtoApp.Run(Instance.MainForm);
                             return;
                         }
@@ -108,9 +105,9 @@ namespace Titan
 
             Instance.AccountManager.SaveIndexFile();
 
-            Logger.Information("Thank you and have a nice day.");
-
             Log.CloseAndFlush();
+
+            Console.WriteLine("Thank you and have a nice day.");
         }
 
         /*
