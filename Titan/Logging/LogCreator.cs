@@ -21,7 +21,7 @@ namespace Titan.Logging
                 .WriteTo.Async(a => a.RollingFile(Path.Combine(LogDirectory.ToString(),
                         name + "-{Date}.log"), outputTemplate:
                     "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
-                .MinimumLevel.Debug() // TODO: Change this to "INFO" on release.
+                .MinimumLevel.Information() // TODO: Change this to "INFO" on release.
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
