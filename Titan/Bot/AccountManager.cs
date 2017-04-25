@@ -158,7 +158,7 @@ namespace Titan.Bot
 
         }
 
-        private void SaveIndexFile()
+        public void SaveIndexFile()
         {
             if(_indexFile.Exists)
             {
