@@ -153,6 +153,7 @@
     <Compile Include="UI\Commands\Links\SteamIO.cs" />
     <Compile Include="UI\Commands\Quit.cs" />
     <Compile Include="UI\MainForm.cs" />
+    <Compile Include="Util\ArrayUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
