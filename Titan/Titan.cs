@@ -106,7 +106,7 @@ namespace Titan
                 }
             }
 
-            //Instance.AccountManager.SaveIndexFile();
+            Instance.AccountManager.SaveIndexFile();
 
             Logger.Information("Thank you and have a nice day.");
 
