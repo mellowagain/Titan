@@ -8,7 +8,6 @@ using Serilog.Core;
 using Titan.Bootstrap;
 using Titan.Bot;
 using Titan.Bot.Mode;
-using Titan.Bot.Threads;
 using Titan.Logging;
 using Titan.Protobufs;
 using Titan.UI;

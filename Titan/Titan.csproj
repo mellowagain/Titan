@@ -141,6 +141,7 @@
     <Compile Include="Bot\Threads\ThreadManager.cs" />
     <Compile Include="Bot\Threads\Watchdog.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
+    <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
     <Compile Include="Logging\LogCreator.cs" />
     <Compile Include="Protobufs\Updater.cs" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="accounts.json" />
+    <Content Include="index.json" />
     <Content Include="Resources\CREDIT.txt" />
     <EmbeddedResource Include="Resources\Exit.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

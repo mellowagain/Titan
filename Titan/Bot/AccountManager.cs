@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Eto.Forms;
 using Newtonsoft.Json;
@@ -21,20 +22,23 @@ namespace Titan.Bot
         private Dictionary<int, List<Account>> _accounts = new Dictionary<int, List<Account>>();
         private List<Account> _allAccounts = new List<Account>();
 
-        private Dictionary<int, long> _indexEntries = new Dictionary<int, long>();
+        private Dictionary<int, double> _indexEntries = new Dictionary<int, double>();
         private int _index;
 
         private FileInfo _indexFile;
         private FileInfo _file;
 
         private JsonAccounts _parsedAccounts;
+        private JsonIndex _parsedIndex;
 
         public AccountManager(FileInfo file)
         {
             _file = file;
-            _indexFile = new FileInfo(Environment.CurrentDirectory + Path.DirectorySeparatorChar +
-                                      "index.json");
+            _indexFile = new FileInfo(Path.Combine(Environment.CurrentDirectory, "index.json"));
             _index = 0;
+
+            _log.Debug("Titan Account Manager initialized on {TimeString}. ({UnixTimestamp})",
+                DateTime.Now.ToShortTimeString(), GetCurrentUnixTimeStamp());
         }
 
         public bool ParseAccountFile()
@@ -42,8 +46,8 @@ namespace Titan.Bot
             if(!_file.Exists)
             {
                 _log.Error("The accounts file at {0} doesn't exist! It is required and needs to " +
-                           "atleast one account specified.", _file.ToString());
-                MessageBox.Show("The account file at " + _file + "doesn't exist. \nPlease create " +
+                           "have atleast one account specified.", _file.ToString());
+                MessageBox.Show("The account file at " + _file + " doesn't exist. \nPlease create " +
                                 "it and specify atleast one account.", "<!> Titan <!>", MessageBoxType.Error);
                 return false;
             }
@@ -89,7 +93,15 @@ namespace Titan.Bot
             }
             else
             {
-                _log.Information("Account file successfully parsed. {Count} accounts have been parsed.", _allAccounts.Count);
+                var list = new List<object>();
+
+                foreach(var keyPair in _accounts)
+                {
+                    list.Add(new { Index = keyPair.Key, keyPair.Value.Count });
+                }
+
+                _log.Information("Account file has been successfully parsed. {Count} accounts " +
+                                 "have been parsed. Details: {@List}", _allAccounts.Count, list);
             }
 
             _index = 0;
@@ -105,38 +117,72 @@ namespace Titan.Bot
             {
                 using(var reader = File.OpenText(_indexFile.ToString()))
                 {
-                    _parsedIndex = (Index) new JsonSerializer().Deserialize(reader, typeof(Index));
+                    _parsedIndex = (JsonIndex) new JsonSerializer().Deserialize(reader, typeof(JsonIndex));
                     // read it and deserialize it into a Index object
                 }
 
                 var lowest = _parsedIndex.AvailableIndex; // find the available index and set it to lowest
 
-                foreach(var expireEntry in _parsedIndex.ExpireEntries)
+                foreach(var expireEntry in _parsedIndex.Entries)
                 {
                     // check if a entry that is marked for expiration is already expired and ready to bot
-                    if(expireEntry.Expires <= GetCurrentUnixTime())
+                    if(expireEntry.ExpireTimestamp <= GetCurrentUnixTimeStamp())
                     {
-                        if(lowest > expireEntry.Index) // if thats the case, check if its lower than the available one
+                        _log.Debug("Index {Index} has expired. It is now available for botting.",
+                            expireEntry.TargetedIndex);
+
+                        if(lowest > expireEntry.TargetedIndex) // if thats the case, check if its lower than the available one
                         {
-                            lowest = expireEntry.Index;
+                            lowest = expireEntry.TargetedIndex;
                         }
 
-                        _parsedIndex.ExpireEntries = _parsedIndex.ExpireEntries.Where(val => val != expireEntry)
+                        _parsedIndex.Entries = _parsedIndex.Entries.Where(val => val != expireEntry)
                             .ToArray(); // and remove it from the expiration list
                     }
                     else
                     {
-                        _indexEntries.Add(expireEntry.Index, expireEntry.Expires);
+                        _indexEntries.Add(expireEntry.TargetedIndex, expireEntry.ExpireTimestamp);
+
+                        _log.Debug("Index {Index} hasn't expired yet. It will expire on {Time}.",
+                            UnixTimeStampToDateTime(expireEntry.ExpireTimestamp).ToShortTimeString());
                     }
                 }
 
-                //_index = lowest;
+                _index = lowest;
             }
             else
             {
-                //SaveIndexFile(); // it doesn't exist, we're gonna' create it!
+                _index = 0;
+                SaveIndexFile(); // it doesn't exist, we're gonna' create it!
             }
 
+        }
+
+        private void SaveIndexFile()
+        {
+            if(_indexFile.Exists)
+            {
+                _indexFile.Delete();
+            }
+
+            var jsonIndex = new JsonIndex
+            {
+                AvailableIndex = _index,
+                Entries = _indexEntries.Select(keyVal => new JsonIndex.JsonEntry
+                    {
+                        TargetedIndex = keyVal.Key,
+                        ExpireTimestamp = keyVal.Value
+                    })
+                    .ToArray()
+            };
+
+            using(var writer = File.CreateText(_indexFile.ToString()))
+            {
+                var str = JsonConvert.SerializeObject(jsonIndex, Formatting.Indented);
+                writer.Write(str);
+            }
+
+            _log.Debug("Successfully wrote index file.");
         }
 
         public void StartBotting(BotMode mode, string target, string matchId)
@@ -193,6 +239,9 @@ namespace Titan.Bot
             });
             thread.Start();
 
+            _indexEntries.Add(_index, DateTimeToUnixTimeStamp(DateTime.Now.AddHours(6)));
+            SaveIndexFile();
+
             _log.Debug("Index #{Index} has been used. It will be unlocked on {Unlock}. " +
                        "Using index #{NextIndex} for next botting session.",
                 _index, DateTime.Now.AddHours(6).ToLongTimeString(), ++_index);
@@ -202,9 +251,23 @@ namespace Titan.Bot
         // UTILITY METHODS
         // =====================================================
 
-        private int GetCurrentUnixTime()
+        private double GetCurrentUnixTimeStamp()
         {
-            return (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+            return DateTimeToUnixTimeStamp(DateTime.Now);
+        }
+
+        private DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
+        private double DateTimeToUnixTimeStamp(DateTime time)
+        {
+            return (TimeZoneInfo.ConvertTimeToUtc(time) - new DateTime(1970, 1, 1, 0, 0, 0, 0,
+                        DateTimeKind.Utc)).TotalSeconds;
         }
 
     }
