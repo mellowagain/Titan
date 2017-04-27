@@ -143,8 +143,14 @@ namespace Titan.Bot
                     {
                         _indexEntries.Add(expireEntry.TargetedIndex, expireEntry.ExpireTimestamp);
 
-                        _log.Debug("Index {Index} hasn't expired yet. It will expire on {Time}.",
+                        _log.Debug("Index #{Index} hasn't expired yet. It will expire on {Time}.",
+                            expireEntry.TargetedIndex,
                             UnixTimeStampToDateTime(expireEntry.ExpireTimestamp).ToShortTimeString());
+
+                        if(expireEntry.TargetedIndex == lowest)
+                        {
+                            lowest++;
+                        }
                     }
                 }
 
@@ -154,6 +160,23 @@ namespace Titan.Bot
             {
                 _index = 0;
                 SaveIndexFile(); // it doesn't exist, we're gonna' create it!
+            }
+
+            var valid = false;
+            foreach(var keyVal in _accounts)
+            {
+                if(keyVal.Key == _index)
+                {
+                    _log.Debug("Using index #{Index} for botting.", _index);
+                    valid = true;
+                }
+            }
+
+            if(!valid)
+            {
+                _log.Warning("Index #{index} doesn't exist. The Bot will use index " +
+                             "#{ForcedIndex}. Please keep in mind that it may already " +
+                             "been used.", _index, _index = 0);
             }
 
         }

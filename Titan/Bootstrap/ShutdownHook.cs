@@ -24,7 +24,7 @@ namespace Titan.Bootstrap
         public static void Hook()
         {
             _log.Debug("Detected operating system: {System} - Running Titan in {Mode} mode.",
-                IsUnix ? "Linux" : "Windows", IsUnix ? "Mono" : "Native");
+                IsUnix ? "Linux" : "Windows", IsUnix ? "native" : "compatibility");
 
             ExitSignal = IsUnix ? (IExitSignal) new UnixExitSignal() : new WinExitSignal();
             ExitSignal.Exit += OnShutdown;
