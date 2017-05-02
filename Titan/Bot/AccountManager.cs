@@ -141,7 +141,10 @@ namespace Titan.Bot
                     }
                     else
                     {
-                        _indexEntries.Add(expireEntry.TargetedIndex, expireEntry.ExpireTimestamp);
+                        if(!_indexEntries.ContainsKey(expireEntry.TargetedIndex))
+                        {
+                            _indexEntries.Add(expireEntry.TargetedIndex, expireEntry.ExpireTimestamp);
+                        }
 
                         _log.Debug("Index #{Index} hasn't expired yet. It will expire on {Time}.",
                             expireEntry.TargetedIndex,
@@ -224,7 +227,7 @@ namespace Titan.Bot
             {
                 try
                 {
-                    ThreadManager.StartWatchdogThread();
+                    Titan.Instance.ThreadManager.StartWatchdog();
                 }
                 catch (Exception ex)
                 {
@@ -235,7 +238,7 @@ namespace Titan.Bot
                 {
                     try
                     {
-                        ThreadManager.StartThread(acc, convTarget, convMatchId, mode);
+                        Titan.Instance.ThreadManager.Start(mode, acc, convTarget, convMatchId);
                     }
                     catch (Exception ex)
                     {
@@ -251,19 +254,11 @@ namespace Titan.Bot
                 return;
             }
 
-            var thread = new Thread(() =>
+            if(!_indexEntries.ContainsKey(_index))
             {
-                while(ThreadManager.WatchdogThread.IsAlive) {}
-
-                _log.Information("Successfully bombed {Target} {Count}x using method {Method}.",
-                    target, accounts.Count, mode);
-
-                MessageBox.Show("Success!", "<!> Titan <!>");
-            });
-            thread.Start();
-
-            _indexEntries.Add(_index, DateTimeToUnixTimeStamp(DateTime.Now.AddHours(6)));
-            SaveIndexFile();
+                _indexEntries.Add(_index, DateTimeToUnixTimeStamp(DateTime.Now.AddHours(6)));
+                SaveIndexFile();
+            }
 
             _log.Debug("Index #{Index} has been used. It will be unlocked on {Unlock}. " +
                        "Using index #{NextIndex} for next botting session.",

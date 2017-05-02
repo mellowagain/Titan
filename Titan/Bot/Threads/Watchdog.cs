@@ -1,4 +1,6 @@
-﻿using Serilog.Core;
+﻿using System;
+using System.Threading;
+using Serilog.Core;
 using Titan.Logging;
 
 namespace Titan.Bot.Threads
@@ -16,6 +18,7 @@ namespace Titan.Bot.Threads
 
                 while(thread.IsAlive)
                 {
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
                     _log.Debug("Thread {Thread} is still alive...", thread.Name);
                 }
 

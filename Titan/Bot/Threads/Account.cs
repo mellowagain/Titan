@@ -27,7 +27,6 @@ namespace Titan.Bot.Threads
         public uint Target { get; set; }
         public ulong MatchID { get; set; }
 
-        // TODO: Steam Guard handleing
         public readonly DirectoryInfo SentryDirectory;
         public readonly FileInfo SentryFile;
 
@@ -41,6 +40,7 @@ namespace Titan.Bot.Threads
 
         public SteamClient SteamClient { get; private set; }
         public SteamUser SteamUser { get; private set; }
+        public SteamFriends SteamFriends { get; private set; }
         public SteamGameCoordinator GameCoordinator { get; private set; }
         public CallbackManager Callbacks { get; private set; }
 
@@ -59,15 +59,16 @@ namespace Titan.Bot.Threads
             SentryDirectory = new DirectoryInfo(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "sentries");
             SentryFile = new FileInfo(Path.Combine(SentryDirectory.ToString(), json.Username + ".sentry.bin"));
 
-            _log = LogCreator.Create("Account: " + json.Username);
+            _log = LogCreator.Create("GC - " + json.Username);
 
             SteamClient = new SteamClient();
             Callbacks = new CallbackManager(SteamClient);
             SteamUser = SteamClient.GetHandler<SteamUser>();
+            SteamFriends = SteamClient.GetHandler<SteamFriends>();
             GameCoordinator = SteamClient.GetHandler<SteamGameCoordinator>();
         }
 
-        public void Process()
+        public bool Process()
         {
             Thread.CurrentThread.Name = _username + " - " + Mode;
 
@@ -86,6 +87,26 @@ namespace Titan.Bot.Threads
             while(IsRunning)
             {
                 Callbacks.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+            }
+
+            return IsSuccess;
+        }
+
+        public void Stop()
+        {
+            if(SteamFriends.GetPersonaState() == EPersonaState.Online)
+            {
+                SteamFriends.SetPersonaState(EPersonaState.Offline);
+            }
+
+            if(SteamUser.SteamID != null)
+            {
+                SteamUser.LogOff();
+            }
+
+            if(SteamClient.IsConnected)
+            {
+                SteamClient.Disconnect();
             }
         }
 
@@ -107,7 +128,6 @@ namespace Titan.Bot.Threads
                         var fileBytes = File.ReadAllBytes(SentryFile.ToString());
                         sentryHash = CryptoHelper.SHAHash(fileBytes);
                     }
-
                     SteamUser.LogOn(new SteamUser.LogOnDetails
                     {
                         Username = _username,
@@ -136,7 +156,7 @@ namespace Titan.Bot.Threads
         public void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
             ReconnectTries++;
-            if(ReconnectTries <= 5 && !IsSuccess)
+            if(ReconnectTries <= 5 && !IsSuccess || !IsRunning)
             {
                 _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", ReconnectTries);
 
@@ -157,6 +177,8 @@ namespace Titan.Bot.Threads
             {
                 case EResult.OK:
                     _log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
+
+                    SteamFriends.SetPersonaState(EPersonaState.Online);
 
                     var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
                     playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
@@ -188,10 +210,12 @@ namespace Titan.Bot.Threads
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");
+                    Stop();
                     IsRunning = false;
                     break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
+                    Stop();
                     IsRunning = false;
                     break;
             }
@@ -297,22 +321,20 @@ namespace Titan.Bot.Threads
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            _log.Debug("Successfully reported. Confirmation ID: {Id}", response.Body.confirmation_id);
+            _log.Information("Successfully reported. Confirmation ID: {Id}", response.Body.confirmation_id);
 
             IsSuccess = true;
 
-            SteamUser.LogOff();
-            SteamClient.Disconnect();
+            Stop();
         }
 
         public void OnCommendResponse(IPacketGCMsg msg)
         {
-            _log.Debug("Successfully commended target.");
+            _log.Information("Successfully commended target {Target}.", Target);
 
             IsSuccess = true;
 
-            SteamUser.LogOff();
-            SteamClient.Disconnect();
+            Stop();
         }
 
     }

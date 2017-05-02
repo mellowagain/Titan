@@ -8,6 +8,7 @@ using Serilog.Core;
 using Titan.Bootstrap;
 using Titan.Bot;
 using Titan.Bot.Mode;
+using Titan.Bot.Threads;
 using Titan.Logging;
 using Titan.Protobufs;
 using Titan.UI;
@@ -25,6 +26,7 @@ namespace Titan
         public bool EnableUI = true;
 
         public AccountManager AccountManager;
+        public ThreadManager ThreadManager;
 
         public MainForm MainForm;
 
@@ -76,6 +78,7 @@ namespace Titan
 
             var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
             Instance.AccountManager = new AccountManager(new FileInfo(Path.Combine(Environment.CurrentDirectory, file)));
+            Instance.ThreadManager = new ThreadManager();
 
             if(Instance.AccountManager.ParseAccountFile())
             {

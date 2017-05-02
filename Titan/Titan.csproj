@@ -154,6 +154,7 @@
     <Compile Include="UI\Commands\Quit.cs" />
     <Compile Include="UI\MainForm.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\WaitFor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
