@@ -10,7 +10,6 @@ using Titan.Bot;
 using Titan.Bot.Mode;
 using Titan.Bot.Threads;
 using Titan.Logging;
-using Titan.Protobufs;
 using Titan.UI;
 
 namespace Titan
@@ -57,21 +56,6 @@ namespace Titan
             {
                 Logger.Information("The arguments --target, --mode and/or --id were omitted - opening the UI.");
                 Instance.EnableUI = true;
-            }
-
-            Logger.Debug("Checking if Protobufs require updates");
-
-            if(Updater.RequiresUpdate() || Instance.Options.ForceUpdate)
-            {
-                Logger.Information("Protobufs require update. Updating...");
-                try
-                {
-                    Updater.Update();
-                }
-                catch (WebException ex)
-                {
-                    Logger.Error("A error occured while updating Protobufs.", ex);
-                }
             }
 
             Instance.MainForm = new MainForm();

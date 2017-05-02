@@ -139,12 +139,10 @@
     <Compile Include="Bot\Mode\ModeParser.cs" />
     <Compile Include="Bot\Threads\Account.cs" />
     <Compile Include="Bot\Threads\ThreadManager.cs" />
-    <Compile Include="Bot\Threads\Watchdog.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
     <Compile Include="Logging\LogCreator.cs" />
-    <Compile Include="Protobufs\Updater.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Commands\About.cs" />
