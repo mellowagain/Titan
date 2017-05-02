@@ -1,4 +1,4 @@
-# Titan [![Build](https://ci.appveyor.com/api/projects/status/v3qp89u5b0r3oa90?svg=true)](https://ci.appveyor.com/project/Marc3842h/titan-kr2ki)
+# Titan [![Build](https://img.shields.io/travis/Marc3842h/Titan.svg)](https://travis-ci.org/Marc3842h/Titan)
 
 A CS:GO report/commendation bot: Send reports or commendations to a target to get them to Overwatch or let them receive friendly / leader / teacher commendations.
 Accounts need to be provided by the user (you).
