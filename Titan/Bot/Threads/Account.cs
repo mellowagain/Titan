@@ -46,6 +46,7 @@ namespace Titan.Bot.Threads
 
         public bool IsRunning { get; private set; }
         public bool IsSuccess { get; private set; }
+        public bool IsLoggedInSomewhereElse { get; private set; }
 
         public Account(JsonAccounts.JsonAccount json)
         {
@@ -156,7 +157,7 @@ namespace Titan.Bot.Threads
         public void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
             ReconnectTries++;
-            if(ReconnectTries <= 5 && !IsSuccess || !IsRunning)
+            if(ReconnectTries <= 5 && !IsSuccess && !IsLoggedInSomewhereElse || !IsRunning )
             {
                 _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", ReconnectTries);
 
@@ -223,7 +224,12 @@ namespace Titan.Bot.Threads
 
         public void OnLoggedOff(SteamUser.LoggedOffCallback callback)
         {
-            _log.Debug("Successfully logged off from Steam: {Result}", callback.Result);
+            IsLoggedInSomewhereElse = callback.Result == EResult.LoggedInElsewhere
+                || callback.Result == EResult.AlreadyLoggedInElsewhere;
+            if(IsLoggedInSomewhereElse)
+                _log.Warning("Account is already logged on somewhere else.");
+            else
+                _log.Debug("Successfully logged off from Steam: {Result}", callback.Result);
         }
 
         public void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
