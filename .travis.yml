@@ -8,6 +8,9 @@ matrix:
       dist: trusty
     - mono: latest
 
+notifications:
+  email: false
+
 install:
   - nuget restore Titan.sln
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
