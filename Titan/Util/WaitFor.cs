@@ -75,7 +75,7 @@ namespace Titan.Util
                 // This is our own exception.
                 Thread.ResetAbort();
 
-                throw new TimeoutException($"{_timeout}.");
+                throw new TimeoutException($"{_timeout.TotalSeconds}.");
             }
             finally
             {

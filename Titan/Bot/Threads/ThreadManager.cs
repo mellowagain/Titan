@@ -29,7 +29,7 @@ namespace Titan.Bot.Threads
 
                 try
                 {
-                    var result = WaitFor<bool>.Run(TimeSpan.FromSeconds(30), acc.Process);
+                    var result = WaitFor<bool>.Run(TimeSpan.FromSeconds(60), acc.Process);
 
                     if(!result)
                     {
@@ -39,9 +39,8 @@ namespace Titan.Bot.Threads
                 }
                 catch (TimeoutException ex)
                 {
-                    _log.Error("Connection to account {Account} timed out. It was not possible " +
-                               "to report the target after {Timespan} seconds. Please check your " +
-                               "internet connection and if steam is online.", acc.Json.Username, ex.Message);
+                    _log.Error("Connection to account {Account} timed out. It was not possible to " +
+                               "report the target after {Timespan} seconds.", acc.Json.Username, ex.Message);
                     timedOut = true;
                 }
                 finally
