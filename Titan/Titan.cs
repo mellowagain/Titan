@@ -5,6 +5,7 @@ using CommandLine;
 using Eto.Forms;
 using Serilog;
 using Serilog.Core;
+using SteamKit2;
 using Titan.Bootstrap;
 using Titan.Bot;
 using Titan.Bot.Mode;
@@ -57,6 +58,10 @@ namespace Titan
                 Logger.Information("The arguments --target, --mode and/or --id were omitted - opening the UI.");
                 Instance.EnableUI = true;
             }
+
+            Logger.Debug("Refreshing Steam server list");
+
+            SteamDirectory.Initialize().Wait();
 
             Instance.MainForm = new MainForm();
 

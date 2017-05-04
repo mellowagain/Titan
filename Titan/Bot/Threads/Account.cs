@@ -52,10 +52,9 @@ namespace Titan.Bot.Threads
         {
             _username = json.Username;
             _password = json.Password;
+            Json = json;
 
             ReconnectTries = 0;
-
-            Json = json;
 
             SentryDirectory = new DirectoryInfo(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "sentries");
             SentryFile = new FileInfo(Path.Combine(SentryDirectory.ToString(), json.Username + ".sentry.bin"));
