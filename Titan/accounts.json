@@ -6,11 +6,13 @@
                 {
                     "username": "username1",
                     "password": "password1",
+                    "enabled": true,
                     "sentry": false
                 },
                 {
                     "username": "username2",
                     "password": "password2",
+                    "enabled": false,
                     "sentry": false
                 }
             ]
@@ -20,11 +22,13 @@
                 {
                     "username": "username3",
                     "password": "password3",
+                    "enabled": true,
                     "sentry": false
                 },
                 {
                     "username": "username4",
                     "password": "password4",
+                    "enabled": true,
                     "sentry": false
                 }
             ]

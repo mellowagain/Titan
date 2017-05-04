@@ -64,12 +64,15 @@ namespace Titan.Bot
                 {
                     var acc = new Account(account);
 
-                    _allAccounts.Add(acc);
-                    accounts.Add(acc);
+                    if(account.Enabled)
+                    {
+                        accounts.Add(acc);
+                        _allAccounts.Add(acc);
+                    }
 
-                    _log.Debug("Found account (stored in index #{Index}): Username: {Username} / " +
-                               "Password: {Password} / Sentry: {sentry}",
-                        _index, account.Username, account.Password, account.Sentry);
+                    _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
+                               "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
+                        _index, account.Username, account.Password, account.Sentry, account.Enabled);
                 }
 
                 if(accounts.Count > 11)

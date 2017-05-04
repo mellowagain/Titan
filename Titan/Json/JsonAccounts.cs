@@ -28,6 +28,9 @@ namespace Titan.Json
             [JsonProperty("sentry")]
             public bool Sentry { get; set; }
 
+            [JsonProperty("enabled")]
+            public bool Enabled { get; set; }
+
         }
 
     }
