@@ -5,6 +5,7 @@ using Eto.Forms;
 using Serilog.Core;
 using Titan.Bot.Mode;
 using Titan.Logging;
+using Titan.UI.Commands;
 using Titan.UI.Commands.Links;
 
 namespace Titan.UI
@@ -79,8 +80,8 @@ namespace Titan.UI
                         new SharecodeFinder()
                     }}
                 },
-                AboutItem = new Commands.About(),
-                QuitItem = new Commands.Quit()
+                AboutItem = new About(),
+                QuitItem = new Quit()
             };
 
         }

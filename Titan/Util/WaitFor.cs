@@ -9,7 +9,6 @@ namespace Titan.Util
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public sealed class WaitFor<TResult>
     {
-
         private readonly TimeSpan _timeout;
 
         /// <summary>
@@ -38,7 +37,7 @@ namespace Titan.Util
         /// <exception cref="TimeoutException">if the function does not finish in time </exception>
         public TResult Run(Func<TResult> function)
         {
-            if (function == null) throw new ArgumentNullException(nameof(function));
+            if(function == null) throw new ArgumentNullException(nameof(function));
 
             var sync = new object();
             var isCompleted = false;
@@ -47,9 +46,9 @@ namespace Titan.Util
             {
                 var watchedThread = obj as Thread;
 
-                lock (sync)
+                lock(sync)
                 {
-                    if (!isCompleted)
+                    if(!isCompleted)
                     {
                         Monitor.Wait(sync, _timeout);
                     }
@@ -59,7 +58,7 @@ namespace Titan.Util
                 // Hence, it should not be called with the 'lock' as it could deadlock
                 // with the 'finally' block below.
 
-                if (!isCompleted)
+                if(!isCompleted)
                 {
                     watchedThread.Abort();
                 }
@@ -79,7 +78,7 @@ namespace Titan.Util
             }
             finally
             {
-                lock (sync)
+                lock(sync)
                 {
                     isCompleted = true;
                     Monitor.Pulse(sync);
@@ -106,6 +105,5 @@ namespace Titan.Util
         {
             return new WaitFor<TResult>(timeout).Run(function);
         }
-
     }
 }

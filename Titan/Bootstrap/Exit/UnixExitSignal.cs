@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Mono.Unix;
+using Mono.Unix.Native;
 
 namespace Titan.Bootstrap.Exit
 {
@@ -10,9 +11,9 @@ namespace Titan.Bootstrap.Exit
         public event EventHandler Exit;
 
         private UnixSignal[] _signals = {
-            new UnixSignal(Mono.Unix.Native.Signum.SIGTERM),
-            new UnixSignal(Mono.Unix.Native.Signum.SIGINT),
-            new UnixSignal(Mono.Unix.Native.Signum.SIGUSR1)
+            new UnixSignal(Signum.SIGTERM),
+            new UnixSignal(Signum.SIGINT),
+            new UnixSignal(Signum.SIGUSR1)
         };
 
         public UnixExitSignal()

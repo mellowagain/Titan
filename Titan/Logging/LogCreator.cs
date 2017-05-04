@@ -34,5 +34,6 @@ namespace Titan.Logging
             var reflectedType = new StackTrace().GetFrame(1).GetMethod().ReflectedType;
             return Create(reflectedType != null ? reflectedType.Name : "Titan (unknown Parent)");
         }
+
     }
 }

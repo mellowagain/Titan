@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Threading;
+using CommandLine;
 using Eto.Forms;
 using Serilog;
 using Serilog.Core;
@@ -47,7 +47,7 @@ namespace Titan
             Logger.Debug("Parsing arguments");
 
             /* Parse arguments provided with the starting of this */
-            if(CommandLine.Parser.Default.ParseArguments(args, Instance.Options))
+            if(Parser.Default.ParseArguments(args, Instance.Options))
             {
                 Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {Id}", Instance.Options.Target, Instance.Options.MatchId);
                 Instance.EnableUI = false;
