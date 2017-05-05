@@ -90,9 +90,6 @@
     <Reference Include="SteamKit2, Version=1.8.3.0, Culture=neutral, PublicKeyToken=ed3ce47ed5aad940">
       <HintPath>..\packages\SteamKit2.1.8.3\lib\net45\SteamKit2.dll</HintPath>
     </Reference>
-    <Reference Include="Steamkit2-csgo, Version=1.2.0.0, Culture=neutral, PublicKeyToken=dd665b295b1468a4">
-      <HintPath>..\packages\SteamKit-CSGO.1.2.0\lib\net45\Steamkit2-csgo.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
