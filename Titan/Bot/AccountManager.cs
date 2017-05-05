@@ -37,7 +37,7 @@ namespace Titan.Bot
             _index = 0;
 
             _log.Debug("Titan Account Manager initialized on {TimeString}. ({UnixTimestamp})",
-                DateTime.Now.ToShortTimeString(), GetCurrentUnixTimeStamp());
+                DateTime.Now.ToShortTimeString(), Math.Round(GetCurrentUnixTimeStamp()));
         }
 
         public bool ParseAccountFile()

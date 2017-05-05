@@ -3,6 +3,7 @@ using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
+using SteamKit2;
 using Titan.Bot.Mode;
 using Titan.Logging;
 using Titan.UI.Commands;
@@ -92,6 +93,18 @@ namespace Titan.UI
 
             if(IsValid(mode, _targetBox.Text, _matchIDBox.Text))
             {
+                var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(
+                    new SteamID(_targetBox.Text).ConvertToUInt64());
+                if(targetBanInfo != null)
+                {
+                    if(targetBanInfo.VacBanned || targetBanInfo.GameBanCount > 0)
+                    {
+                        _log.Warning("The target has already been banned. Are you sure you " +
+                                     "want to bot this player? Ignore this message if the " +
+                                     "target has been banned in other games.");
+                    }
+                }
+
                 _log.Information("Bomb! Button has been pressed. Starting bombing to {Target} in match {Match}.", _targetBox.Text, _matchIDBox.Text);
 
                 Titan.Instance.AccountManager.StartBotting(mode, _targetBox.Text, _matchIDBox.Text);

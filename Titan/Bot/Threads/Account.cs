@@ -12,6 +12,7 @@ using SteamKit2.Internal;
 using Titan.Bot.Mode;
 using Titan.Json;
 using Titan.Logging;
+using Titan.Util;
 
 namespace Titan.Bot.Threads
 {
@@ -47,6 +48,7 @@ namespace Titan.Bot.Threads
         public bool IsRunning { get; private set; }
         public bool IsSuccess { get; private set; }
         public bool IsLoggedInSomewhereElse { get; private set; }
+        public bool IsBanned { get; private set; }
 
         public Account(JsonAccounts.JsonAccount json)
         {
@@ -176,7 +178,18 @@ namespace Titan.Bot.Threads
             switch(callback.Result)
             {
                 case EResult.OK:
-                    _log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
+                    _log.Debug("Successfully logged in. Checking for any VAC or game bans...");
+
+                    var banInfo = Titan.Instance.BanManager.GetBanInfoFor(SteamUser.SteamID.ConvertToUInt64());
+                    if(banInfo != null && (banInfo.VacBanned || banInfo.GameBanCount > 0))
+                    {
+                        _log.Warning("The account has a ban on record. " +
+                                     "If the VAC/Game ban ban is from CS:GO, a {Mode} is not possible. " +
+                                     "Proceeding with caution.", Mode.ToString().ToLower());
+                        IsBanned = true;
+                    }
+
+                    _log.Debug("Registering that we're playing CS:GO...");
 
                     SteamFriends.SetPersonaState(EPersonaState.Online);
 

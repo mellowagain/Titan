@@ -8,6 +8,7 @@ using Serilog.Core;
 using SteamKit2;
 using Titan.Bootstrap;
 using Titan.Bot;
+using Titan.Bot.Bans;
 using Titan.Bot.Mode;
 using Titan.Bot.Threads;
 using Titan.Logging;
@@ -27,6 +28,7 @@ namespace Titan
 
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
+        public BanManager BanManager;
 
         public MainForm MainForm;
 
@@ -68,6 +70,9 @@ namespace Titan
             var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
             Instance.AccountManager = new AccountManager(new FileInfo(Path.Combine(Environment.CurrentDirectory, file)));
             Instance.ThreadManager = new ThreadManager();
+
+            Instance.BanManager = new BanManager();
+            Instance.BanManager.ParseApiKeyFile();
 
             if(Instance.AccountManager.ParseAccountFile())
             {

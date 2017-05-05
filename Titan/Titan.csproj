@@ -54,6 +54,10 @@
     <Reference Include="JsonFx, Version=2.0.1209.2802, Culture=neutral, PublicKeyToken=315052dd637f8a52">
       <HintPath>..\packages\JsonFx.2.0.1209.2802\lib\net40\JsonFx.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Mono.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <HintPath>..\packages\Mono.CSharp.4.0.0.143\lib\4.5\Mono.CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
     </Reference>
@@ -132,6 +136,8 @@
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\ShutdownHook.cs" />
     <Compile Include="Bot\AccountManager.cs" />
+    <Compile Include="Bot\Bans\BanInfo.cs" />
+    <Compile Include="Bot\Bans\BanManager.cs" />
     <Compile Include="Bot\Mode\BotMode.cs" />
     <Compile Include="Bot\Mode\ModeParser.cs" />
     <Compile Include="Bot\Threads\Account.cs" />
