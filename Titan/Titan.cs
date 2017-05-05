@@ -102,9 +102,9 @@ namespace Titan
 
             Instance.AccountManager.SaveIndexFile();
 
-            Log.CloseAndFlush();
+            Logger.Information("Thank you and have a nice day.");
 
-            Console.WriteLine("Thank you and have a nice day.");
+            Log.CloseAndFlush();
         }
 
         /*
