@@ -20,7 +20,7 @@ namespace Titan.Bot.Threads
         {
             SetArguments(acc, mode, target, matchId);
 
-            _log.Debug("Starting reporting thread for {Target} in {MatchId} " +
+            _log.Debug("Starting reporting thread for {Target} in match {MatchId} " +
                        "using account {Account}.", target, matchId, acc.Json.Username);
 
             _taskDic.Add(acc, Task.Run(() =>

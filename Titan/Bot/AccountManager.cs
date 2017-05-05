@@ -213,7 +213,7 @@ namespace Titan.Bot
             _log.Debug("Successfully wrote index file.");
         }
 
-        public void StartBotting(BotMode mode, string target, string matchId)
+        public void StartBotting(BotMode mode, string target, ulong matchId)
         {
             _log.Debug("Checking if the index file contains a newer available index...");
 
@@ -222,7 +222,6 @@ namespace Titan.Bot
             _log.Debug("Starting botting using index {Index}.", _index);
 
             var convTarget = new SteamID(target).AccountID;
-            var convMatchId = mode == BotMode.Report ? Convert.ToUInt64(matchId) : 0;
 
             List<Account> accounts;
             if(_accounts.TryGetValue(_index, out accounts))
@@ -240,7 +239,7 @@ namespace Titan.Bot
                 {
                     try
                     {
-                        Titan.Instance.ThreadManager.Start(mode, acc, convTarget, convMatchId);
+                        Titan.Instance.ThreadManager.Start(mode, acc, convTarget, matchId);
                     }
                     catch (Exception ex)
                     {

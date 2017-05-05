@@ -33,7 +33,7 @@ namespace Titan.UI
 
             // Selected arguments for the UI
             _targetBox = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
-            _matchIDBox = new TextBox { PlaceholderText = "3203363151840018511" };
+            _matchIDBox = new TextBox { PlaceholderText = "3203363151840018511 (optional)" };
             _matchIDLabel = new Label { Text = "Match ID" };
 
             _dropDown = new DropDown { Items = { "Report", "Commend" }, SelectedIndex = 0 };
@@ -84,15 +84,16 @@ namespace Titan.UI
                 AboutItem = new About(),
                 QuitItem = new Quit()
             };
-
         }
 
         public void OnBombButtonClick(object sender, EventArgs args)
         {
             var mode = ModeParser.Parse(_dropDown.SelectedIndex);
 
-            if(IsValid(mode, _targetBox.Text, _matchIDBox.Text))
+            if(!string.IsNullOrWhiteSpace(_targetBox.Text))
             {
+                var matchid = string.IsNullOrWhiteSpace(_matchIDBox.Text) ? 8 : Convert.ToUInt64(_matchIDBox.Text);
+
                 var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(
                     new SteamID(_targetBox.Text).ConvertToUInt64());
                 if(targetBanInfo != null)
@@ -105,17 +106,14 @@ namespace Titan.UI
                     }
                 }
 
-                _log.Information("Bomb! Button has been pressed. Starting bombing to {Target} in match {Match}.", _targetBox.Text, _matchIDBox.Text);
+                _log.Information("Starting bombing of {Target} in Match {Match}.",
+                    _targetBox.Text, matchid);
 
-                Titan.Instance.AccountManager.StartBotting(mode, _targetBox.Text, _matchIDBox.Text);
+                Titan.Instance.AccountManager.StartBotting(mode, _targetBox.Text, matchid);
             }
             else
             {
-                MessageBox.Show(
-                    mode == BotMode.Commend
-                        ? "Please provide the Target."
-                        : "Please provide the Target and the Match ID.", "Error - Titan",
-                    MessageBoxType.Error);
+                MessageBox.Show("Please provide a target.", MessageBoxType.Error);
             }
         }
 
@@ -131,18 +129,6 @@ namespace Titan.UI
                 _matchIDLabel.Visible = false;
                 _matchIDBox.Visible = false;
             }
-        }
-
-        private bool IsValid(BotMode mode, string target, string matchId)
-        {
-            switch(mode)
-            {
-                case BotMode.Report:
-                    return !string.IsNullOrWhiteSpace(target) && !string.IsNullOrWhiteSpace(matchId);
-                case BotMode.Commend:
-                    return !string.IsNullOrWhiteSpace(target);
-            }
-            return false;
         }
 
     }

@@ -95,7 +95,8 @@ namespace Titan
                             return;
                         }
 
-                        Instance.AccountManager.StartBotting(mode, Instance.Options.Target, Instance.Options.MatchId);
+                        Instance.AccountManager.StartBotting(mode, Instance.Options.Target,
+                            Convert.ToUInt64(Instance.Options.MatchId));
                     }
                 }
             }
