@@ -13,6 +13,7 @@ using Titan.Bot.Mode;
 using Titan.Bot.Threads;
 using Titan.Logging;
 using Titan.UI;
+using Titan.Util;
 
 namespace Titan
 {
@@ -95,7 +96,7 @@ namespace Titan
                             return;
                         }
 
-                        Instance.AccountManager.StartBotting(mode, Instance.Options.Target,
+                        Instance.AccountManager.StartBotting(mode, SteamUtil.Parse(Instance.Options.Target),
                             Convert.ToUInt64(Instance.Options.MatchId));
                     }
                 }

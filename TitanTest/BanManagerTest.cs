@@ -1,5 +1,6 @@
 ﻿using SteamKit2;
 using Titan.Bot.Bans;
+using Titan.Util;
 using Xunit;
 
 namespace TitanTest
@@ -20,7 +21,7 @@ namespace TitanTest
         [Fact]
         public void TestGameBan()
         {
-            var banInfo = _banManager.GetBanInfoFor(new SteamID("[U:1:416035008]").ConvertToUInt64());
+            var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:208017504"));
 
             if(banInfo != null && banInfo.GameBanCount > 0)
             {
@@ -30,14 +31,14 @@ namespace TitanTest
             {
                 Assert.True(false);
             }
-            // [U:1:416035008]
+            // STEAM_0:0:208017504
             // https://steamcommunity.com/id/TopKekTux/
         }
 
         [Fact]
         public void TestVacBan()
         {
-            var banInfo = _banManager.GetBanInfoFor(new SteamID("[U:1:39755130]").ConvertToUInt64());
+            var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:19877565"));
 
             if(banInfo != null && banInfo.VacBanned)
             {
@@ -47,14 +48,14 @@ namespace TitanTest
             {
                 Assert.True(false);
             }
-            // [U:1:39755130]
+            // STEAM_0:0:19877565
             // https://steamcommunity.com/id/kqly/
         }
 
         [Fact]
         public void TestCleanHistory()
         {
-            var banInfo = _banManager.GetBanInfoFor(new SteamID("[U:1:263966176]").ConvertToUInt64());
+            var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:131983088"));
 
             if(banInfo != null && (!banInfo.VacBanned && banInfo.GameBanCount <= 0))
             {
@@ -64,7 +65,7 @@ namespace TitanTest
             {
                 Assert.True(false);
             }
-            // [U:1:263966176]
+            // STEAM_0:0:131983088
             // https://steamcommunity.com/id/Marc3842h/
         }
 

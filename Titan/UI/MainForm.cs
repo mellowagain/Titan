@@ -8,6 +8,7 @@ using Titan.Bot.Mode;
 using Titan.Logging;
 using Titan.UI.Commands;
 using Titan.UI.Commands.Links;
+using Titan.Util;
 
 namespace Titan.UI
 {
@@ -94,8 +95,9 @@ namespace Titan.UI
             {
                 var matchid = string.IsNullOrWhiteSpace(_matchIDBox.Text) ? 8 : Convert.ToUInt64(_matchIDBox.Text);
 
-                var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(
-                    new SteamID(_targetBox.Text).ConvertToUInt64());
+                var steamId = SteamUtil.Parse(_targetBox.Text);
+
+                var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(steamId.ConvertToUInt64());
                 if(targetBanInfo != null)
                 {
                     if(targetBanInfo.VacBanned || targetBanInfo.GameBanCount > 0)
@@ -109,7 +111,7 @@ namespace Titan.UI
                 _log.Information("Starting bombing of {Target} in Match {Match}.",
                     _targetBox.Text, matchid);
 
-                Titan.Instance.AccountManager.StartBotting(mode, _targetBox.Text, matchid);
+                Titan.Instance.AccountManager.StartBotting(mode, steamId, matchid);
             }
             else
             {

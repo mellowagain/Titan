@@ -157,6 +157,7 @@
     <Compile Include="UI\Commands\Quit.cs" />
     <Compile Include="UI\MainForm.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\SteamUtil.cs" />
     <Compile Include="Util\StringUtil.cs" />
     <Compile Include="Util\WaitFor.cs" />
   </ItemGroup>
