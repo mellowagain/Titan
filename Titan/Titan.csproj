@@ -130,9 +130,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrap\Exit\IExitSignal.cs" />
-    <Compile Include="Bootstrap\Exit\UnixExitSignal.cs" />
-    <Compile Include="Bootstrap\Exit\WinExitSignal.cs" />
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\ShutdownHook.cs" />
     <Compile Include="Bot\AccountManager.cs" />
