@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading;
 
 namespace Titan.Util
@@ -74,7 +75,7 @@ namespace Titan.Util
                 // This is our own exception.
                 Thread.ResetAbort();
 
-                throw new TimeoutException($"{_timeout.TotalSeconds}.");
+                throw new TimeoutException(_timeout.TotalSeconds.ToString());
             }
             finally
             {

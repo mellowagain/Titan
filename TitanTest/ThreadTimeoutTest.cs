@@ -25,7 +25,7 @@ namespace TitanTest
                 }
                 catch (TimeoutException ex)
                 {
-                    Assert.True(true, $"The thread timed successfully out after {ex.Message} seconds.");
+                    Assert.True(true, "The thread timed successfully out after " + ex.Message + " seconds.");
                 }
 
                 Assert.True(false, "The thread never timed out.");
