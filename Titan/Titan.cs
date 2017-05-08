@@ -36,7 +36,6 @@ namespace Titan
         [STAThread]
         public static void Main(string[] args)
         {
-            ShutdownHook.Hook();
             Thread.CurrentThread.Name = "Main";
 
             Logger.Debug("Initializing libraries...");

@@ -131,7 +131,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap\Options.cs" />
-    <Compile Include="Bootstrap\ShutdownHook.cs" />
     <Compile Include="Bot\AccountManager.cs" />
     <Compile Include="Bot\Bans\BanInfo.cs" />
     <Compile Include="Bot\Bans\BanManager.cs" />
