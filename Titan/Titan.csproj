@@ -167,6 +167,8 @@
     <Content Include="accounts.json" />
     <Content Include="index.json" />
     <Content Include="Resources\CREDIT.txt" />
+    <Content Include="Resources\Logo.png" />
+    <Content Include="Resources\Text.png" />
     <EmbeddedResource Include="Resources\Exit.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

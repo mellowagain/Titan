@@ -1,5 +1,5 @@
-<p align="center"><img width=15% src="http://image.prntscr.com/image/cc972344aad8415b91c01a0a2dc1b88b.png"></p>
-<p align="center"><img width=40% src="http://image.prntscr.com/image/910d0939b09742c988ac7b14281409ff.png"></p>
+<p align="center"><img width=15% src="https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Logo.png"></p>
+<p align="center"><img width=40% src="https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Text.png"></p>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [![Version](https://img.shields.io/github/release/Marc3842h/Titan/all.svg?label=version)](https://github.com/Marc3842h/Titan/releases)
