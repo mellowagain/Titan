@@ -1,5 +1,4 @@
-﻿using SteamKit2;
-using Titan.Bot.Bans;
+﻿using Titan.Bot.Bans;
 using Titan.Util;
 using Xunit;
 

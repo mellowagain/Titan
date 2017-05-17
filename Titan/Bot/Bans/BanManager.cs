@@ -45,15 +45,15 @@ namespace Titan.Bot.Bans
             _log.Debug("Using Steam API key: {Key}", _apiKey);
         }
 
-        public BanInfo GetBanInfoFor(ulong steamId)
+        public BanInfo GetBanInfoFor(SteamID steamId)
         {
             using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", _apiKey))
             {
-                KeyValue pair = steamUser.GetPlayerBans(steamids: steamId);
+                KeyValue pair = steamUser.GetPlayerBans(steamids: steamId.ConvertToUInt64());
 
                 foreach(var get in pair["players"].Children)
                 {
-                    if(get["SteamId"].AsUnsignedLong() == steamId)
+                    if(get["SteamId"].AsUnsignedLong() == steamId.ConvertToUInt64())
                     {
                         return new BanInfo
                         {
@@ -69,6 +69,7 @@ namespace Titan.Bot.Bans
                 }
             }
 
+            _log.Warning("Did not receive ban informations for {SteamID}. Skipping...");
             return null;
         }
 
