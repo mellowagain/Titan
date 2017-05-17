@@ -4,26 +4,26 @@ using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 
-namespace Titan.UI.Commands.Links
+namespace Titan.UI.Main.Commands.Links
 {
-    public class JsonValidator : Command
+    public class SteamIO : Command
     {
 
         private readonly string _icon = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Resources" +
-                                        Path.DirectorySeparatorChar + "JsonLint.ico";
+                               Path.DirectorySeparatorChar + "SteamIO.ico";
 
-        public JsonValidator()
+        public SteamIO()
         {
-            MenuText = "JsonLint";
+            MenuText = "SteamIO";
             Image = new Icon(File.Open(_icon, FileMode.Open));
-            Shortcut = Application.Instance.CommonModifier | Keys.J;
+            Shortcut = Application.Instance.CommonModifier | Keys.I;
         }
 
         protected override void OnExecuted(EventArgs e)
         {
             base.OnExecuted(e);
 
-            Process.Start("http://jsonlint.com");
+            Process.Start("https://steamid.io");
         }
 
     }

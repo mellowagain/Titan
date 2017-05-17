@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Eto.Forms;
 
-namespace Titan.UI.Commands.Links
+namespace Titan.UI.Main.Commands.Links
 {
     public class SharecodeFinder : Command
     {

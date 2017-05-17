@@ -1,36 +1,34 @@
 ﻿using System;
-using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
-using SteamKit2;
 using Titan.Bot.Mode;
 using Titan.Logging;
-using Titan.UI.Commands;
-using Titan.UI.Commands.Links;
+using Titan.UI.Main.Commands;
+using Titan.UI.Main.Commands.Links;
 using Titan.Util;
 
-namespace Titan.UI
+namespace Titan.UI.Main
 {
+
     public sealed class MainForm : Form
     {
 
-        private readonly string _icon = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Resources" +
-                                        Path.DirectorySeparatorChar + "Logo.ico";
-
         private Logger _log = LogCreator.Create();
+
+        private UIManager _uiManager;
 
         private readonly DropDown _dropDown;
         private readonly TextBox _targetBox;
         private readonly TextBox _matchIDBox;
         private readonly Label _matchIDLabel;
 
-        public MainForm()
+        public MainForm(UIManager uiManager)
         {
             Title = "Titan";
-            ClientSize = new Size(600, 160);
+            ClientSize = new Size(600, 180);
             Resizable = false;
-            Icon = new Icon(File.Open(_icon, FileMode.Open));
+            Icon = uiManager.SharedResources.TITAN_ICON;
 
             // Selected arguments for the UI
             _targetBox = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
@@ -42,6 +40,8 @@ namespace Titan.UI
 
             var bombBtn = new Button { Text = "Bomb!" };
             bombBtn.Click += OnBombButtonClick;
+
+            _uiManager = uiManager;
 
             Content = new TableLayout
             {

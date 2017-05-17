@@ -12,7 +12,7 @@ using SteamKit2.Internal;
 using Titan.Bot.Mode;
 using Titan.Json;
 using Titan.Logging;
-using Titan.Util;
+using Titan.UI._2FA;
 
 namespace Titan.Bot.Threads
 {
@@ -210,15 +210,33 @@ namespace Titan.Bot.Threads
                 case EResult.AccountLogonDenied:
                     if(Json.Sentry)
                     {
-                        _log.Information("Please enter the 2FA code from the Steam App:");
-                        AuthCode = Console.ReadLine();
+                        if(Eto.Threading.Thread.IsMainThread)
+                        {
+                            _log.Error("THIS IS THE MAIN THREAD");
+                        }
+                        else
+                        {
+                            _log.Error("THIS IS {not} THE MAIN THREAD", "NOT");
+                        }
+
+                        Titan.Instance.UIManager.ShowFormInvokeDelegate
+                            .Invoke(new TwoFactorAuthForm(Titan.Instance.UIManager, this, null));
                     }
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                     if(Json.Sentry)
                     {
-                        _log.Information("Please enter the auth code sent to email at {Mail}:", callback.EmailDomain);
-                        TwoFactorCode = Console.ReadLine();
+                        if(Eto.Threading.Thread.IsMainThread)
+                        {
+                            _log.Error("THIS IS THE MAIN THREAD");
+                        }
+                        else
+                        {
+                            _log.Error("THIS IS {not} THE MAIN THREAD", "NOT");
+                        }
+
+                        Titan.Instance.UIManager.ShowFormInvokeDelegate
+                            .Invoke(new TwoFactorAuthForm(Titan.Instance.UIManager, this, callback.EmailDomain));
                     }
                     break;
                 case EResult.ServiceUnavailable:

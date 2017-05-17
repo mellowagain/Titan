@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using CommandLine;
-using Eto.Forms;
 using Serilog;
 using Serilog.Core;
 using SteamKit2;
@@ -23,15 +22,13 @@ namespace Titan
         public static Logger Logger = LogCreator.Create(); // Global logger
         public static Titan Instance;
 
-        public Application EtoApp;
         public Options Options;
         public bool EnableUI = true;
 
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
         public BanManager BanManager;
-
-        public MainForm MainForm;
+        public UIManager UIManager;
 
         [STAThread]
         public static void Main(string[] args)
@@ -43,7 +40,6 @@ namespace Titan
             /* Initialize libraries: Eto.Forms, SteamKit2, SteamKit-CSGO */
             Instance = new Titan
             {
-                EtoApp = new Application(),
                 Options = new Options()
             };
 
@@ -65,7 +61,7 @@ namespace Titan
 
             SteamDirectory.Initialize().Wait();
 
-            Instance.MainForm = new MainForm();
+            Instance.UIManager = new UIManager();
 
             var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
             Instance.AccountManager = new AccountManager(new FileInfo(Path.Combine(Environment.CurrentDirectory, file)));
@@ -80,7 +76,7 @@ namespace Titan
 
                 if(Instance.EnableUI)
                 {
-                    Instance.EtoApp.Run(Instance.MainForm);
+                    Instance.UIManager.ShowForm(UIType.Main);
                 }
                 else
                 {
@@ -91,7 +87,7 @@ namespace Titan
                         if(string.IsNullOrEmpty(Instance.Options.MatchId))
                         {
                             Logger.Error("Match ID was not provided when starting Titan!");
-                            Instance.EtoApp.Run(Instance.MainForm);
+                            Instance.UIManager.ShowForm(UIType.Main);
                             return;
                         }
 

@@ -1,27 +1,29 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 
-namespace Titan.UI.Commands
+namespace Titan.UI.Main.Commands.Links
 {
-    public class Quit : Command
+    public class JsonValidator : Command
     {
 
         private readonly string _icon = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Resources" +
-                                        Path.DirectorySeparatorChar + "Exit.ico";
+                                        Path.DirectorySeparatorChar + "JsonLint.ico";
 
-        public Quit()
+        public JsonValidator()
         {
-            MenuText = "Quit";
+            MenuText = "JsonLint";
             Image = new Icon(File.Open(_icon, FileMode.Open));
+            Shortcut = Application.Instance.CommonModifier | Keys.J;
         }
 
         protected override void OnExecuted(EventArgs e)
         {
             base.OnExecuted(e);
 
-            Environment.Exit(0);
+            Process.Start("http://jsonlint.com");
         }
 
     }

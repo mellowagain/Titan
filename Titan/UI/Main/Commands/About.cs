@@ -3,7 +3,7 @@ using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 
-namespace Titan.UI.Commands
+namespace Titan.UI.Main.Commands
 {
     public class About : Command
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using Serilog.Core;
-using Serilog.Events;
 using SteamKit2;
 using Titan.Logging;
+using Titan.UI;
 
 namespace Titan.Bot.Bans
 {
@@ -14,7 +14,7 @@ namespace Titan.Bot.Bans
 
         private FileInfo _apiKeyFile;
 
-        private string _apiKey;
+        public string APIKey;
 
         public BanManager()
         {
@@ -25,29 +25,22 @@ namespace Titan.Bot.Bans
         {
             if(!_apiKeyFile.Exists)
             {
-                _log.Information("======================");
-                _log.Information("The {Reason} key has not been found.", "Steam API");
-                _log.Information("Please generate a API key at {Url} " +
-                                 "and input it below:", "https://steamcommunity.com/dev/apikey");
-                _log.Information("======================");
-                _apiKey = Console.ReadLine();
+                Titan.Instance.UIManager.ShowForm(UIType.APIKeyInput);
 
-                File.WriteAllText(_apiKeyFile.ToString(), _apiKey);
-
-                // TODO: Change this into a form
+                File.WriteAllText(_apiKeyFile.ToString(), APIKey);
             }
 
             using(var reader = File.OpenText(_apiKeyFile.ToString()))
             {
-                _apiKey = reader.ReadLine();
+                APIKey = reader.ReadLine();
             }
 
-            _log.Debug("Using Steam API key: {Key}", _apiKey);
+            _log.Debug("Using Steam API key: {Key}", APIKey);
         }
 
         public BanInfo GetBanInfoFor(SteamID steamId)
         {
-            using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", _apiKey))
+            using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", APIKey))
             {
                 KeyValue pair = steamUser.GetPlayerBans(steamids: steamId.ConvertToUInt64());
 
