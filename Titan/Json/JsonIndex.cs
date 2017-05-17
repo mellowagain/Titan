@@ -18,7 +18,7 @@ namespace Titan.Json
             public int TargetedIndex;
 
             [JsonProperty("expires")]
-            public double ExpireTimestamp;
+            public long ExpireTimestamp;
 
         }
 

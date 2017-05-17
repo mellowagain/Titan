@@ -10,6 +10,7 @@ using Titan.Bot.Mode;
 using Titan.Bot.Threads;
 using Titan.Json;
 using Titan.Logging;
+using Titan.Util;
 
 namespace Titan.Bot
 {
@@ -21,7 +22,7 @@ namespace Titan.Bot
         private Dictionary<int, List<Account>> _accounts = new Dictionary<int, List<Account>>();
         private List<Account> _allAccounts = new List<Account>();
 
-        private Dictionary<int, double> _indexEntries = new Dictionary<int, double>();
+        private Dictionary<int, long> _indexEntries = new Dictionary<int, long>();
         private int _index;
 
         private FileInfo _indexFile;
@@ -37,7 +38,7 @@ namespace Titan.Bot
             _index = 0;
 
             _log.Debug("Titan Account Manager initialized on {TimeString}. ({UnixTimestamp})",
-                DateTime.Now.ToShortTimeString(), Math.Round(GetCurrentUnixTimeStamp()));
+                DateTime.Now.ToShortTimeString(), Math.Round((double) TimeUtil.GetCurrentTicks()));
         }
 
         public bool ParseAccountFile()
@@ -128,7 +129,7 @@ namespace Titan.Bot
                 foreach(var expireEntry in _parsedIndex.Entries)
                 {
                     // check if a entry that is marked for expiration is already expired and ready to bot
-                    if(expireEntry.ExpireTimestamp <= GetCurrentUnixTimeStamp())
+                    if(expireEntry.ExpireTimestamp <= TimeUtil.GetCurrentTicks())
                     {
                         _log.Debug("Index {Index} has expired. It is now available for botting.",
                             expireEntry.TargetedIndex);
@@ -150,7 +151,7 @@ namespace Titan.Bot
 
                         _log.Debug("Index #{Index} hasn't expired yet. It will expire on {Time}.",
                             expireEntry.TargetedIndex,
-                            UnixTimeStampToDateTime(expireEntry.ExpireTimestamp).ToShortTimeString());
+                            TimeUtil.TicksToDateTime(expireEntry.ExpireTimestamp).ToShortTimeString());
 
                         if(expireEntry.TargetedIndex == lowest)
                         {
@@ -255,36 +256,13 @@ namespace Titan.Bot
 
             if(!_indexEntries.ContainsKey(_index))
             {
-                _indexEntries.Add(_index, DateTimeToUnixTimeStamp(DateTime.Now.AddHours(6)));
+                _indexEntries.Add(_index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(6)));
                 SaveIndexFile();
             }
 
             _log.Debug("Index #{Index} has been used. It will be unlocked on {Unlock}. " +
                        "Using index #{NextIndex} for next botting session.",
                 _index, DateTime.Now.AddHours(6).ToLongTimeString(), ++_index);
-        }
-
-        // =====================================================
-        // UTILITY METHODS
-        // =====================================================
-
-        private double GetCurrentUnixTimeStamp()
-        {
-            return DateTimeToUnixTimeStamp(DateTime.Now);
-        }
-
-        private DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
-        private double DateTimeToUnixTimeStamp(DateTime time)
-        {
-            return (TimeZoneInfo.ConvertTimeToUtc(time) - new DateTime(1970, 1, 1, 0, 0, 0, 0,
-                        DateTimeKind.Utc)).TotalSeconds;
         }
 
     }

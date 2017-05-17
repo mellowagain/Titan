@@ -155,6 +155,7 @@
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\SteamUtil.cs" />
     <Compile Include="Util\StringUtil.cs" />
+    <Compile Include="Util\TimeUtil.cs" />
     <Compile Include="Util\WaitFor.cs" />
   </ItemGroup>
   <ItemGroup>
