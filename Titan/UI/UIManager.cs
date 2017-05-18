@@ -19,8 +19,6 @@ namespace Titan.UI
         private Dictionary<UIType, Form> _forms = new Dictionary<UIType, Form>();
         public SharedResources SharedResources;
 
-        public bool locked = false;
-
         // Invoking
         public Action<Form> ShowFormInvokeDelegate = delegate(Form form)
         {
