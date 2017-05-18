@@ -31,7 +31,7 @@ namespace Titan
         public UIManager UIManager;
 
         [STAThread]
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             Thread.CurrentThread.Name = "Main";
 
@@ -65,10 +65,14 @@ namespace Titan
 
             var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
             Instance.AccountManager = new AccountManager(new FileInfo(Path.Combine(Environment.CurrentDirectory, file)));
+
             Instance.ThreadManager = new ThreadManager();
 
             Instance.BanManager = new BanManager();
             Instance.BanManager.ParseApiKeyFile();
+
+            // Register hook
+            AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
             if(Instance.AccountManager.ParseAccountFile())
             {
@@ -87,8 +91,7 @@ namespace Titan
                         if(string.IsNullOrEmpty(Instance.Options.MatchId))
                         {
                             Logger.Error("Match ID was not provided when starting Titan!");
-                            Instance.UIManager.ShowForm(UIType.Main);
-                            return;
+                            return -1;
                         }
 
                         Instance.AccountManager.StartBotting(mode, SteamUtil.Parse(Instance.Options.Target),
@@ -98,6 +101,13 @@ namespace Titan
 
                 Instance.UIManager.StartMainLoop();
             }
+
+            return 0; // OK.
+        }
+
+        public static void OnShutdown(object sender, EventArgs args)
+        {
+            // Cleanup a few things before shutting down
 
             Instance.BanManager.SaveAPIKeyFile();
             Instance.AccountManager.SaveIndexFile();
