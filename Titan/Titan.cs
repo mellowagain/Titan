@@ -95,8 +95,11 @@ namespace Titan
                             Convert.ToUInt64(Instance.Options.MatchId));
                     }
                 }
+
+                Instance.UIManager.StartMainLoop();
             }
 
+            Instance.BanManager.SaveAPIKeyFile();
             Instance.AccountManager.SaveIndexFile();
 
             Logger.Information("Thank you and have a nice day.");

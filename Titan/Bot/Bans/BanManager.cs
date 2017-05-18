@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Logging;
@@ -26,16 +27,21 @@ namespace Titan.Bot.Bans
             if(!_apiKeyFile.Exists)
             {
                 Titan.Instance.UIManager.ShowForm(UIType.APIKeyInput);
-
-                File.WriteAllText(_apiKeyFile.ToString(), APIKey);
             }
-
-            using(var reader = File.OpenText(_apiKeyFile.ToString()))
+            else
             {
-                APIKey = reader.ReadLine();
+                using(var reader = File.OpenText(_apiKeyFile.ToString()))
+                {
+                    APIKey = reader.ReadLine();
+                }
             }
 
             _log.Debug("Using Steam API key: {Key}", APIKey);
+        }
+
+        public void SaveAPIKeyFile()
+        {
+            File.WriteAllText(_apiKeyFile.ToString(), APIKey, Encoding.UTF8);
         }
 
         public BanInfo GetBanInfoFor(SteamID steamId)

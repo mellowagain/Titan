@@ -19,9 +19,12 @@ namespace Titan.UI
         private Dictionary<UIType, Form> _forms = new Dictionary<UIType, Form>();
         public SharedResources SharedResources;
 
+        public bool locked = false;
+
         // Invoking
         public Action<Form> ShowFormInvokeDelegate = delegate(Form form)
         {
+
             form.Show();
             form.Focus();
 
@@ -35,6 +38,8 @@ namespace Titan.UI
 
             _forms.Add(UIType.Main, new MainForm(this));
             _forms.Add(UIType.APIKeyInput, new APIKeyForm(this));
+
+            _etoApp.MainForm = GetForm(UIType.Main);
         }
 
         public void ShowForm(UIType ui)
@@ -45,8 +50,6 @@ namespace Titan.UI
             {
                 form.Show();
                 form.Focus();
-
-                _etoApp.Run(form);
             }
             else
             {
@@ -58,8 +61,25 @@ namespace Titan.UI
         {
             form.Show();
             form.Focus();
+        }
 
-            _etoApp.Run(form);
+        public void RunForm(UIType ui)
+        {
+            Form form;
+
+            if(_forms.TryGetValue(ui, out form))
+            {
+                _etoApp.Run(form);
+            }
+            else
+            {
+                _log.Error("Could not find form assigned to UI enum {UI}.", ui);
+            }
+        }
+
+        public void StartMainLoop()
+        {
+            _etoApp.Run();
         }
 
         public Form GetForm(UIType ui)
