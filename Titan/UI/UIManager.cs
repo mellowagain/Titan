@@ -39,7 +39,7 @@ namespace Titan.UI
             _forms.Add(UIType.Main, new MainForm(this));
             _forms.Add(UIType.APIKeyInput, new APIKeyForm(this));
 
-            _etoApp.MainForm = GetForm(UIType.Main);
+            _etoApp.MainForm = GetForm<MainForm>(UIType.Main);
         }
 
         public void ShowForm(UIType ui)
@@ -82,13 +82,13 @@ namespace Titan.UI
             _etoApp.Run();
         }
 
-        public Form GetForm(UIType ui)
+        public T GetForm<T>(UIType ui) where T: Form
         {
             Form form;
 
             if(_forms.TryGetValue(ui, out form))
             {
-                return form;
+                return (T) form;
             }
 
             _log.Error("Could not find form assigned to UI enum {UI}.", ui);
