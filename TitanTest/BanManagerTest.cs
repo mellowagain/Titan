@@ -1,4 +1,5 @@
-﻿using Titan.Bot.Bans;
+﻿using System;
+using Titan.Bot.Bans;
 using Titan.Util;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace TitanTest
 
         public BanManagerTest()
         {
-            _banManager.ParseApiKeyFile();
+            _banManager.APIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
         }
 
         [Fact]

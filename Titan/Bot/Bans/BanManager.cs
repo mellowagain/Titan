@@ -34,6 +34,12 @@ namespace Titan.Bot.Bans
                 {
                     APIKey = reader.ReadLine();
                 }
+
+                if(string.IsNullOrWhiteSpace(APIKey))
+                {
+                    APIKey = null;
+                    Titan.Instance.UIManager.ShowForm(UIType.APIKeyInput);
+                }
             }
 
             _log.Debug("Using Steam API key: {Key}", APIKey);
@@ -41,6 +47,8 @@ namespace Titan.Bot.Bans
 
         public void SaveAPIKeyFile()
         {
+            Environment.SetEnvironmentVariable("TITAN_WEB_API_KEY", APIKey, EnvironmentVariableTarget.User);
+
             File.WriteAllText(_apiKeyFile.ToString(), APIKey, Encoding.UTF8);
         }
 
