@@ -17,4 +17,5 @@ build_script:
 artifacts:
   - path: Titan/bin/Release/*
 
+test: off
 deploy: off
