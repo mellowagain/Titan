@@ -4,7 +4,6 @@ var config = Argument("configuration", "Release");
 var runEnvironment = Argument("runenv", "local");
 
 var buildDir = Directory("./Titan/bin/") + Directory(config);
-var testDir = Directory("./TitanTest/bin/") + Directory(config);
 
 Task("Clean")
     .Does(() =>

@@ -53,7 +53,7 @@ namespace Titan
             }
             else
             {
-                Logger.Information("The arguments --target, --mode and/or --id were omitted - opening the UI.");
+                Logger.Information("The arguments --target and --mode were omitted - opening the UI.");
                 Instance.EnableUI = true;
             }
 
