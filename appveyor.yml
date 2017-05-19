@@ -1,0 +1,20 @@
+max_jobs: 1
+image: Visual Studio 2017
+
+matrix:
+  fast_finish: true
+
+cache:
+  - packages
+  - tools
+
+platform: Any CPU
+configuration: Release
+
+build_script:
+  - ps: .\build.ps1 --runenv=ci
+
+artifacts:
+  - path: Titan/bin/Release/*
+
+deploy: off

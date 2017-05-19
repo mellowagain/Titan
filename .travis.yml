@@ -1,19 +1,15 @@
 language: csharp
 solution: Titan.sln
 
-matrix:
-  include:
-    - dotnet: 1.0.1
-      mono: none
-      dist: trusty
-    - mono: latest
-
 notifications:
   email: false
 
 install:
-  - nuget restore Titan.sln
-  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
+  - chmod +x build.sh
 script:
-  - xbuild /p:Configuration=Release Titan.sln
-  - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./TitanTest/bin/Release/TitanTest.dll
+  - ./build.sh --runenv=ci
+
+cache:
+  directories:
+    - packages
+    - tools

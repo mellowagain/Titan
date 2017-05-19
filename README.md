@@ -35,13 +35,16 @@ Download the package for your operating system, unpack it and run the `Titan.exe
 
 #### Option 2: From Source
 
-```bash
-$ git clone git@github.com:Marc3842h/Titan
-$ cd Titan
-$ xbuild /p:Configuration=Release Titan.sln
 ```
+$ git clone git@github.com:Marc3842h/Titan.git
+$ cd Titan
 
-On Windows, replace `xbuild` with `msbuild`.
+# Run this in a PowerShell terminal on Windows
+PS> .\build.ps1
+
+# Run this in a bash terminal on Linux
+$ chmod +x build.sh && ./build.sh
+```
 
 ## Usage
 
