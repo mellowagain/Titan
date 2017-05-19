@@ -1,16 +1,17 @@
-﻿using Xunit;
+﻿using Titan.Sharecode;
+using Xunit;
 
 namespace TitanTest
 {
     public class ShareCodeDecoderTest
     {
 
-        [Fact]
+        [Fact(Skip = "The Sharecode Decoder hasn't been fully implemented yet")]
         public void TestDecoder()
         {
             // TODO: Implement tests as soon as share code parser is useable
 
-            /*var decoder = new ShareCodeDecoder("CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE");
+            var decoder = new ShareCodeDecoder("CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE");
 
             if(decoder.Decode().MatchId == 3208347562318757960)
             {
@@ -19,7 +20,7 @@ namespace TitanTest
             else
             {
                 Assert.True(false);
-            }*/
+            }
         }
 
     }
