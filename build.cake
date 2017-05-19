@@ -1,4 +1,4 @@
-#tool "nuget:?package=xunit.runners&version=1.9.2"
+#tool "nuget:?package=xunit.runner.console"
 
 var config = Argument("configuration", "Release");
 var runEnvironment = Argument("runenv", "local");
@@ -39,8 +39,9 @@ Task("Run-Unit-Tests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    XUnit(GetFiles("./TitanTest/bin/" + config + "/TitanTest.dll"), new XUnitSettings()
+    XUnit2(GetFiles("./TitanTest/bin/" + config + "/Titan*.dll"), new XUnit2Settings()
     {
+        Parallelism = ParallelismOption.All,
         OutputDirectory = "./TitanTest/bin/" + config + "/results"
     });
 });
