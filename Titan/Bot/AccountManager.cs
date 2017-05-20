@@ -6,8 +6,9 @@ using Eto.Forms;
 using Newtonsoft.Json;
 using Serilog.Core;
 using SteamKit2;
+using Titan.Bot.Account;
+using Titan.Bot.Account.Implementations;
 using Titan.Bot.Mode;
-using Titan.Bot.Threads;
 using Titan.Json;
 using Titan.Logging;
 using Titan.Util;
@@ -19,8 +20,8 @@ namespace Titan.Bot
 
         private Logger _log = LogCreator.Create();
 
-        private Dictionary<int, List<Account>> _accounts = new Dictionary<int, List<Account>>();
-        private List<Account> _allAccounts = new List<Account>();
+        private Dictionary<int, List<TitanAccount>> _accounts = new Dictionary<int, List<TitanAccount>>();
+        private List<TitanAccount> _allAccounts = new List<TitanAccount>();
 
         private Dictionary<int, long> _indexEntries = new Dictionary<int, long>();
         private int _index;
@@ -59,11 +60,15 @@ namespace Titan.Bot
 
             foreach(var indexes in _parsedAccounts.Indexes)
             {
-                var accounts = new List<Account>();
+                var accounts = new List<TitanAccount>();
 
                 foreach(var account in indexes.Accounts)
                 {
-                    var acc = new Account(account);
+                    TitanAccount acc;
+                    if(account.Sentry)
+                        acc = new ProtectedAccount(account);
+                    else
+                        acc = new UnprotectedAccount(account);
 
                     if(account.Enabled)
                     {
@@ -222,7 +227,7 @@ namespace Titan.Bot
 
             _log.Debug("Starting botting using index {Index}.", _index);
 
-            List<Account> accounts;
+            List<TitanAccount> accounts;
             if(_accounts.TryGetValue(_index, out accounts))
             {
                 try
@@ -243,7 +248,7 @@ namespace Titan.Bot
                     catch (Exception ex)
                     {
                         _log.Error(ex, "Could not start reporting for account {Account}: {Message}",
-                            acc.Json.Username, ex.Message);
+                            acc.JsonAccount.Username, ex.Message);
                     }
                 }
             }

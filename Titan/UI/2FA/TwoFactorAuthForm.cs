@@ -2,7 +2,8 @@
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
-using Titan.Bot.Threads;
+using Titan.Bot.Account;
+using Titan.Bot.Account.Implementations;
 using Titan.Logging;
 
 namespace Titan.UI._2FA
@@ -14,10 +15,10 @@ namespace Titan.UI._2FA
 
         private TextBox _txtBox;
 
-        private Account _account;
+        private ProtectedAccount _account;
         private string _email;
 
-        public TwoFactorAuthForm(UIManager uiManager, Account account, string email)
+        public TwoFactorAuthForm(UIManager uiManager, ProtectedAccount account, string email)
         {
             Title = "Titan";
             ClientSize = new Size(400, 100);
@@ -60,11 +61,11 @@ namespace Titan.UI._2FA
             {
                 if(_email != null)
                 {
-                    _account.TwoFactorCode = _txtBox.Text;
+                    _account.FeedWith2FACode(_txtBox.Text);
                 }
                 else
                 {
-                    _account.AuthCode = _txtBox.Text;
+                    _account.FeedWithAuthToken(_txtBox.Text);
                 }
 
                 _log.Debug("Successfully found 2FA Code: {2FA}.", _txtBox.Text);

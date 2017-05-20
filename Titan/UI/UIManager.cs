@@ -22,10 +22,6 @@ namespace Titan.UI
         // Invoking
         public Action<Form> ShowFormInvokeDelegate = delegate(Form form)
         {
-
-            form.Show();
-            form.Focus();
-
             Titan.Instance.UIManager._etoApp.Run(form);
         };
 
@@ -73,6 +69,11 @@ namespace Titan.UI
             {
                 _log.Error("Could not find form assigned to UI enum {UI}.", ui);
             }
+        }
+
+        public void RunForm(UIType ui, Form form)
+        {
+            _etoApp.Run(form);
         }
 
         public void StartMainLoop()

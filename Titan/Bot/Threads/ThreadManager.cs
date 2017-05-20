@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
+using Titan.Bot.Account;
 using Titan.Bot.Mode;
 using Titan.Logging;
 using Titan.Util;
@@ -14,14 +15,23 @@ namespace Titan.Bot.Threads
 
         private Logger _log = LogCreator.Create();
 
-        private Dictionary<Account, Task> _taskDic = new Dictionary<Account, Task>();
+        private Dictionary<TitanAccount, Task> _taskDic = new Dictionary<TitanAccount, Task>();
 
-        public void Start(BotMode mode, Account acc, uint target, ulong matchId)
+        private int _successCount;
+
+        public void Start(BotMode mode, TitanAccount acc, uint target, ulong matchId)
         {
-            SetArguments(acc, mode, target, matchId);
+            acc.Feed(new Info
+            {
+                Mode = mode,
+                Target = target,
+                MatchID = matchId
+            });
+
+            _successCount = 0;
 
             _log.Debug("Starting reporting thread for {Target} in match {MatchId} " +
-                       "using account {Account}.", target, matchId, acc.Json.Username);
+                       "using account {Account}.", target, matchId, acc.JsonAccount.Username);
 
             _taskDic.Add(acc, Task.Run(() =>
             {
@@ -29,18 +39,32 @@ namespace Titan.Bot.Threads
 
                 try
                 {
-                    var result = WaitFor<bool>.Run(TimeSpan.FromSeconds(60), acc.Process);
+                    var result = WaitFor<Result>.Run(TimeSpan.FromSeconds(60), acc.Start);
 
-                    if(!result)
+                    switch(result)
                     {
-                        _log.Error("Could not report {Target} with account {Account}.",
-                            target, acc.Json.Username);
+                        case Result.Success:
+                            _log.Information("Successfully sent a {Mode} to {Target} with account {Account}.",
+                                mode.ToString().ToLower(), target, acc.JsonAccount.Username);
+                            _successCount++;
+                            break;
+                        case Result.AlreadyLoggedInSomewhereElse:
+                            _log.Error("Could not report with account {Account}. The account is " +
+                                         "already logged in somewhere else.", acc.JsonAccount.Username);
+                            break;
+                        case Result.AccountBanned:
+                            _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
+                                         "have not been submitted.");
+                            break;
+                        case Result.TimedOut:
+                            _log.Error("Processing thread for {Account} has timed out.");
+                            break;
                     }
                 }
                 catch (TimeoutException ex)
                 {
                     _log.Error("Connection to account {Account} timed out. It was not possible to " +
-                               "report the target after {Timespan} seconds.", acc.Json.Username, ex.Message);
+                               "report the target after {Timespan} seconds.", acc.JsonAccount.Username, ex.Message);
                     timedOut = true;
                 }
                 finally
@@ -73,13 +97,6 @@ namespace Titan.Bot.Threads
 
                 _log.Information("Successfully finished botting.");
             });
-        }
-
-        private void SetArguments(Account acc, BotMode mode, uint target, ulong matchId)
-        {
-            acc.Mode = mode;
-            acc.Target = target;
-            acc.MatchID = matchId;
         }
 
     }
