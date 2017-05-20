@@ -194,6 +194,8 @@ namespace Titan.Bot.Account.Implementations
                     _gameCoordinator.Send(clientHello, 730);
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
+                    _log.Information("Opening UI form to get the 2FA Steam Guard App Code...");
+
                     Titan.Instance.UIManager.RunForm(UIType.TwoFactorAuthentification,
                         new TwoFactorAuthForm(Titan.Instance.UIManager, this, null));
 
@@ -201,8 +203,12 @@ namespace Titan.Bot.Account.Implementations
                     {
                         /* Wait until the Form inputted the 2FA code from the Steam Guard App */
                     }
+
+                    _log.Information("Received 2FA Code: {Code}", _2FactorCode);
                     break;
                 case EResult.AccountLogonDenied:
+                    _log.Information("Opening UI form to get the Auth Token from EMail...");
+
                     Titan.Instance.UIManager.RunForm(UIType.TwoFactorAuthentification,
                         new TwoFactorAuthForm(Titan.Instance.UIManager, this, callback.EmailDomain));
 
@@ -210,6 +216,8 @@ namespace Titan.Bot.Account.Implementations
                     {
                         /* Wait until the Form inputted the Auth code from the Email Steam sent */
                     }
+
+                    _log.Information("Received Auth Token: {Code}", _authCode);
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");
