@@ -6,14 +6,12 @@ namespace TitanTest
     public class ShareCodeDecoderTest
     {
 
-        [Fact(Skip = "The Sharecode Decoder hasn't been fully implemented yet")]
+        [Fact]
         public void TestDecoder()
         {
-            // TODO: Implement tests as soon as share code parser is useable
-
             var decoder = new ShareCodeDecoder("CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE");
 
-            if(decoder.Decode().MatchId == 3208347562318757960)
+            if(decoder.Decode().MatchID == 3208347562318757960)
             {
                 Assert.True(true, "The decoded Match ID is 3208347562318757960");
             }
