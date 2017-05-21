@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Serilog.Core;
-using Titan.Logging;
 using Titan.Util;
 
 namespace Titan.Sharecode
@@ -9,16 +7,12 @@ namespace Titan.Sharecode
     public class ShareCodeDecoder
     {
 
-        private Logger _log = LogCreator.Create();
-
         private string _shareCode;
         private string _dict = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefhijkmnopqrstuvwxyz23456789";
 
         public ShareCodeDecoder(string shareCode)
         {
             _shareCode = new Regex("CSGO|-").Replace(shareCode, "").Reverse();
-
-            _log.Debug("Output Sharecode after Regex replace and reverse: {Output}", _shareCode);
         }
 
         public ShareCodeInfo Decode()
