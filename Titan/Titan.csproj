@@ -179,6 +179,7 @@
     <EmbeddedResource Include="Resources\Steam.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Content Include="Resources\MainForm.png" />
     <Content Include="Resources\Text.png" />
     <EmbeddedResource Include="Resources\Exit.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
