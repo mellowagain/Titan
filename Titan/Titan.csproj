@@ -155,7 +155,6 @@
     <Compile Include="UI\APIKey\Commands\SteamKeySite.cs" />
     <Compile Include="UI\Main\Commands\About.cs" />
     <Compile Include="UI\Main\Commands\Links\JsonValidator.cs" />
-    <Compile Include="UI\Main\Commands\Links\SharecodeFinder.cs" />
     <Compile Include="UI\Main\Commands\Links\SteamIO.cs" />
     <Compile Include="UI\Main\Commands\Quit.cs" />
     <Compile Include="UI\Main\MainForm.cs" />
@@ -163,6 +162,7 @@
     <Compile Include="UI\UIManager.cs" />
     <Compile Include="UI\UIType.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\SharecodeUtil.cs" />
     <Compile Include="Util\SteamUtil.cs" />
     <Compile Include="Util\StringUtil.cs" />
     <Compile Include="Util\TimeUtil.cs" />

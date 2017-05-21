@@ -19,6 +19,7 @@ It provides a advanced set of features and high effiency when compared against o
 * Support for both a graphical user interface (GUI) and command line.
 * High performance thanks to multi-threaded reporting and commending (when compared to other report bots).
 * Ban checking for both target and bot accounts. (Requires own generated [Steam Web API](https://steamcommunity.com/dev/apikey) key)
+* Integrated Sharecode parser that automaticly pauses the Match ID from a CS:GO Demo Share URL
 * Automatic index timer which outputs when an account has finished its 6 hours cooldown.
 * Cross-platform compatibility, supports both Windows and Linux. Darwin support is coming soon.
 * No installation necessary, every release is provided as binary archives.
@@ -58,7 +59,7 @@ On Windows, run Titan without the `mono` part at the beginning.
 
 If no arguments have been passed with Titan, the GUI will open:
 
-![GUI](http://image.prntscr.com/image/d2c471aa6bc54ebbb4f956d6b9ea135e.png)
+![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/MainForm.png)
 
 ## Benchmarks
 

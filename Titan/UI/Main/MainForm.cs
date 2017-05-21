@@ -32,8 +32,8 @@ namespace Titan.UI.Main
 
             // Selected arguments for the UI
             _targetBox = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
-            _matchIDBox = new TextBox { PlaceholderText = "3203363151840018511 (optional)" };
-            _matchIDLabel = new Label { Text = "Match ID" };
+            _matchIDBox = new TextBox { PlaceholderText = "CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE" };
+            _matchIDLabel = new Label { Text = "Share Link (optional)" };
 
             _dropDown = new DropDown { Items = { "Report", "Commend" }, SelectedIndex = 0 };
             _dropDown.SelectedIndexChanged += OnDropDownIndexChange;
@@ -78,8 +78,7 @@ namespace Titan.UI.Main
                 {
                     new ButtonMenuItem { Text = "&Links", Items = {
                         new SteamIO(),
-                        new JsonValidator(),
-                        new SharecodeFinder()
+                        new JsonValidator()
                     }}
                 },
                 AboutItem = new About(),
@@ -93,7 +92,7 @@ namespace Titan.UI.Main
 
             if(!string.IsNullOrWhiteSpace(_targetBox.Text))
             {
-                var matchid = string.IsNullOrWhiteSpace(_matchIDBox.Text) ? 8 : Convert.ToUInt64(_matchIDBox.Text);
+                var matchid = string.IsNullOrWhiteSpace(_matchIDBox.Text) ? 8 : SharecodeUtil.Parse(_matchIDBox.Text);
 
                 var steamId = SteamUtil.Parse(_targetBox.Text);
 
