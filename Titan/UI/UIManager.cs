@@ -22,7 +22,8 @@ namespace Titan.UI
         // Invoking
         public Action<Form> ShowFormInvokeDelegate = delegate(Form form)
         {
-            Titan.Instance.UIManager._etoApp.Run(form);
+            form.Show();
+            form.Focus();
         };
 
         public UIManager()
@@ -55,6 +56,12 @@ namespace Titan.UI
         {
             form.Show();
             form.Focus();
+        }
+
+        public void ShowForm(UIType ui, Dialog dialog)
+        {
+            dialog.Focus();
+            dialog.ShowModal();
         }
 
         public void RunForm(UIType ui)

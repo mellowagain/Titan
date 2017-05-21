@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
+using Eto.Forms;
 using Serilog.Core;
 using SteamKit2;
 using SteamKit2.GC;
@@ -144,7 +145,7 @@ namespace Titan.Bot.Account.Implementations
             _reconnects++;
 
             if(_reconnects <= 5 && Result != Result.Success &&
-               Result != Result.AlreadyLoggedInSomewhereElse || !IsRunning )
+               Result != Result.AlreadyLoggedInSomewhereElse || IsRunning )
             {
                 _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
@@ -196,10 +197,10 @@ namespace Titan.Bot.Account.Implementations
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                     _log.Information("Opening UI form to get the 2FA Steam Guard App Code...");
 
-                    Titan.Instance.UIManager.RunForm(UIType.TwoFactorAuthentification,
-                        new TwoFactorAuthForm(Titan.Instance.UIManager, this, null));
+                    Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(UIType.TwoFactorAuthentification,
+                        new TwoFactorAuthForm(Titan.Instance.UIManager, this, null)));
 
-                    while(_2FactorCode != null)
+                    while(_2FactorCode == null)
                     {
                         /* Wait until the Form inputted the 2FA code from the Steam Guard App */
                     }
@@ -209,10 +210,10 @@ namespace Titan.Bot.Account.Implementations
                 case EResult.AccountLogonDenied:
                     _log.Information("Opening UI form to get the Auth Token from EMail...");
 
-                    Titan.Instance.UIManager.RunForm(UIType.TwoFactorAuthentification,
-                        new TwoFactorAuthForm(Titan.Instance.UIManager, this, callback.EmailDomain));
+                    Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(UIType.TwoFactorAuthentification,
+                        new TwoFactorAuthForm(Titan.Instance.UIManager, this, callback.EmailDomain)));
 
-                    while(_authCode != null)
+                    while(_authCode == null)
                     {
                         /* Wait until the Form inputted the Auth code from the Email Steam sent */
                     }
