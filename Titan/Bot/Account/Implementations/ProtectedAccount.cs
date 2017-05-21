@@ -124,14 +124,6 @@ namespace Titan.Bot.Account.Implementations
                     TwoFactorCode = _2FactorCode,
                     SentryFileHash = sentryHash
                 });
-
-                _log.Debug("Successfully connected to Steam. Logging in...");
-
-                _steamUser.LogOn(new SteamUser.LogOnDetails
-                {
-                    Username = JsonAccount.Username,
-                    Password = JsonAccount.Password
-                });
             }
             else
             {
@@ -147,7 +139,7 @@ namespace Titan.Bot.Account.Implementations
             if(_reconnects <= 5 && Result != Result.Success &&
                Result != Result.AlreadyLoggedInSomewhereElse || IsRunning )
             {
-                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
+                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({_count}/5)", _reconnects);
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
 
@@ -206,6 +198,8 @@ namespace Titan.Bot.Account.Implementations
                     }
 
                     _log.Information("Received 2FA Code: {Code}", _2FactorCode);
+
+                    Thread.Sleep(5000);
                     break;
                 case EResult.AccountLogonDenied:
                     _log.Information("Opening UI form to get the Auth Token from EMail...");
@@ -219,6 +213,8 @@ namespace Titan.Bot.Account.Implementations
                     }
 
                     _log.Information("Received Auth Token: {Code}", _authCode);
+
+                    Thread.Sleep(5000);
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");

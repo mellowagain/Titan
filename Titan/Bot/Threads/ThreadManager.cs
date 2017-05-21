@@ -17,7 +17,7 @@ namespace Titan.Bot.Threads
 
         private Dictionary<TitanAccount, Task> _taskDic = new Dictionary<TitanAccount, Task>();
 
-        private int _successCount;
+        private int _count; // Amount of accounts that successfully reported or commended
 
         public void Start(BotMode mode, TitanAccount acc, uint target, ulong matchId)
         {
@@ -28,7 +28,7 @@ namespace Titan.Bot.Threads
                 MatchID = matchId
             });
 
-            _successCount = 0;
+            _count = 0;
 
             _log.Debug("Starting reporting thread for {Target} in match {MatchId} " +
                        "using account {Account}.", target, matchId, acc.JsonAccount.Username);
@@ -39,6 +39,7 @@ namespace Titan.Bot.Threads
 
                 try
                 {
+                    acc.StartTick = DateTime.Now.Ticks;
                     var result = WaitFor<Result>.Run(TimeSpan.FromSeconds(60), acc.Start);
 
                     switch(result)
@@ -46,7 +47,7 @@ namespace Titan.Bot.Threads
                         case Result.Success:
                             _log.Information("Successfully sent a {Mode} to {Target} with account {Account}.",
                                 mode.ToString().ToLower(), target, acc.JsonAccount.Username);
-                            _successCount++;
+                            _count++;
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
                             _log.Error("Could not report with account {Account}. The account is " +
@@ -55,6 +56,7 @@ namespace Titan.Bot.Threads
                         case Result.AccountBanned:
                             _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
                                          "have not been submitted.");
+                            _count++;
                             break;
                         case Result.TimedOut:
                             _log.Error("Processing thread for {Account} has timed out.");
@@ -63,9 +65,19 @@ namespace Titan.Bot.Threads
                 }
                 catch (TimeoutException ex)
                 {
-                    _log.Error("Connection to account {Account} timed out. It was not possible to " +
-                               "report the target after {Timespan} seconds.", acc.JsonAccount.Username, ex.Message);
-                    timedOut = true;
+                    var timeSpent = new DateTime(DateTime.Now.Ticks - acc.StartTick);
+
+                    if(timeSpent.Second > 60)
+                    {
+                        _log.Error("Connection to account {Account} timed out. It was not possible to " +
+                                   "report the target after {Timespan} seconds.", acc.JsonAccount.Username, timeSpent.Second);
+                        timedOut = true;
+                    }
+                    else
+                    {
+                        _log.Error("The {Mode} thread for {Account} already timed out after {Time} seconds.",
+                            mode.ToString().ToLower(), acc.JsonAccount.Username, timeSpent.Second);
+                    }
                 }
                 finally
                 {
@@ -87,15 +99,23 @@ namespace Titan.Bot.Threads
         {
             Task.Run(() =>
             {
+                Info info = null;
+
                 foreach(var pair in _taskDic)
                 {
                     while(!pair.Value.IsCompleted)
                     {
                         Thread.Sleep(TimeSpan.FromSeconds(5));
                     }
+
+                    if(info == null) info = pair.Key._info;
                 }
 
-                _log.Information("Successfully finished botting.");
+                if(info != null)
+                {
+                    _log.Information("Successfully {mode}ed {Target} {_count}x.",
+                        info.Mode.ToString().ToLower(), info.Target, _count);
+                }
             });
         }
 
