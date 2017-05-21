@@ -113,7 +113,7 @@ namespace Titan.Bot.Threads
 
                 if(info != null)
                 {
-                    _log.Information("Successfully {mode}ed {Target} {_count}x.",
+                    _log.Information("Successfully {mode}ed {Target} {Count}x.",
                         info.Mode.ToString().ToLower(), info.Target, _count);
                 }
             });

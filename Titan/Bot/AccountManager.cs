@@ -94,7 +94,7 @@ namespace Titan.Bot
 
             if(_allAccounts.Count < 11)
             {
-                _log.Warning("Less than 11 (only {_count}) accounts have been parsed. Atleast 11 accounts " +
+                _log.Warning("Less than 11 (only {Count}) accounts have been parsed. Atleast 11 accounts " +
                              "are required to get a target into Overwatch.", _allAccounts.Count);
                 MessageBox.Show("You have less than 11 accounts specified. There are atleast 11 " +
                                 "reports needed to get a target into Overwatch.", MessageBoxType.Warning);
@@ -108,7 +108,7 @@ namespace Titan.Bot
                     list.Add(new { Index = keyPair.Key, keyPair.Value.Count });
                 }
 
-                _log.Information("Account file has been successfully parsed. {_count} accounts " +
+                _log.Information("Account file has been successfully parsed. {Count} accounts " +
                                  "have been parsed. Details: {@List}", _allAccounts.Count, list);
             }
 
