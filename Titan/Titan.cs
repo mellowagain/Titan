@@ -88,14 +88,8 @@ namespace Titan
 
                     if(mode == BotMode.Report)
                     {
-                        if(string.IsNullOrEmpty(Instance.Options.MatchId))
-                        {
-                            Logger.Error("Match ID was not provided when starting Titan!");
-                            return -1;
-                        }
-
                         Instance.AccountManager.StartBotting(mode, SteamUtil.Parse(Instance.Options.Target),
-                            Convert.ToUInt64(Instance.Options.MatchId));
+                            Instance.Options.MatchId != null ? Convert.ToUInt64(Instance.Options.MatchId) : 8);
                     }
                 }
 
