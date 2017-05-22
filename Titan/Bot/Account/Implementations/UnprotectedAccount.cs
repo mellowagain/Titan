@@ -78,6 +78,8 @@ namespace Titan.Bot.Account.Implementations
             {
                 _steamClient.Disconnect();
             }
+
+            IsRunning = false;
         }
 
         ////////////////////////////////////////////////////

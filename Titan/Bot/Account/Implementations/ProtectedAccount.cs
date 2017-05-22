@@ -93,6 +93,8 @@ namespace Titan.Bot.Account.Implementations
             {
                 _steamClient.Disconnect();
             }
+
+            IsRunning = false;
         }
 
         ////////////////////////////////////////////////////
@@ -140,7 +142,7 @@ namespace Titan.Bot.Account.Implementations
             if(_reconnects <= 5 && (Result != Result.Success ||
                Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
             {
-                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
+                _log.Information("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
 
@@ -307,7 +309,7 @@ namespace Titan.Bot.Account.Implementations
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            _log.Information("Successfully reported. Confirmation ID: {Id}", response.Body.confirmation_id);
+            _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
 
             Result = Result.Success;
 

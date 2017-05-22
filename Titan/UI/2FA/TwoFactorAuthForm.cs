@@ -20,7 +20,7 @@ namespace Titan.UI._2FA
 
         public TwoFactorAuthForm(UIManager uiManager, ProtectedAccount account, string email)
         {
-            Title = "Titan";
+            Title = "Titan - " + account.JsonAccount.Username;
             ClientSize = new Size(400, 100);
             Resizable = false;
             Icon = uiManager.SharedResources.TITAN_ICON;

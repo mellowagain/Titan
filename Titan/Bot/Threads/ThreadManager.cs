@@ -40,7 +40,10 @@ namespace Titan.Bot.Threads
                 try
                 {
                     acc.StartTick = DateTime.Now.Ticks;
-                    var result = WaitFor<Result>.Run(TimeSpan.FromSeconds(60), acc.Start);
+
+                    // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
+                    var result = WaitFor<Result>.Run(acc.JsonAccount.Sentry ?
+                        TimeSpan.FromMinutes(3) : TimeSpan.FromSeconds(60), acc.Start);
 
                     switch(result)
                     {
@@ -63,21 +66,13 @@ namespace Titan.Bot.Threads
                             break;
                     }
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException)
                 {
                     var timeSpent = new DateTime(DateTime.Now.Ticks - acc.StartTick);
 
-                    if(timeSpent.Second > 60)
-                    {
-                        _log.Error("Connection to account {Account} timed out. It was not possible to " +
-                                   "report the target after {Timespan} seconds.", acc.JsonAccount.Username, timeSpent.Second);
-                        timedOut = true;
-                    }
-                    else
-                    {
-                        _log.Error("The {Mode} thread for {Account} already timed out after {Time} seconds.",
-                            mode.ToString().ToLower(), acc.JsonAccount.Username, timeSpent.Second);
-                    }
+                    _log.Error("Connection to account {Account} timed out. It was not possible to " +
+                               "report the target after {Timespan} seconds.", acc.JsonAccount.Username, timeSpent.Second);
+                    timedOut = true;
                 }
                 finally
                 {
