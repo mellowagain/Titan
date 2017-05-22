@@ -12,7 +12,7 @@ platform: Any CPU
 configuration: Release
 
 build_script:
-  - ps: .\build.ps1 --runenv=ci
+  - ps: .\build.ps1
 
 artifacts:
   - path: Titan/bin/Release/*.exe

@@ -7,7 +7,7 @@ notifications:
 install:
   - chmod +x build.sh
 script:
-  - ./build.sh --runenv=ci
+  - ./build.sh
 
 cache:
   directories:
