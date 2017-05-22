@@ -15,7 +15,7 @@ build_script:
   - ps: .\build.ps1 --runenv=ci
 
 artifacts:
-  - path: Titan/bin/Release/*
+  - path: Titan/bin/Release/*.exe
 
 test: off
 deploy: off
