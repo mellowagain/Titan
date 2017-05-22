@@ -30,8 +30,8 @@ namespace Titan.Bot.Threads
 
             _count = 0;
 
-            _log.Debug("Starting reporting thread for {Target} in match {MatchId} " +
-                       "using account {Account}.", target, matchId, acc.JsonAccount.Username);
+            _log.Debug("Starting {Mode} thread for {Target} in match {MatchId} " +
+                       "using account {Account}.", mode.ToString().ToLower() + "ing", target, matchId, acc.JsonAccount.Username);
 
             _taskDic.Add(acc, Task.Run(() =>
             {
@@ -113,8 +113,8 @@ namespace Titan.Bot.Threads
 
                 if(info != null)
                 {
-                    _log.Information("Successfully {mode}ed {Target} {Count}x.",
-                        info.Mode.ToString().ToLower(), info.Target, _count);
+                    _log.Information("Successfully {mode} {Target} {Count}x.",
+                        info.Mode.ToString().ToLower() + "ed", info.Target, _count);
                 }
             });
         }
