@@ -10,7 +10,7 @@ namespace Titan.Logging
     public class LogCreator
     {
 
-        public static DirectoryInfo LogDirectory = new DirectoryInfo(Environment.CurrentDirectory +
+        private static DirectoryInfo _logDir = new DirectoryInfo(Environment.CurrentDirectory +
                                                                      Path.DirectorySeparatorChar + "logs");
 
         public static Logger Create(string name)
@@ -18,7 +18,7 @@ namespace Titan.Logging
             return new LoggerConfiguration()
                 .WriteTo.LiterateConsole(outputTemplate:
                     "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
-                .WriteTo.Async(a => a.RollingFile(Path.Combine(LogDirectory.ToString(),
+                .WriteTo.Async(a => a.RollingFile(Path.Combine(_logDir.ToString(),
                         name + "-{Date}.log"), outputTemplate:
                     "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
                 .MinimumLevel.Debug() // TODO: Change this to "INFO" on release.
