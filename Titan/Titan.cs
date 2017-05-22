@@ -76,7 +76,7 @@ namespace Titan
 
             if(Instance.AccountManager.ParseAccountFile())
             {
-                Logger.Information("Hello and welcome to Titan.");
+                Logger.Information("Hello and welcome to Titan v1.4.0.");
 
                 if(Instance.EnableUI)
                 {
