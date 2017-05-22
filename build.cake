@@ -1,7 +1,6 @@
 #tool "nuget:?package=xunit.runner.console"
 
 var config = Argument("configuration", "Release");
-var runEnvironment = Argument("runenv", "local");
 
 var buildDir = Directory("./Titan/bin/") + Directory(config);
 
@@ -45,10 +44,5 @@ Task("Run-Unit-Tests")
     });
 });
 
-if(runEnvironment.ToLower() == "ci") {
-    Task("Default").IsDependentOn("Run-Unit-Tests");
-} else {
-    Task("Default").IsDependentOn("Build");
-}
-
+Task("Default").IsDependentOn("Run-Unit-Tests");
 RunTarget("Default");
