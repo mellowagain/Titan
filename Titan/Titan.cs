@@ -84,7 +84,7 @@ namespace Titan
                 }
                 else
                 {
-                    var mode = ModeParser.Parse(Instance.Options.Mode);
+                    var mode = BotModeParser.Parse(Instance.Options.Mode);
 
                     if(mode == BotMode.Report)
                     {

@@ -140,7 +140,6 @@
     <Compile Include="Bot\Bans\BanInfo.cs" />
     <Compile Include="Bot\Bans\BanManager.cs" />
     <Compile Include="Bot\Mode\BotMode.cs" />
-    <Compile Include="Bot\Mode\ModeParser.cs" />
     <Compile Include="Bot\Threads\ThreadManager.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Json\JsonIndex.cs" />
