@@ -38,6 +38,12 @@ namespace Titan.Bot
             _indexFile = new FileInfo(Path.Combine(Environment.CurrentDirectory, "index.json"));
             _index = 0;
 
+            var dirInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "sentries"));
+            if(!dirInfo.Exists)
+            {
+                dirInfo.Create();
+            }
+
             _log.Debug("Titan Account Manager initialized on {TimeString}. ({UnixTimestamp})",
                 DateTime.Now.ToShortTimeString(), Math.Round((double) TimeUtil.GetCurrentTicks()));
         }

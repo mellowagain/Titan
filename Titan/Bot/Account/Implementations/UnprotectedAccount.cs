@@ -107,8 +107,8 @@ namespace Titan.Bot.Account.Implementations
         {
             _reconnects++;
 
-            if(_reconnects <= 5 && Result != Result.Success &&
-               Result != Result.AlreadyLoggedInSomewhereElse || !IsRunning )
+            if(_reconnects <= 5 && (Result != Result.Success &&
+               Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
             {
                 _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 

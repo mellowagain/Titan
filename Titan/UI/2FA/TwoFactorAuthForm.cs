@@ -61,11 +61,11 @@ namespace Titan.UI._2FA
             {
                 if(_email != null)
                 {
-                    _account.FeedWith2FACode(_txtBox.Text);
+                    _account.FeedWithAuthToken(_txtBox.Text);
                 }
                 else
                 {
-                    _account.FeedWithAuthToken(_txtBox.Text);
+                    _account.FeedWith2FACode(_txtBox.Text);
                 }
 
                 _log.Debug("Successfully found 2FA Code: {2FA}.", _txtBox.Text);

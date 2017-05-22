@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using Eto.Forms;
 using Serilog.Core;
@@ -136,8 +137,8 @@ namespace Titan.Bot.Account.Implementations
         {
             _reconnects++;
 
-            if(_reconnects <= 5 && Result != Result.Success &&
-               Result != Result.AlreadyLoggedInSomewhereElse || IsRunning )
+            if(_reconnects <= 5 && (Result != Result.Success ||
+               Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
             {
                 _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
@@ -198,8 +199,6 @@ namespace Titan.Bot.Account.Implementations
                     }
 
                     _log.Information("Received 2FA Code: {Code}", _2FactorCode);
-
-                    Thread.Sleep(5000);
                     break;
                 case EResult.AccountLogonDenied:
                     _log.Information("Opening UI form to get the Auth Token from EMail...");
@@ -213,8 +212,6 @@ namespace Titan.Bot.Account.Implementations
                     }
 
                     _log.Information("Received Auth Token: {Code}", _authCode);
-
-                    Thread.Sleep(5000);
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");
@@ -263,6 +260,8 @@ namespace Titan.Bot.Account.Implementations
                     hash = sha.ComputeHash(fwr);
                 }
             }
+
+            _log.Debug("Successfully opened / created sentry file. Hash: {Hash}", Encoding.UTF8.GetString(hash));
 
             _steamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
             {
