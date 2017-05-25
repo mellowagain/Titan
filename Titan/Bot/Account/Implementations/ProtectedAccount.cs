@@ -222,6 +222,14 @@ namespace Titan.Bot.Account.Implementations
 
                     IsRunning = false;
                     break;
+                case EResult.RateLimitExceeded:
+                    _log.Debug("Steam Rate Limit has been reached. Please try it again in a few minutes...");
+
+                    Stop();
+
+                    IsRunning = false;
+                    Result = Result.RateLimit;
+                    break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
 

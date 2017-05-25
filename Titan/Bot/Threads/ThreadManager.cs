@@ -64,6 +64,14 @@ namespace Titan.Bot.Threads
                         case Result.TimedOut:
                             _log.Error("Processing thread for {Account} has timed out.");
                             break;
+                        case Result.SentryRequired:
+                            _log.Error("The account has 2FA enabled. Please set {sentry} to {true} " +
+                                       "in the accounts.json file.", "sentry", true);
+                            break;
+                        case Result.RateLimit:
+                            _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
+                                       "few minutes.");
+                            break;
                     }
                 }
                 catch (TimeoutException)

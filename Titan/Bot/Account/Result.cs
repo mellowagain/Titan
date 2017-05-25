@@ -6,7 +6,9 @@
         Success,
         AlreadyLoggedInSomewhereElse,
         AccountBanned,
-        TimedOut
+        TimedOut,
+        SentryRequired,
+        RateLimit
 
     }
 }

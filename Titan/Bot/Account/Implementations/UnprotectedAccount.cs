@@ -161,13 +161,28 @@ namespace Titan.Bot.Account.Implementations
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                 case EResult.AccountLogonDenied:
-                    _log.Error("Two Factor Authentification is activated on this account. Please set " +
+                    _log.Debug("Two Factor Authentification is activated on this account. Please set " +
                                "Sentry to {true} in the accounts.json for this account.", true);
+
+                    Stop();
+
+                    IsRunning = false;
+                    Result = Result.SentryRequired;
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");
+
                     Stop();
+
                     IsRunning = false;
+                    break;
+                case EResult.RateLimitExceeded:
+                    _log.Debug("Steam Rate Limit has been reached. Please try it again in a few minutes...");
+
+                    Stop();
+
+                    IsRunning = false;
+                    Result = Result.RateLimit;
                     break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
