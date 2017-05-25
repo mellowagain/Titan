@@ -34,7 +34,7 @@ namespace Titan.UI._2FA
             var btn = new Button { Text = "Continue" };
             btn.Click += OnButtonClick;
 
-            var msg = email != null ? "Please input the Auth Code sent \nto to " + email + "."
+            var msg = email != null ? "Please input the Auth Code sent \nto your email at " + email + "."
                 : "Please input the 2FA Code from \nthe Steam App.";
 
             Content = new TableLayout
