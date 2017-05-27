@@ -6,7 +6,7 @@ using SteamKit2;
 using Titan.Logging;
 using Titan.UI;
 
-namespace Titan.Bot.Bans
+namespace Titan.Bans
 {
     public class BanManager
     {

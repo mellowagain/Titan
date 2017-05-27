@@ -1,4 +1,4 @@
-﻿namespace Titan.Bot.Account
+﻿namespace Titan.Account
 {
     public enum Result
     {

@@ -2,8 +2,8 @@
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
-using Titan.Bot.Mode;
 using Titan.Logging;
+using Titan.Mode;
 using Titan.UI.Main.Commands;
 using Titan.UI.Main.Commands.Links;
 using Titan.Util;

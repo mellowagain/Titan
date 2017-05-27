@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
-using Titan.Bot.Account;
-using Titan.Bot.Mode;
+using Titan.Account;
 using Titan.Logging;
+using Titan.Mode;
 using Titan.Util;
 
-namespace Titan.Bot.Threads
+namespace Titan.Managers
 {
     public class ThreadManager
     {

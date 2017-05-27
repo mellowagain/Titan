@@ -3,7 +3,7 @@ using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using Titan.Json;
 
-namespace Titan.Bot.Account
+namespace Titan.Account
 {
     public abstract class TitanAccount
     {

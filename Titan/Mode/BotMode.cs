@@ -1,10 +1,10 @@
 ﻿using Serilog.Core;
 using Titan.Logging;
 
-namespace Titan.Bot.Mode
+namespace Titan.Mode
 {
 
-    public enum BotMode : int
+    public enum BotMode
     {
 
         Unknown = -1,

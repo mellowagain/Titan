@@ -1,4 +1,4 @@
-﻿using Titan.Bot.Mode;
+﻿using Titan.Mode;
 using Xunit;
 
 namespace TitanTest

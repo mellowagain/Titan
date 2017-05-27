@@ -1,8 +1,8 @@
 ﻿using System;
-using Titan.Bot.Mode;
+using Titan.Mode;
 using Titan.Util;
 
-namespace Titan.Bot.Account
+namespace Titan.Account
 {
     public class Info
     {

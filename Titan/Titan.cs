@@ -5,12 +5,11 @@ using CommandLine;
 using Serilog;
 using Serilog.Core;
 using SteamKit2;
+using Titan.Bans;
 using Titan.Bootstrap;
-using Titan.Bot;
-using Titan.Bot.Bans;
-using Titan.Bot.Mode;
-using Titan.Bot.Threads;
 using Titan.Logging;
+using Titan.Managers;
+using Titan.Mode;
 using Titan.UI;
 using Titan.Util;
 

@@ -6,14 +6,14 @@ using Eto.Forms;
 using Newtonsoft.Json;
 using Serilog.Core;
 using SteamKit2;
-using Titan.Bot.Account;
-using Titan.Bot.Account.Implementations;
-using Titan.Bot.Mode;
+using Titan.Account;
+using Titan.Account.Implementations;
 using Titan.Json;
 using Titan.Logging;
+using Titan.Mode;
 using Titan.Util;
 
-namespace Titan.Bot
+namespace Titan.Managers
 {
     public class AccountManager
     {

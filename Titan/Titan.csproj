@@ -130,23 +130,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\Implementations\ProtectedAccount.cs" />
+    <Compile Include="Account\Implementations\UnprotectedAccount.cs" />
+    <Compile Include="Account\Info.cs" />
+    <Compile Include="Account\Result.cs" />
+    <Compile Include="Account\TitanAccount.cs" />
+    <Compile Include="Bans\BanInfo.cs" />
+    <Compile Include="Bans\BanManager.cs" />
     <Compile Include="Bootstrap\Options.cs" />
-    <Compile Include="Bot\AccountManager.cs" />
-    <Compile Include="Bot\Account\TitanAccount.cs" />
-    <Compile Include="Bot\Account\Implementations\ProtectedAccount.cs" />
-    <Compile Include="Bot\Account\Implementations\UnprotectedAccount.cs" />
-    <Compile Include="Bot\Account\Info.cs" />
-    <Compile Include="Bot\Account\Result.cs" />
-    <Compile Include="Bot\Bans\BanInfo.cs" />
-    <Compile Include="Bot\Bans\BanManager.cs" />
-    <Compile Include="Bot\Mode\BotMode.cs" />
-    <Compile Include="Bot\Threads\ThreadManager.cs" />
     <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
     <Compile Include="Logging\LogCreator.cs" />
+    <Compile Include="Managers\AccountManager.cs" />
+    <Compile Include="Mode\BotMode.cs" />
     <Compile Include="Sharecode\ShareCodeDecoder.cs" />
     <Compile Include="Sharecode\ShareCodeInfo.cs" />
+    <Compile Include="Managers\ThreadManager.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\2FA\TwoFactorAuthForm.cs" />
