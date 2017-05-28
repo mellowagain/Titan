@@ -116,7 +116,7 @@ namespace Titan.Account.Implementations
                     var fileBytes = File.ReadAllBytes(_file.ToString());
                     sentryHash = CryptoHelper.SHAHash(fileBytes);
 
-                    _log.Debug("Hash for sentry file found: {@Hash}", sentryHash);
+                    _log.Debug("Hash for sentry file found: {Hash}", Encoding.UTF8.GetString(sentryHash));
                 }
 
                 _steamUser.LogOn(new SteamUser.LogOnDetails
@@ -146,10 +146,16 @@ namespace Titan.Account.Implementations
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
 
+                _log.Debug(">>> Connecting to Steam using Steam Client.");
+                
                 _steamClient.Connect();
+                
+                _log.Debug(">>> Success.");
             }
             else
             {
+                _log.Debug(">>> Forcefully disconnected from Steam. {Result} / {Reconnects} / {IsRunning}",
+                    Result, _reconnects, IsRunning);
                 _log.Debug("Successfully disconnected from Steam.");
                 IsRunning = false;
             }

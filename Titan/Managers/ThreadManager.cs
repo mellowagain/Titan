@@ -48,8 +48,6 @@ namespace Titan.Managers
                     switch(result)
                     {
                         case Result.Success:
-                            _log.Information("Successfully sent a {Mode} to {Target} with account {Account}.",
-                                mode.ToString().ToLower(), target, acc.JsonAccount.Username);
                             _count++;
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
