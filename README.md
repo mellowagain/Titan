@@ -14,6 +14,9 @@ Titan `/ˈtaɪtən/` is an advanced Counter-Strike Global Offensive report and c
 Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch.
 It provides a advanced set of features and high effiency when compared against other report and commendation bots.
 
+**Development will be hold until the 15th of June 2017 as [Glacier](github.com/Marc3842h/Glacier) takes priority.
+Support will still be available on the issues tracker and Pull Requests will be merged**.
+
 ## Features
 
 * Support for both a graphical user interface (GUI) and command line.

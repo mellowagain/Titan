@@ -2,6 +2,10 @@
 using System.IO;
 using System.Threading;
 using CommandLine;
+using Common.Logging;
+using Common.Logging.Simple;
+using Quartz;
+using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
 using SteamKit2;
@@ -29,20 +33,39 @@ namespace Titan
         public BanManager BanManager;
         public UIManager UIManager;
 
+        public IScheduler Scheduler;
+
         [STAThread]
         public static int Main(string[] args)
         {
             Thread.CurrentThread.Name = "Main";
 
-            Logger.Debug("Initializing libraries...");
+            Logger.Debug("Startup: Loading Titan Bootstrapper.");
 
-            /* Initialize libraries: Eto.Forms, SteamKit2, SteamKit-CSGO */
+            // Initialize Titan Singleton
             Instance = new Titan
             {
-                Options = new Options()
+                Options = new Options(),
+                Scheduler = StdSchedulerFactory.GetDefaultScheduler()
             };
+            
+            Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
+            
+            // Common Logging <-> Serilog bridge
+            Log.Logger = Logger;
+            LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter { Level = LogLevel.Info };
+            
+            Logger.Debug("Startup: Loading Quartz.NET.");
+            
+            // Quartz.NET
+            Instance.Scheduler.Start();
+            
+            // SteamKit
+            Logger.Debug("Startup: Refreshing Steam Universe list.");
+            
+            SteamDirectory.Initialize().Wait();
 
-            Logger.Debug("Parsing arguments");
+            Logger.Debug("Startup: Parsing Command Line Arguments.");
 
             /* Parse arguments provided with the starting of this */
             if(Parser.Default.ParseArguments(args, Instance.Options))
@@ -56,10 +79,8 @@ namespace Titan
                 Instance.EnableUI = true;
             }
 
-            Logger.Debug("Refreshing Steam server list");
-
-            SteamDirectory.Initialize().Wait();
-
+            Logger.Debug("Startup: Initializing Gui Manager, Account Manager and Ban Manager.");
+            
             Instance.UIManager = new UIManager();
 
             var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
@@ -69,10 +90,14 @@ namespace Titan
 
             Instance.BanManager = new BanManager();
             Instance.BanManager.ParseApiKeyFile();
+            
+            Logger.Debug("Startup: Registering Shutdown Hook.");
 
             // Register hook
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
+            Logger.Debug("Startup: Parsing accounts.json file.");
+            
             if(Instance.AccountManager.ParseAccountFile())
             {
                 Logger.Information("Hello and welcome to Titan v1.4.0.");
@@ -94,7 +119,14 @@ namespace Titan
 
                 Instance.UIManager.StartMainLoop();
             }
-
+            
+            // The Shutdown handler gets only called after the last thread finished.
+            // Quartz runs a Watchdog untilS Scheduler#Shutdown is called, so we're calling it
+            // before Titan will be calling the Shutdown Hook.
+            Logger.Debug("Shutdown: Shutting down Quartz.NET Scheduler.");
+            
+            Instance.Scheduler.Shutdown();
+            
             return 0; // OK.
         }
 

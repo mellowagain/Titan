@@ -36,6 +36,15 @@
     <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32">
       <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
+      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
+      <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Serilog, Version=4.1.11.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Common.Logging.Serilog.4.1.11\lib\net45\Common.Logging.Serilog.dll</HintPath>
+    </Reference>
     <Reference Include="EasyHttp, Version=1.7.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\EasyHttp.1.7.0\lib\net40\EasyHttp.dll</HintPath>
     </Reference>
@@ -69,6 +78,9 @@
     </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz, Version=2.5.0.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4">
+      <HintPath>..\packages\Quartz.2.5.0\lib\net40\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
       <HintPath>..\packages\Serilog.2.4.0\lib\net45\Serilog.dll</HintPath>
@@ -141,7 +153,9 @@
     <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
+    <Compile Include="Json\Victims.cs" />
     <Compile Include="Logging\LogCreator.cs" />
+    <Compile Include="Logging\VictimTracker.cs" />
     <Compile Include="Managers\AccountManager.cs" />
     <Compile Include="Mode\BotMode.cs" />
     <Compile Include="Sharecode\ShareCodeDecoder.cs" />
@@ -168,6 +182,8 @@
     <Compile Include="Util\WaitFor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="job_scheduling_data_2_0.xsd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
