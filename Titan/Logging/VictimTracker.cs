@@ -56,7 +56,7 @@ namespace Titan.Logging
         {
             if(!_file.Exists)
             {
-                _file.Create();
+                _file.Create().Close();
                 SaveVictimsFile();
             }
             
