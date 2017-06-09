@@ -23,6 +23,8 @@ It provides a advanced set of features and high effiency when compared against o
 * Automatic index timer which outputs when an account has finished its 6 hours cooldown.
 * Cross-platform compatibility, supports both Windows and Linux. Darwin support is coming soon.
 * No installation necessary, every release is provided as binary archives.
+* Tracking of botted victims with automatic notification when a ban occurs.
+* Automatic Steam Guard code generation from Shared Secrets
 * Steam Guard support
 
 ## Installation
@@ -60,6 +62,12 @@ On Windows, run Titan without the `mono` part at the beginning.
 If no arguments have been passed with Titan, the GUI will open:
 
 ![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/MainForm.png)
+
+If one of your recently botted players got banned, you'll also receive a notification:
+
+![Notification](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Notification.png)
+
+<sup>All screenshots have been taken on <b>Arch Linux</b> using <b>Gnome</b> with the <b>Ark-Dark</b> theme.</sup>
 
 ## Benchmarks
 
