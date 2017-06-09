@@ -100,7 +100,7 @@ namespace Titan
             
             if(Instance.AccountManager.ParseAccountFile())
             {
-                Logger.Information("Hello and welcome to Titan v1.4.0.");
+                Logger.Information("Hello and welcome to Titan v1.4.0-Dev.");
 
                 if(Instance.EnableUI)
                 {
@@ -121,7 +121,7 @@ namespace Titan
             }
             
             // The Shutdown handler gets only called after the last thread finished.
-            // Quartz runs a Watchdog untilS Scheduler#Shutdown is called, so we're calling it
+            // Quartz runs a Watchdog until Scheduler#Shutdown is called, so we're calling it
             // before Titan will be calling the Shutdown Hook.
             Logger.Debug("Shutdown: Shutting down Quartz.NET Scheduler.");
             
@@ -141,14 +141,6 @@ namespace Titan
 
             Log.CloseAndFlush();
         }
-
-        /*
-         * Limitations of this report bot
-         * > The CS:GO game coordinator doesn't accepts games 10 minutes after game end.
-         * > The Share Code parser is a Node.js library (node-csgo) and hasn't been ported to C#.
-         * You need to parse the Match ID from Sharecode by yourself. The "links" tab provides a website for that.
-         * > Reports and Commendations are only possible once per 6 hours.
-         */
 
     }
 }

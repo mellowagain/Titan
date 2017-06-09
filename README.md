@@ -1,21 +1,18 @@
 <p align="center"><img width=15% src="https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Logo.png"></p>
 <p align="center"><img width=40% src="https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Text.png"></p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [![Version](https://img.shields.io/github/release/Marc3842h/Titan/all.svg?label=version)](https://github.com/Marc3842h/Titan/releases)
 [![Appveyor](https://img.shields.io/appveyor/ci/Marc3842h/titan-kr2ki.svg?label=windows%20build)](https://ci.appveyor.com/project/Marc3842h/titan-kr2ki)
 [![Travis CI](https://img.shields.io/travis/Marc3842h/Titan.svg?label=linux%20build)](https://travis-ci.org/Marc3842h/Titan)
 [![Dependencies](https://img.shields.io/librariesio/github/Marc3842h/Titan.svg)](https://libraries.io/github/Marc3842h/Titan)
 [![Downloads](https://img.shields.io/github/downloads/Marc3842h/Titan/total.svg)](https://github.com/Marc3842h/Titan/releases)
 [![License](https://img.shields.io/github/license/Marc3842h/Titan.svg)](https://github.com/Marc3842h/Titan/blob/master/LICENSE.txt)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 Titan `/ˈtaɪtən/` is an advanced Counter-Strike Global Offensive report and commendation bot.
 Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch.
 It provides a advanced set of features and high effiency when compared against other report and commendation bots.
-
-**Development will be hold until the 15th of June 2017 as [Glacier](github.com/Marc3842h/Glacier) takes priority.
-Support will still be available on the issues tracker and Pull Requests will be merged**.
 
 ## Features
 
