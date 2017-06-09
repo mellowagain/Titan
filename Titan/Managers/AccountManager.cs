@@ -268,6 +268,9 @@ namespace Titan.Managers
                            "Does it exist?", _index);
                 return;
             }
+            
+            if(mode == BotMode.Report)
+                Titan.Instance.VictimTracker.AddVictim(target);
 
             if(!_indexEntries.ContainsKey(_index))
             {

@@ -2,8 +2,6 @@
 using System.IO;
 using System.Threading;
 using CommandLine;
-using Common.Logging;
-using Common.Logging.Simple;
 using Quartz;
 using Quartz.Impl;
 using Serilog;
@@ -30,6 +28,7 @@ namespace Titan
 
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
+        public VictimTracker VictimTracker;
         public BanManager BanManager;
         public UIManager UIManager;
 
@@ -45,19 +44,18 @@ namespace Titan
             // Initialize Titan Singleton
             Instance = new Titan
             {
-                Options = new Options(),
-                Scheduler = StdSchedulerFactory.GetDefaultScheduler()
+                Options = new Options()
             };
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
             // Common Logging <-> Serilog bridge
-            Log.Logger = Logger;
-            LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter { Level = LogLevel.Info };
+            Log.Logger = LogCreator.Create("Quartz.NET Scheduler");
             
             Logger.Debug("Startup: Loading Quartz.NET.");
             
             // Quartz.NET
+            Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler();
             Instance.Scheduler.Start();
             
             // SteamKit
@@ -79,9 +77,14 @@ namespace Titan
                 Instance.EnableUI = true;
             }
 
-            Logger.Debug("Startup: Initializing Gui Manager, Account Manager and Ban Manager.");
+            Logger.Debug("Startup: Initializing Gui Manager, Victim Tracker, Account Manager and Ban Manager.");
             
             Instance.UIManager = new UIManager();
+            
+            Instance.VictimTracker = new VictimTracker();
+            
+            // Schedule Victim Tracking
+            Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
             Instance.AccountManager = new AccountManager(new FileInfo(Path.Combine(Environment.CurrentDirectory, file)));
@@ -133,7 +136,8 @@ namespace Titan
         public static void OnShutdown(object sender, EventArgs args)
         {
             // Cleanup a few things before shutting down
-
+            
+            Instance.VictimTracker.SaveVictimsFile();
             Instance.BanManager.SaveAPIKeyFile();
             Instance.AccountManager.SaveIndexFile();
 

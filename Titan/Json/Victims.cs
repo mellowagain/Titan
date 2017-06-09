@@ -15,7 +15,7 @@ namespace Titan.Json
             public ulong SteamID; // Steam64ID of target
 
             [JsonProperty("timestamp")]
-            public double Ticks; // Timestamp in ticks that the target was botted
+            public long Ticks; // Timestamp in ticks that the target was botted
 
         }
         
