@@ -19,8 +19,6 @@ namespace Titan.Account
         public void FeedWithMatchID(string matchID)
         {
             MatchID = Convert.ToUInt64(matchID);
-
-            // TODO: Replace with sharecode parsing as soon as done
         }
 
     }

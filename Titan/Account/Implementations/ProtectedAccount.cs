@@ -67,7 +67,7 @@ namespace Titan.Account.Implementations
 
         public override Result Start()
         {
-            Thread.CurrentThread.Name = JsonAccount.Username + " - " + _info.Mode; // TODO: Get current mode
+            Thread.CurrentThread.Name = JsonAccount.Username + " - " + _info.Mode;
 
             _callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             _callbacks.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
