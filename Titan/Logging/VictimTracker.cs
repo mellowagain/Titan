@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Linq;
 using Eto.Forms;
 using Newtonsoft.Json;
 using Quartz;
@@ -76,11 +76,14 @@ namespace Titan.Logging
 
         public void SaveVictimsFile()
         {
-            using(var writer = new StreamWriter(_file.OpenWrite(), Encoding.UTF8))
+            using(var writer = new StreamWriter(_file.ToString(), false))
             {
+                // TODO: Change this ugly workaround
+                
                 var victims = new Victims
                 {
-                    Array = _victims.ToArray()
+                    Array = (from victim in _victims let bans = Titan.Instance.BanManager.GetBanInfoFor(SteamUtil.FromSteamID64(victim.SteamID)) 
+                        where !(bans.GameBanCount > 0 || bans.VacBanned) select victim).ToArray()
                 };
                 
                 writer.Write(JsonConvert.SerializeObject(victims, Formatting.Indented));
@@ -106,27 +109,28 @@ namespace Titan.Logging
                 {
                     var count = bans.GameBanCount == 0 ? bans.VacBanCount : bans.GameBanCount;
                     var id64 = target.ConvertToUInt64();
-                    
-                    _victims.Remove(victim);
-                    
-                    _log.Information("Your recently botted target {Target} received " +
-                                     "{Count} ban(s) after {Delay}. Thank you for using Titan.",
-                        id64, count, time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
-                    
-                    var notification = new Notification
-                    {
-                        Title = "Titan - " + id64 + " banned",
-                        Message = "Your recently botted target " + id64 + " " +
-                                  "has been banned and has now " + count + " Ban(s) on record.",
-                        Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON
-                    };
-                    
-                    notification.Activated += delegate
-                    {
-                        Process.Start("https://steamcommunity.com/profiles/" + id64 + "/");
-                    };
 
-                    Application.Instance.Invoke(() => notification.Show());
+                    if(_victims.Remove(victim))
+                    {
+                        _log.Information("Your recently botted target {Target} received " +
+                                         "{Count} ban(s) after {Delay}. Thank you for using Titan.",
+                            id64, count, time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
+
+                        var notification = new Notification
+                        {
+                            Title = "Titan - " + id64 + " banned",
+                            Message = "Your recently botted target " + id64 + " " +
+                                      "has been banned and has now " + count + " Ban(s) on record.",
+                            Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON
+                        };
+
+                        notification.Activated += delegate
+                        {
+                            Process.Start("https://steamcommunity.com/profiles/" + id64 + "/");
+                        };
+
+                        Application.Instance.Invoke(() => notification.Show());
+                    }
                 }
             }
         }
