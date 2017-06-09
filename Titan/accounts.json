@@ -6,14 +6,16 @@
                 {
                     "username": "username1",
                     "password": "password1",
-                    "enabled": true,
-                    "sentry": false
+                    "enabled": true, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
                 },
                 {
                     "username": "username2",
                     "password": "password2",
-                    "enabled": false,
-                    "sentry": false
+                    "enabled": false, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
                 }
             ]
         },
@@ -22,14 +24,16 @@
                 {
                     "username": "username3",
                     "password": "password3",
-                    "enabled": true,
-                    "sentry": false
+                    "enabled": true, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
                 },
                 {
                     "username": "username4",
                     "password": "password4",
-                    "enabled": true,
-                    "sentry": false
+                    "enabled": true, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
                 }
             ]
         }

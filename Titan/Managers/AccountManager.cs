@@ -71,10 +71,14 @@ namespace Titan.Managers
                 foreach(var account in indexes.Accounts)
                 {
                     TitanAccount acc;
-                    if(account.Sentry)
+                    if(account.Sentry || account.SharedSecret != null)
+                    {
                         acc = new ProtectedAccount(account);
+                    }
                     else
+                    {
                         acc = new UnprotectedAccount(account);
+                    }
 
                     if(account.Enabled)
                     {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Eto.Forms;
 using Serilog.Core;
+using SteamAuth;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
@@ -27,6 +28,7 @@ namespace Titan.Account.Implementations
 
         private FileInfo _file;
 
+        private SteamGuardAccount _sgAccount;
         private string _authCode;
         private string _2FactorCode;
 
@@ -51,6 +53,14 @@ namespace Titan.Account.Implementations
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
+
+            if(json.SharedSecret != null)
+            {
+                _sgAccount = new SteamGuardAccount
+                {
+                    SharedSecret = json.SharedSecret
+                };
+            }
 
             _log.Debug("Successfully initialized account object for " + json.Username + ".");
         }
@@ -198,12 +208,24 @@ namespace Titan.Account.Implementations
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                     _log.Information("Opening UI form to get the 2FA Steam Guard App Code...");
 
-                    Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(UIType.TwoFactorAuthentification,
-                        new TwoFactorAuthForm(Titan.Instance.UIManager, this, null)));
-
-                    while(_2FactorCode == null)
+                    if(_sgAccount != null)
                     {
-                        /* Wait until the Form inputted the 2FA code from the Steam Guard App */
+                        _log.Debug("A shared secret has been provided: automaticly generating it...");
+                        
+                        _2FactorCode = _sgAccount.GenerateSteamGuardCode();
+                    }
+                    else
+                    {
+
+                        Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(
+                            UIType.TwoFactorAuthentification,
+                            new TwoFactorAuthForm(Titan.Instance.UIManager, this, null)));
+
+                        while(_2FactorCode == null)
+                        {
+                            /* Wait until the Form inputted the 2FA code from the Steam Guard App */
+                        }
+                        
                     }
 
                     _log.Information("Received 2FA Code: {Code}", _2FactorCode);

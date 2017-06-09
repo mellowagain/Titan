@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Titan.Json
 {
@@ -25,11 +26,17 @@ namespace Titan.Json
             [JsonProperty("password")]
             public string Password { get; set; }
 
-            [JsonProperty("sentry")]
+            [JsonProperty("sentry", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+            [DefaultValue(false)]
             public bool Sentry { get; set; }
 
-            [JsonProperty("enabled")]
+            [JsonProperty("enabled", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+            [DefaultValue(true)]
             public bool Enabled { get; set; }
+            
+            [JsonProperty("secret", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+            [DefaultValue(null)]
+            public string SharedSecret { get; set; }
 
         }
 
