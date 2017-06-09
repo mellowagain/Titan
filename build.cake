@@ -14,6 +14,12 @@ Task("Restore-NuGet-Packages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
+    // First add MyGet Eto source
+    NuGetAddSource(
+        name: "MyGet.org Eto",
+        source: "https://www.myget.org/F/eto/api/v3/index.json"
+    );
+
     NuGetRestore("./Titan.sln");
 });
 

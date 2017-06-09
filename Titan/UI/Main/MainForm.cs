@@ -26,7 +26,7 @@ namespace Titan.UI.Main
         public MainForm(UIManager uiManager)
         {
             Title = "Titan";
-            ClientSize = new Size(600, 180);
+            ClientSize = new Size(600, 230);
             Resizable = false;
             Icon = uiManager.SharedResources.TITAN_ICON;
 

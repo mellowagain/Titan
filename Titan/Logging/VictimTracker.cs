@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using Eto.Forms;
 using Newtonsoft.Json;
 using Quartz;
@@ -74,20 +76,14 @@ namespace Titan.Logging
 
         public void SaveVictimsFile()
         {
-            if(_file.Exists)
+            using(var writer = new StreamWriter(_file.OpenWrite(), Encoding.UTF8))
             {
-                _file.Delete();
-            }
-
-            var victims = new Victims
-            {
-                Array = _victims.ToArray()
-            };
-
-            using(var writer = File.CreateText(_file.ToString()))
-            {
-                var str = JsonConvert.SerializeObject(victims, Formatting.Indented);
-                writer.Write(str);
+                var victims = new Victims
+                {
+                    Array = _victims.ToArray()
+                };
+                
+                writer.Write(JsonConvert.SerializeObject(victims, Formatting.Indented));
             }
 
             _log.Debug("Successfully wrote Victim file.");
@@ -106,24 +102,31 @@ namespace Titan.Logging
                 var bans = Titan.Instance.BanManager.GetBanInfoFor(target);
                 var time = DateTime.Now.Subtract(new DateTime(victim.Ticks));
                 
-                _log.Information("Ban Info for {Victim}: {BanInfo}",
-                    target.ConvertToUInt64(), bans);
-                
                 if(bans.GameBanCount > 0 || bans.VacBanned)
                 {
-                    _log.Information("Your recently botted target {Target} received " +
-                                     "{Count} ban(s) after {Delay}. Thank you for using Titan.",
-                        target.ConvertToUInt64(), bans.GameBanCount == 0 ? bans.VacBanCount : bans.GameBanCount, 
-                        time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
-
-                    // TODO: Replace this with a System Notification
-                    // Windows & some Linux DE (libnotify) has support for notifications
-                    Application.Instance.Invoke(() => MessageBox.Show("Congratulations! Your recently botted target " +
-                                                                      target.ConvertToUInt64() + " has now " +
-                                                                      bans.GameBanCount + " " +
-                                                                      "Ban(s) on record.", "Titan - Confirmed Ban"));
+                    var count = bans.GameBanCount == 0 ? bans.VacBanCount : bans.GameBanCount;
+                    var id64 = target.ConvertToUInt64();
                     
                     _victims.Remove(victim);
+                    
+                    _log.Information("Your recently botted target {Target} received " +
+                                     "{Count} ban(s) after {Delay}. Thank you for using Titan.",
+                        id64, count, time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
+                    
+                    var notification = new Notification
+                    {
+                        Title = "Titan - " + id64 + " banned",
+                        Message = "Your recently botted target " + id64 + " " +
+                                  "has been banned and has now " + count + " Ban(s) on record.",
+                        Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON
+                    };
+                    
+                    notification.Activated += delegate
+                    {
+                        Process.Start("https://steamcommunity.com/profiles/" + id64 + "/");
+                    };
+
+                    Application.Instance.Invoke(() => notification.Show());
                 }
             }
         }
