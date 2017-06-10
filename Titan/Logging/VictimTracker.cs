@@ -95,7 +95,7 @@ namespace Titan.Logging
                 else
                 {
 
-                    writer.Write("{}");
+                    writer.Write("{\"victims\":[]}");
                 }
             }
 
