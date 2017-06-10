@@ -79,14 +79,24 @@ namespace Titan.Logging
             using(var writer = new StreamWriter(_file.ToString(), false))
             {
                 // TODO: Change this ugly workaround
-                
-                var victims = new Victims
+
+                if(_victims != null && _victims.Count > 0)
                 {
-                    Array = (from victim in _victims let bans = Titan.Instance.BanManager.GetBanInfoFor(SteamUtil.FromSteamID64(victim.SteamID)) 
-                        where !(bans.GameBanCount > 0 || bans.VacBanned) select victim).ToArray()
-                };
-                
-                writer.Write(JsonConvert.SerializeObject(victims, Formatting.Indented));
+                    var victims = new Victims
+                    {
+                        Array = (from victim in _victims
+                            let bans = Titan.Instance.BanManager.GetBanInfoFor(SteamUtil.FromSteamID64(victim.SteamID))
+                            where !(bans.GameBanCount > 0 || bans.VacBanned)
+                            select victim).ToArray()
+                    };
+
+                    writer.Write(JsonConvert.SerializeObject(victims, Formatting.Indented));
+                }
+                else
+                {
+
+                    writer.Write("{}");
+                }
             }
 
             _log.Debug("Successfully wrote Victim file.");
