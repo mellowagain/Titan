@@ -1,10 +1,14 @@
 ﻿using System.Linq;
+using Serilog;
 using SteamKit2;
+using Titan.Logging;
 
 namespace Titan.Util
 {
     public class SteamUtil
     {
+
+        private static ILogger _log = LogCreator.Create();
 
         // Renders from a "STEAM_0:0:131983088" form.
         public static SteamID FromSteamID(string steamId)
@@ -39,7 +43,14 @@ namespace Titan.Util
                     case 'S':
                         return FromSteamID(s);
                     default:
-                        return FromSteamID64(ulong.Parse(s));
+                        ulong id;
+                        if(ulong.TryParse(s, out id))
+                        {
+                            return FromSteamID64(id);
+                        }
+                        
+                        _log.Error("Could not parse {SteamID} to Steam ID.", s);
+                        return null; // TODO: Handle errored Steam ID better.
             }
         }
 

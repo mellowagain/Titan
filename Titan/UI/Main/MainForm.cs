@@ -96,6 +96,15 @@ namespace Titan.UI.Main
 
                 var steamId = SteamUtil.Parse(_targetBox.Text);
 
+                if(steamId == null)
+                {
+                    MessageBox.Show("Titan - Error", "Could not parse Steam ID " +
+                        _targetBox.Text + " to Steam ID. Please provide a valid " +
+                        "SteamID, SteamID3 or SteamID64.", MessageBoxType.Error);
+                    
+                    return;
+                }
+
                 var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(steamId.ConvertToUInt64());
                 if(targetBanInfo != null)
                 {
