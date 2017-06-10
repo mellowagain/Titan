@@ -43,7 +43,7 @@ namespace Titan.Account.Implementations
 
         public ProtectedAccount(JsonAccounts.JsonAccount json) : base(json)
         {
-            _log = LogCreator.Create("GC - " + json.Username);
+            _log = LogCreator.Create("GC - " + json.Username + " (Protected)");
 
             _file = new FileInfo(Path.Combine(Path.Combine(Environment.CurrentDirectory, "sentries"),
                 json.Username + ".sentry"));

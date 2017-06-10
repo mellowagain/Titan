@@ -30,7 +30,7 @@ namespace Titan.Account.Implementations
 
         public UnprotectedAccount(JsonAccounts.JsonAccount json) : base(json)
         {
-            _log = LogCreator.Create("GC - " + json.Username);
+            _log = LogCreator.Create("GC - " + json.Username + " (Unprotected)");
 
             _steamClient = new SteamClient();
             _callbacks = new CallbackManager(_steamClient);
