@@ -48,31 +48,58 @@ PS> .\build.ps1
 # Run this in a bash terminal on Linux
 $ chmod +x build.sh && ./build.sh
 ```
-#### Accounts file
 
-Create a ```accounts.json``` in main directory with data:
-```
-{
-  "indexes": [
-    // Put here a array of indexes with accounts. Starting with { and ending with a }: use a , to split.
-    {
-      "accounts": [
-        // Put in here a array of accounts. Starting with a { and ending with a }: use a , to split.
-        {
-          "username": "account username",
-          "password": "account password",
-          "enabled": true, // Set to false if the account should not be used for reporting
-          "sentry": true, // Set to true if the account has Steam Guard enabled
-        }
-      ]
-    }
-  ]
-}
-```
 
 ## Usage
 
-Start the program from command line with the following syntax:
+#### Accounts file
+
+Create a ```accounts.json``` in main directory with data:
+```json
+{
+    // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
+    "indexes": [
+        {
+            "accounts": [
+                {
+                    "username": "username1",
+                    "password": "password1",
+                    "enabled": true, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                },
+                {
+                    "username": "username11",
+                    "password": "password11",
+                    "enabled": false, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                }
+            ]
+        },
+        {
+            "accounts": [
+                {
+                    "username": "username12",
+                    "password": "password12",
+                    "enabled": true, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                },
+                {
+                    "username": "username22",
+                    "password": "password22",
+                    "enabled": true, // May be omitted if you want set it to default value (true)
+                    "sentry": false, // May be omitted if you want set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                }
+            ]
+        }
+    ]
+}
+```
+#### Start
+Run the program from command line with the following syntax:
 
 ```bash
 $ mono Titan.exe (--target) (--mode) [--id] [--file]
