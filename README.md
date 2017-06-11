@@ -48,6 +48,27 @@ PS> .\build.ps1
 # Run this in a bash terminal on Linux
 $ chmod +x build.sh && ./build.sh
 ```
+#### Accounts file
+
+Create a ```accounts.json``` in main directory with data:
+```
+{
+  "indexes": [
+    // Put here a array of indexes with accounts. Starting with { and ending with a }: use a , to split.
+    {
+      "accounts": [
+        // Put in here a array of accounts. Starting with a { and ending with a }: use a , to split.
+        {
+          "username": "account username",
+          "password": "account password",
+          "enabled": true, // Set to false if the account should not be used for reporting
+          "sentry": true, // Set to true if the account has Steam Guard enabled
+        }
+      ]
+    }
+  ]
+}
+```
 
 ## Usage
 
