@@ -2,7 +2,7 @@
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
-using Titan.Account.Implementations;
+using Titan.Account.Impl;
 using Titan.Logging;
 
 namespace Titan.UI._2FA

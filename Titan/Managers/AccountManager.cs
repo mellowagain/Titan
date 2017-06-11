@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Account;
-using Titan.Account.Implementations;
+using Titan.Account.Impl;
 using Titan.Json;
 using Titan.Logging;
 using Titan.Mode;

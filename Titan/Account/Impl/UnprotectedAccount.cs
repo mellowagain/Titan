@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
-using Eto.Forms;
 using Serilog.Core;
-using SteamAuth;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
@@ -14,23 +9,15 @@ using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
 using Titan.Mode;
-using Titan.UI;
-using Titan.UI._2FA;
 
-namespace Titan.Account.Implementations
+namespace Titan.Account.Impl
 {
-    public class ProtectedAccount : TitanAccount
+    public class UnprotectedAccount : TitanAccount
     {
 
         private Logger _log;
 
         private int _reconnects;
-
-        private FileInfo _file;
-
-        private SteamGuardAccount _sgAccount;
-        private string _authCode;
-        private string _2FactorCode;
 
         private SteamClient _steamClient;
         private SteamUser _steamUser;
@@ -41,12 +28,9 @@ namespace Titan.Account.Implementations
         public Result Result { get; private set; }
         public bool IsRunning { get; private set; }
 
-        public ProtectedAccount(JsonAccounts.JsonAccount json) : base(json)
+        public UnprotectedAccount(JsonAccounts.JsonAccount json) : base(json)
         {
-            _log = LogCreator.Create("GC - " + json.Username + " (Protected)");
-
-            _file = new FileInfo(Path.Combine(Path.Combine(Environment.CurrentDirectory, "sentries"),
-                json.Username + ".sentry"));
+            _log = LogCreator.Create("GC - " + json.Username + " (Unprotected)");
 
             _steamClient = new SteamClient();
             _callbacks = new CallbackManager(_steamClient);
@@ -54,15 +38,7 @@ namespace Titan.Account.Implementations
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
 
-            if(json.SharedSecret != null)
-            {
-                _sgAccount = new SteamGuardAccount
-                {
-                    SharedSecret = json.SharedSecret
-                };
-            }
-
-            _log.Debug("Successfully initialized account object for " + json.Username + ".");
+            _log.Debug("Successfully initialized account object for {0}.", json.Username);
         }
 
         public override Result Start()
@@ -74,7 +50,6 @@ namespace Titan.Account.Implementations
             _callbacks.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
             _callbacks.Subscribe<SteamUser.LoggedOffCallback>(OnLoggedOff);
             _callbacks.Subscribe<SteamGameCoordinator.MessageCallback>(OnGCMessage);
-            _callbacks.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
 
             IsRunning = true;
             _steamClient.Connect();
@@ -115,27 +90,12 @@ namespace Titan.Account.Implementations
         {
             if(callback.Result == EResult.OK)
             {
-                _log.Debug("Sentry has been activated for this account. Checking if a sentry file " +
-                           "exists and hashing it...");
-
-                byte[] sentryHash = null;
-                if(_file.Exists)
-                {
-                    _log.Debug("Sentry file found. Hashing...");
-
-                    var fileBytes = File.ReadAllBytes(_file.ToString());
-                    sentryHash = CryptoHelper.SHAHash(fileBytes);
-
-                    _log.Debug("Hash for sentry file found: {Hash}", Encoding.UTF8.GetString(sentryHash));
-                }
+                _log.Debug("Successfully connected to Steam. Logging in...");
 
                 _steamUser.LogOn(new SteamUser.LogOnDetails
                 {
                     Username = JsonAccount.Username,
-                    Password = JsonAccount.Password,
-                    AuthCode = _authCode,
-                    TwoFactorCode = _2FactorCode,
-                    SentryFileHash = sentryHash
+                    Password = JsonAccount.Password
                 });
             }
             else
@@ -149,23 +109,17 @@ namespace Titan.Account.Implementations
         {
             _reconnects++;
 
-            if(_reconnects <= 5 && (Result != Result.Success ||
+            if(_reconnects <= 5 && (Result != Result.Success &&
                Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
             {
-                _log.Information("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
+                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
 
-                _log.Debug(">>> Connecting to Steam using Steam Client.");
-                
                 _steamClient.Connect();
-                
-                _log.Debug(">>> Success.");
             }
             else
             {
-                _log.Debug(">>> Forcefully disconnected from Steam. {Result} / {Reconnects} / {IsRunning}",
-                    Result, _reconnects, IsRunning);
                 _log.Debug("Successfully disconnected from Steam.");
                 IsRunning = false;
             }
@@ -206,42 +160,14 @@ namespace Titan.Account.Implementations
                     _gameCoordinator.Send(clientHello, 730);
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    _log.Information("Opening UI form to get the 2FA Steam Guard App Code...");
-
-                    if(_sgAccount != null)
-                    {
-                        _log.Debug("A shared secret has been provided: automaticly generating it...");
-                        
-                        _2FactorCode = _sgAccount.GenerateSteamGuardCode();
-                    }
-                    else
-                    {
-
-                        Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(
-                            UIType.TwoFactorAuthentification,
-                            new TwoFactorAuthForm(Titan.Instance.UIManager, this, null)));
-
-                        while(_2FactorCode == null)
-                        {
-                            /* Wait until the Form inputted the 2FA code from the Steam Guard App */
-                        }
-                        
-                    }
-
-                    _log.Information("Received 2FA Code: {Code}", _2FactorCode);
-                    break;
                 case EResult.AccountLogonDenied:
-                    _log.Information("Opening UI form to get the Auth Token from EMail...");
+                    _log.Debug("Two Factor Authentification is activated on this account. Please set " +
+                               "Sentry to {true} in the accounts.json for this account.", true);
 
-                    Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(UIType.TwoFactorAuthentification,
-                        new TwoFactorAuthForm(Titan.Instance.UIManager, this, callback.EmailDomain)));
+                    Stop();
 
-                    while(_authCode == null)
-                    {
-                        /* Wait until the Form inputted the Auth code from the Email Steam sent */
-                    }
-
-                    _log.Information("Received Auth Token: {Code}", _authCode);
+                    IsRunning = false;
+                    Result = Result.SentryRequired;
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");
@@ -260,9 +186,7 @@ namespace Titan.Account.Implementations
                     break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
-
                     Stop();
-
                     IsRunning = false;
                     break;
             }
@@ -277,42 +201,6 @@ namespace Titan.Account.Implementations
                 _log.Warning("Account is already logged on somewhere else. Skipping...");
             else
                 _log.Debug("Successfully logged off from Steam: {Result}", callback.Result);
-        }
-
-        public void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
-        {
-            _log.Debug("Checking if a sentry file exists...");
-
-            int size;
-            byte[] hash;
-
-            using(var fwr = File.Open(_file.ToString(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            {
-                fwr.Seek(callback.Offset, SeekOrigin.Begin);
-                fwr.Write(callback.Data, 0, callback.BytesToWrite);
-                size = (int) fwr.Length;
-
-                fwr.Seek(0, SeekOrigin.Begin);
-                using(var sha = SHA1.Create())
-                {
-                    hash = sha.ComputeHash(fwr);
-                }
-            }
-
-            _log.Debug("Successfully opened / created sentry file. Hash: {Hash}", Encoding.UTF8.GetString(hash));
-
-            _steamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
-            {
-                JobID = callback.JobID,
-                FileName = callback.FileName,
-                BytesWritten = callback.BytesToWrite,
-                FileSize = size,
-                Offset = callback.Offset,
-                Result = EResult.OK,
-                LastError = 0,
-                OneTimePassword = callback.OneTimePassword,
-                SentryFileHash = hash
-            });
         }
 
         public override void OnGCMessage(SteamGameCoordinator.MessageCallback callback)
@@ -345,7 +233,15 @@ namespace Titan.Account.Implementations
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
+            if(_info.Mode == BotMode.Report)
+            {
+                _log.Information("Successfully reported. Confirmation ID: {Id}", response.Body.confirmation_id);
+            }
+            else
+            {
+                _log.Information("Successfully commended {Target} with a Leader, Friendly and a Teacher.",
+                    _info.Target);
+            }
 
             Result = Result.Success;
 
@@ -359,16 +255,6 @@ namespace Titan.Account.Implementations
             Result = Result.Success;
 
             Stop();
-        }
-
-        public void FeedWithAuthToken(string authToken)
-        {
-            _authCode = authToken;
-        }
-
-        public void FeedWith2FACode(string twofactorCode)
-        {
-            _2FactorCode = twofactorCode;
         }
 
     }

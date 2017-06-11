@@ -121,8 +121,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account\Implementations\ProtectedAccount.cs" />
-    <Compile Include="Account\Implementations\UnprotectedAccount.cs" />
+    <Compile Include="Account\Impl\ProtectedAccount.cs" />
+    <Compile Include="Account\Impl\UnprotectedAccount.cs" />
     <Compile Include="Account\Info.cs" />
     <Compile Include="Account\Result.cs" />
     <Compile Include="Account\TitanAccount.cs" />
