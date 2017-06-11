@@ -115,10 +115,10 @@ namespace Titan
                 {
                     var mode = BotModeParser.Parse(Instance.Options.Mode);
 
-                    if(mode == BotMode.Report)
+                    if(mode != BotMode.Unknown)
                     {
                         Instance.AccountManager.StartBotting(mode, SteamUtil.Parse(Instance.Options.Target),
-                            Instance.Options.MatchId != null ? Convert.ToUInt64(Instance.Options.MatchId) : 8);
+                            Instance.Options.MatchId != null ? SharecodeUtil.Parse(Instance.Options.MatchId) : 8);
                     }
                 }
 

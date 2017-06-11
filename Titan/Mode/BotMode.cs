@@ -1,4 +1,5 @@
-﻿using Serilog.Core;
+﻿using System.Text.RegularExpressions;
+using Serilog.Core;
 using Titan.Logging;
 
 namespace Titan.Mode
@@ -9,7 +10,8 @@ namespace Titan.Mode
 
         Unknown = -1,
         Report = 0,
-        Commend = 1
+        Commend = 1,
+        RemoveCommend = 2
 
     }
 
@@ -20,12 +22,15 @@ namespace Titan.Mode
 
         public static BotMode Parse(string mode)
         {
-            switch(mode.ToUpperInvariant())
+            switch(Regex.Replace(mode.ToUpperInvariant(), @"\s+", ""))
             {
                case "REPORT":
                    return BotMode.Report;
                case "COMMEND":
                    return BotMode.Commend;
+               case "UNCOMMEND":
+               case "REMOVECOMMEND":
+                   return BotMode.RemoveCommend;
                default:
                    _log.Error("Could not parse string to mode: {String}", mode);
                    break;

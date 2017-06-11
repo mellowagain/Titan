@@ -335,17 +335,38 @@ namespace Titan.Account.Impl
         {
             _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...", _info.Mode);
 
-            if(_info.Mode == BotMode.Report)
-                _gameCoordinator.Send(GetReportPayload(_info.Target, _info.MatchID), 730);
-            else
-                _gameCoordinator.Send(GetCommendPayload(_info.Target), 730);
+            switch(_info.Mode)
+            {
+                case BotMode.Report:
+                    _gameCoordinator.Send(GetReportPayload(_info.Target, _info.MatchID), 730);
+                    break;
+                case BotMode.Commend:
+                    _gameCoordinator.Send(GetCommendPayload(_info.Target), 730);
+                    break;
+                case BotMode.RemoveCommend:
+                    _gameCoordinator.Send(GetRemoveCommendPayload(_info.Target), 730);
+                    break;
+            }
         }
 
         public override void OnReportResponse(IPacketGCMsg msg)
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
+            switch(_info.Mode)
+            {
+                case BotMode.Report:
+                    _log.Information("Successfully reported. Confirmation ID: {Id}", response.Body.confirmation_id);
+                    break;
+                case BotMode.Commend:
+                    _log.Information("Successfully commended {Target} with a Leader, Friendly and a Teacher.",
+                        _info.Target);
+                    break;
+                case BotMode.RemoveCommend:
+                    _log.Information("Successfully removed Leader, Friendly an Teacher commends from {Target}.",
+                        _info.Target);
+                    break;
+            }
 
             Result = Result.Success;
 
@@ -354,7 +375,8 @@ namespace Titan.Account.Impl
 
         public override void OnCommendResponse(IPacketGCMsg msg)
         {
-            _log.Information("Successfully commended target {Target}.", _info.Target);
+            _log.Information("Successfully " + (_info.Mode == BotMode.RemoveCommend ? "un" : "") + 
+                             "commended target {Target}.", _info.Target);
 
             Result = Result.Success;
 

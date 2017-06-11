@@ -100,6 +100,27 @@ namespace Titan.Account
 
             return payload;
         }
+        
+        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer> GetRemoveCommendPayload(uint target)
+        {
+            var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer>(
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer);
+
+            payload.Body.account_id = target;
+            payload.Body.match_id = 8;
+
+            payload.Body.commendation = new PlayerCommendationInfo
+            {
+                // Not tested if it works by setting all values to 0, but it should.
+                cmd_friendly = 0,
+                cmd_teaching = 0,
+                cmd_leader = 0
+            };
+
+            payload.Body.tokens = 10; // Whatever this is
+
+            return payload;
+        }
 
     }
 }

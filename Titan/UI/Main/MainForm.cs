@@ -35,7 +35,7 @@ namespace Titan.UI.Main
             _matchIDBox = new TextBox { PlaceholderText = "CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE" };
             _matchIDLabel = new Label { Text = "Share Link (optional)" };
 
-            _dropDown = new DropDown { Items = { "Report", "Commend" }, SelectedIndex = 0 };
+            _dropDown = new DropDown { Items = { "Report", "Commend", "Un-Commend" }, SelectedIndex = 0 };
             _dropDown.SelectedIndexChanged += OnDropDownIndexChange;
 
             var bombBtn = new Button { Text = "Bomb!" };
