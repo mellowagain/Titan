@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using Serilog;
 using SteamKit2;
 using Titan.Logging;
@@ -9,6 +10,8 @@ namespace Titan.Util
     {
 
         private static ILogger _log = LogCreator.Create();
+
+        public static string WebAPIKey;
 
         // Renders from a "STEAM_0:0:131983088" form.
         public static SteamID FromSteamID(string steamId)
@@ -33,6 +36,64 @@ namespace Titan.Util
 
             return id;
         }
+        
+        // Renders from a "https://steamcommunity.com/id/Marc3842h/" form.
+        public static SteamID FromCustomUrl(string customUrl)
+        {
+            var url = customUrl.StartsWith("http://") ? 
+                customUrl.Replace("http://", "") : 
+                customUrl.StartsWith("https://") ? 
+                    customUrl.Replace("https://", "")
+                    : customUrl;
+
+            url = url.Replace("steamcommunity.com", "");
+
+            url = url.Replace("/id/", "");
+
+            url = url.Replace("/", "");
+
+            try
+            {
+                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", WebAPIKey))
+                {    
+                    KeyValue pair = steamUser.ResolveVanityURL(vanityurl: url);
+
+                    if(pair["success"].AsInteger() == 1)
+                    {
+                        return FromSteamID64(pair["steamid"].AsUnsignedLong());
+                    }
+                    
+                    _log.Error("Could not resolve custom URL {URL} to SteamID64: {Error}",
+                        url, pair["message"].AsString());
+                }
+            }
+            catch (WebException ex)
+            {
+                _log.Error("Could not resolve custom URL {URL} to SteamID64: {Error}",
+                    url, ex.Message);
+            }
+
+            return null;
+        }
+
+        // Renders from a "http://steamcommunity.com/profiles/76561198224231904" form.
+        public static SteamID FromNativeUrl(string nativeUrl)
+        {
+            var url = nativeUrl.StartsWith("http://") ? 
+                nativeUrl.Replace("http://", "") : 
+                nativeUrl.StartsWith("https://") ? 
+                    nativeUrl.Replace("https://", "")
+                    : nativeUrl;
+
+            url = url.Replace("steamcommunity.com", "");
+
+            url = url.Replace("/profiles/", "");
+            
+            url = url.Replace("/", "");
+
+            ulong steamID;
+            return ulong.TryParse(url, out steamID) ? FromSteamID64(steamID) : FromCustomUrl(nativeUrl);
+        }
 
         public static SteamID Parse(string s)
         {
@@ -42,15 +103,16 @@ namespace Titan.Util
                         return FromSteamID3(s);
                     case 'S':
                         return FromSteamID(s);
+                    case 'h':
+                        if(s.Contains("id"))
+                        {
+                            return FromCustomUrl(s);
+                        }
+
+                        return FromNativeUrl(s);
                     default:
                         ulong id;
-                        if(ulong.TryParse(s, out id))
-                        {
-                            return FromSteamID64(id);
-                        }
-                        
-                        _log.Error("Could not parse {SteamID} to Steam ID.", s);
-                        return null; // TODO: Handle errored Steam ID better.
+                        return ulong.TryParse(s, out id) ? FromSteamID64(id) : FromCustomUrl(s);
             }
         }
 

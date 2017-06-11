@@ -93,6 +93,8 @@ namespace Titan
 
             Instance.BanManager = new BanManager();
             Instance.BanManager.ParseApiKeyFile();
+
+            SteamUtil.WebAPIKey = Instance.BanManager.APIKey;
             
             Logger.Debug("Startup: Registering Shutdown Hook.");
 
