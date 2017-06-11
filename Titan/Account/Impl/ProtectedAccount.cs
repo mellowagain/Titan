@@ -21,6 +21,10 @@ namespace Titan.Account.Impl
 {
     public class ProtectedAccount : TitanAccount
     {
+        
+        //////////////////////////////////////////////////////////////
+        // TODO: This class seems to be broken. See GH Issue #8 
+        //////////////////////////////////////////////////////////////
 
         private Logger _log;
 
@@ -155,17 +159,11 @@ namespace Titan.Account.Impl
                 _log.Information("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
-
-                _log.Debug(">>> Connecting to Steam using Steam Client.");
                 
                 _steamClient.Connect();
-                
-                _log.Debug(">>> Success.");
             }
             else
             {
-                _log.Debug(">>> Forcefully disconnected from Steam. {Result} / {Reconnects} / {IsRunning}",
-                    Result, _reconnects, IsRunning);
                 _log.Debug("Successfully disconnected from Steam.");
                 IsRunning = false;
             }
