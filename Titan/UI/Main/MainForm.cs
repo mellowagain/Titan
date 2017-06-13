@@ -95,7 +95,7 @@ namespace Titan.UI.Main
                 };
             }
             
-            TrayIcon.Show();
+            TrayIcon?.Show();
         }
 
         public void OnBombButtonClick(object sender, EventArgs args)
