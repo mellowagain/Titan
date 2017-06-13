@@ -9,6 +9,8 @@ using Quartz;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Json;
+using Titan.UI;
+using Titan.UI.Main;
 using Titan.Util;
 
 namespace Titan.Logging
@@ -139,7 +141,9 @@ namespace Titan.Logging
                             Process.Start("https://steamcommunity.com/profiles/" + id64 + "/");
                         };
 
-                        Application.Instance.Invoke(() => notification.Show());
+                        Application.Instance.Invoke(() => notification.Show(
+                            Titan.Instance.UIManager.GetForm<MainForm>(UIType.Main).TrayIcon
+                        ));
                     }
                 }
             }

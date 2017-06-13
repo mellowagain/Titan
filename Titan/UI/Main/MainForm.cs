@@ -18,6 +18,9 @@ namespace Titan.UI.Main
 
         private UIManager _uiManager;
 
+        // This TrayIcon only exists on Windows. See GitHub issue #14
+        public TrayIndicator TrayIcon;
+
         private readonly DropDown _dropDown;
         private readonly TextBox _targetBox;
         private readonly TextBox _matchIDBox;
@@ -84,6 +87,13 @@ namespace Titan.UI.Main
                 AboutItem = new About(),
                 QuitItem = new Quit()
             };
+            
+            if(Platform.IsWpf || Platform.IsWinForms) {
+                TrayIcon = new TrayIndicator
+                {
+                    Icon = _uiManager.SharedResources.TITAN_ICON
+                };
+            }
         }
 
         public void OnBombButtonClick(object sender, EventArgs args)
