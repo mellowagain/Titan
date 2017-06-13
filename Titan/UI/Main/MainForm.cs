@@ -94,6 +94,8 @@ namespace Titan.UI.Main
                     Icon = _uiManager.SharedResources.TITAN_ICON
                 };
             }
+            
+            TrayIcon.Show();
         }
 
         public void OnBombButtonClick(object sender, EventArgs args)
