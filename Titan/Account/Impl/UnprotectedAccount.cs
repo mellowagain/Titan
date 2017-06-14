@@ -42,8 +42,14 @@ namespace Titan.Account.Impl
             // Initialize debug network sniffer when debug mode is enabled
             if(Titan.Instance.Options.Debug)
             {
+                var dir = new DirectoryInfo(Path.Combine(Titan.Instance.DebugDirectory.ToString(), json.Username));
+                if(!dir.Exists)
+                {
+                    dir.Create();
+                }
+                
                 _steamClient.DebugNetworkListener = new NetHookNetworkListener(
-                    Path.Combine(Environment.CurrentDirectory, Path.Combine("debug", json.Username + "-network.log"))
+                    dir.ToString()
                 );
             }
 

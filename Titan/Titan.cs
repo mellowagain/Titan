@@ -34,6 +34,9 @@ namespace Titan
 
         public IScheduler Scheduler;
 
+        // May be null if Options#Debug is false
+        public DirectoryInfo DebugDirectory = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "debug"));
+
         [STAThread]
         public static int Main(string[] args)
         {
@@ -85,11 +88,9 @@ namespace Titan
             // Initialize the Debug directory if Debug mode is enabled
             if(Instance.Options.Debug)
             {
-                var dir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "debug"));
-                
-                if(!dir.Exists)
+                if(!Instance.DebugDirectory.Exists)
                 {
-                    dir.Create();
+                    Instance.DebugDirectory.Create();
                 }
             }
 
