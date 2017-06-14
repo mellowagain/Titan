@@ -1,4 +1,4 @@
-﻿using Serilog;
+﻿using Serilog.Core;
 using Titan.Logging;
 using Titan.Sharecode;
 
@@ -7,7 +7,7 @@ namespace Titan.Util
     public class SharecodeUtil
     {
 
-        private static ILogger _log = LogCreator.Create();
+        private static Logger _log = LogCreator.Create();
 
         public static ulong Parse(string shareCode)
         {

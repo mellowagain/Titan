@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Net;
-using Serilog;
+using Serilog.Core;
 using SteamKit2;
 using Titan.Logging;
 
@@ -9,7 +9,7 @@ namespace Titan.Util
     public class SteamUtil
     {
 
-        private static ILogger _log = LogCreator.Create();
+        private static Logger _log = LogCreator.Create();
 
         public static string WebAPIKey;
 
