@@ -106,9 +106,9 @@ namespace Titan.UI.Main
             {
                 var matchid = string.IsNullOrWhiteSpace(_matchIDBox.Text) ? 8 : SharecodeUtil.Parse(_matchIDBox.Text);
 
-                var steamId = SteamUtil.Parse(_targetBox.Text);
+                var steamID = SteamUtil.Parse(_targetBox.Text);
 
-                if(steamId == null)
+                if(steamID == null)
                 {
                     MessageBox.Show("Titan - Error", "Could not parse Steam ID " +
                         _targetBox.Text + " to Steam ID. Please provide a valid " +
@@ -117,7 +117,7 @@ namespace Titan.UI.Main
                     return;
                 }
 
-                var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(steamId.ConvertToUInt64());
+                var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(steamID.ConvertToUInt64());
                 if(targetBanInfo != null)
                 {
                     if(targetBanInfo.VacBanned || targetBanInfo.GameBanCount > 0)
@@ -131,7 +131,7 @@ namespace Titan.UI.Main
                 _log.Information("Starting bombing of {Target} in Match {Match}.",
                     _targetBox.Text, matchid);
 
-                Titan.Instance.AccountManager.StartBotting(mode, steamId, matchid);
+                Titan.Instance.AccountManager.StartBotting(mode, steamID, matchid);
             }
             else
             {

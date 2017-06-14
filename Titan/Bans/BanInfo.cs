@@ -3,7 +3,7 @@
     public class BanInfo
     {
 
-        public ulong SteamId { get; set; }
+        public ulong SteamID { get; set; }
 
         public bool CommunityBanned { get; set; }
 

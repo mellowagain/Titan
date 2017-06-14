@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
@@ -18,13 +17,6 @@ namespace Titan.UI
 
         private Dictionary<UIType, Form> _forms = new Dictionary<UIType, Form>();
         public SharedResources SharedResources;
-
-        // Invoking
-        public Action<Form> ShowFormInvokeDelegate = delegate(Form form)
-        {
-            form.Show();
-            form.Focus();
-        };
 
         public UIManager()
         {
@@ -88,7 +80,7 @@ namespace Titan.UI
             _etoApp.Run();
         }
 
-        public T GetForm<T>(UIType ui) where T: Form
+        public T GetForm<T>(UIType ui) where T : Form
         {
             Form form;
 

@@ -229,7 +229,7 @@ namespace Titan.Managers
             _log.Debug("Successfully wrote index file.");
         }
 
-        public void StartBotting(BotMode mode, SteamID target, ulong matchId)
+        public void StartBotting(BotMode mode, SteamID target, ulong matchID)
         {
             _log.Debug("Checking if the index file contains a newer available index...");
 
@@ -253,7 +253,7 @@ namespace Titan.Managers
                 {
                     try
                     {
-                        Titan.Instance.ThreadManager.Start(mode, acc, target.AccountID, matchId);
+                        Titan.Instance.ThreadManager.Start(mode, acc, target.AccountID, matchID);
                     }
                     catch (Exception ex)
                     {

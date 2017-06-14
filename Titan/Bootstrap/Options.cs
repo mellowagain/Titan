@@ -12,7 +12,7 @@ namespace Titan.Bootstrap
 
         [Option('i', "id", Required = false,
             HelpText = "The CS:GO Match ID with which the target should get to Overwatch")]
-        public string MatchId { get; set; } // This is required when the Mode value has been set to REPORT
+        public string MatchID { get; set; } // This is required when the Mode value has been set to REPORT
 
         [Option('m', "mode", Required = true,
             HelpText = "The Mode in which the bot should be operating")]
@@ -22,11 +22,6 @@ namespace Titan.Bootstrap
             HelpText = "The file containg a list of Steam accounts owning CS:GO that should be used")]
         [DefaultValue("accounts.json")]
         public string File { get; set; }
-
-        [Option('u', "update", Required = false,
-            HelpText = "Force a update of the CS:GO Protobufs from the SteamKit GitHub repository")]
-        [DefaultValue(false)]
-        public bool ForceUpdate { get; set; }
 
     }
 }

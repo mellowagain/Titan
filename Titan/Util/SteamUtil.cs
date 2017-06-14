@@ -14,25 +14,25 @@ namespace Titan.Util
         public static string WebAPIKey;
 
         // Renders from a "STEAM_0:0:131983088" form.
-        public static SteamID FromSteamID(string steamId)
+        public static SteamID FromSteamID(string steamID)
         {
-            return new SteamID(steamId);
+            return new SteamID(steamID);
         }
 
         // Renders from a "[U:1:263966176]" form.
-        public static SteamID FromSteamID3(string steamId3)
+        public static SteamID FromSteamID3(string steamID3)
         {
             var id = new SteamID();
-            id.SetFromSteam3String(steamId3);
+            id.SetFromSteam3String(steamID3);
 
             return id;
         }
 
         // Renders from a "76561198224231904" form.
-        public static SteamID FromSteamID64(ulong steamId64)
+        public static SteamID FromSteamID64(ulong steamID64)
         {
             var id = new SteamID();
-            id.SetFromUInt64(steamId64);
+            id.SetFromUInt64(steamID64);
 
             return id;
         }

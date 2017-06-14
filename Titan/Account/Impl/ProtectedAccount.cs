@@ -354,7 +354,7 @@ namespace Titan.Account.Impl
             switch(_info.Mode)
             {
                 case BotMode.Report:
-                    _log.Information("Successfully reported. Confirmation ID: {Id}", response.Body.confirmation_id);
+                    _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
                     break;
                 case BotMode.Commend:
                     _log.Information("Successfully commended {Target} with a Leader, Friendly and a Teacher.",

@@ -68,7 +68,7 @@ namespace Titan
             /* Parse arguments provided with the starting of this */
             if(Parser.Default.ParseArguments(args, Instance.Options))
             {
-                Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {Id}", Instance.Options.Target, Instance.Options.MatchId);
+                Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {ID}", Instance.Options.Target, Instance.Options.MatchID);
                 Instance.EnableUI = false;
             }
             else
@@ -118,7 +118,7 @@ namespace Titan
                     if(mode != BotMode.Unknown)
                     {
                         Instance.AccountManager.StartBotting(mode, SteamUtil.Parse(Instance.Options.Target),
-                            Instance.Options.MatchId != null ? SharecodeUtil.Parse(Instance.Options.MatchId) : 8);
+                            Instance.Options.MatchID != null ? SharecodeUtil.Parse(Instance.Options.MatchID) : 8);
                     }
                 }
 

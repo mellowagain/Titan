@@ -52,19 +52,19 @@ namespace Titan.Bans
             File.WriteAllText(_apiKeyFile.ToString(), APIKey, Encoding.UTF8);
         }
 
-        public BanInfo GetBanInfoFor(SteamID steamId)
+        public BanInfo GetBanInfoFor(SteamID steamID)
         {
             using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", APIKey))
             {
-                KeyValue pair = steamUser.GetPlayerBans(steamids: steamId.ConvertToUInt64());
+                KeyValue pair = steamUser.GetPlayerBans(steamids: steamID.ConvertToUInt64());
 
                 foreach(var get in pair["players"].Children)
                 {
-                    if(get["SteamId"].AsUnsignedLong() == steamId.ConvertToUInt64())
+                    if(get["SteamId"].AsUnsignedLong() == steamID.ConvertToUInt64())
                     {
                         return new BanInfo
                         {
-                            SteamId = get["SteamId"].AsUnsignedLong(),
+                            SteamID = get["SteamId"].AsUnsignedLong(),
                             CommunityBanned = get["CommunityBanned"].AsBoolean(),
                             VacBanned = get["VACBanned"].AsBoolean(),
                             VacBanCount = get["NumberOfVACBans"].AsInteger(),

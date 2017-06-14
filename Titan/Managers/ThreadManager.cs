@@ -19,19 +19,19 @@ namespace Titan.Managers
 
         private int _count; // Amount of accounts that successfully reported or commended
 
-        public void Start(BotMode mode, TitanAccount acc, uint target, ulong matchId)
+        public void Start(BotMode mode, TitanAccount acc, uint target, ulong matchID)
         {
             acc.Feed(new Info
             {
                 Mode = mode,
                 Target = target,
-                MatchID = matchId
+                MatchID = matchID
             });
 
             _count = 0;
 
-            _log.Debug("Starting {Mode} thread for {Target} in match {MatchId} " +
-                       "using account {Account}.", mode.ToString().ToLower() + "ing", target, matchId, acc.JsonAccount.Username);
+            _log.Debug("Starting {Mode} thread for {Target} in match {MatchID} " +
+                       "using account {Account}.", mode.ToString().ToLower() + "ing", target, matchID, acc.JsonAccount.Username);
 
             _taskDic.Add(acc, Task.Run(() =>
             {

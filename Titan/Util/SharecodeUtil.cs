@@ -21,10 +21,10 @@ namespace Titan.Util
                 return new ShareCodeDecoder(shareCode).Decode().MatchID;
             }
 
-            ulong matchId;
-            if(ulong.TryParse(shareCode, out matchId))
+            ulong matchID;
+            if(ulong.TryParse(shareCode, out matchID))
             {
-                return matchId;
+                return matchID;
             }
 
             _log.Warning("Could not convert Match ID {ID} to Unsigned Long.", shareCode);
