@@ -15,22 +15,16 @@ namespace Titan.Logging
 
         public static Logger Create(string name)
         {
-            if(Titan.Instance.Options.Debug)
+            if(Titan.Instance != null && Titan.Instance.Options.Debug)
             {
-                return new LoggerConfiguration()
-                    .WriteTo.LiterateConsole(outputTemplate:
-                        "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
-                    .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
-                            name + "-{Date}.log"), outputTemplate:
-                        "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
-                    .MinimumLevel.Debug()
-                    .Enrich.WithProperty("Name", name)
-                    .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
-                    .Enrich.FromLogContext()
-                    .Enrich.WithThreadId()
-                    .CreateLogger();
+                return CreateDebugLogger(name);
             }
-            
+
+            return CreateInfoLogger(name);
+        }
+
+        public static Logger CreateInfoLogger(string name)
+        {
             return new LoggerConfiguration()
                 .WriteTo.LiterateConsole(outputTemplate:
                     "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
@@ -45,6 +39,22 @@ namespace Titan.Logging
                 .CreateLogger();
         }
 
+        public static Logger CreateDebugLogger(string name)
+        {
+            return new LoggerConfiguration()
+                .WriteTo.LiterateConsole(outputTemplate:
+                    "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
+                .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
+                        name + "-{Date}.log"), outputTemplate:
+                    "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
+                .MinimumLevel.Debug()
+                .Enrich.WithProperty("Name", name)
+                .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
+                .Enrich.FromLogContext()
+                .Enrich.WithThreadId()
+                .CreateLogger();
+        }
+ 
         public static Logger Create()
         {
             var reflectedType = new StackTrace().GetFrame(1).GetMethod().ReflectedType;

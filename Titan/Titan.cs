@@ -20,7 +20,7 @@ namespace Titan
     public sealed class Titan
     {
 
-        public static Logger Logger = LogCreator.Create(); // Global logger
+        public static Logger Logger; // Global logger
         public static Titan Instance;
 
         public Options Options;
@@ -39,13 +39,15 @@ namespace Titan
         {
             Thread.CurrentThread.Name = "Main";
 
-            Logger.Debug("Startup: Loading Titan Bootstrapper.");
-
             // Initialize Titan Singleton
             Instance = new Titan
             {
                 Options = new Options()
             };
+
+            Logger = LogCreator.Create();
+            
+            Logger.Debug("Startup: Loading Titan Bootstrapper.");
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
@@ -76,6 +78,9 @@ namespace Titan
                 Logger.Information("The arguments --target and --mode were omitted - opening the UI.");
                 Instance.EnableUI = true;
             }
+            
+            // Reinitialize logger with new parsed debug option
+            Logger = LogCreator.Create();
 
             Logger.Debug("Startup: Initializing Gui Manager, Victim Tracker, Account Manager and Ban Manager.");
             

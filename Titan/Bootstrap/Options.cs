@@ -22,11 +22,11 @@ namespace Titan.Bootstrap
             HelpText = "The file containg a list of Steam accounts owning CS:GO that should be used")]
         [DefaultValue("accounts.json")]
         public string File { get; set; }
-        
+
         [Option('d', "debug", Required = false,
             HelpText = "Should the Titan Debug Mode be enabled?")]
         [DefaultValue(false)]
-        public bool Debug { get; set; }
+        public bool Debug { get; set; } = true; // TODO: Remove this "true" on release.
 
     }
 }
