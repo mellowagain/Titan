@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using Serilog.Core;
 using SteamKit2;
@@ -54,26 +55,34 @@ namespace Titan.Bans
 
         public BanInfo GetBanInfoFor(SteamID steamID)
         {
-            using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", APIKey))
+            try
             {
-                KeyValue pair = steamUser.GetPlayerBans(steamids: steamID.ConvertToUInt64());
-
-                foreach(var get in pair["players"].Children)
+                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", APIKey))
                 {
-                    if(get["SteamId"].AsUnsignedLong() == steamID.ConvertToUInt64())
+                    KeyValue pair = steamUser.GetPlayerBans(steamids: steamID.ConvertToUInt64());
+
+                    foreach(var get in pair["players"].Children)
                     {
-                        return new BanInfo
+                        if(get["SteamId"].AsUnsignedLong() == steamID.ConvertToUInt64())
                         {
-                            SteamID = get["SteamId"].AsUnsignedLong(),
-                            CommunityBanned = get["CommunityBanned"].AsBoolean(),
-                            VacBanned = get["VACBanned"].AsBoolean(),
-                            VacBanCount = get["NumberOfVACBans"].AsInteger(),
-                            DaysSinceLastBan = get["DaysSinceLastBan"].AsInteger(),
-                            GameBanCount = get["NumberOfGameBans"].AsInteger(),
-                            EconomyBan = get["EconomyBan"].AsString()
-                        };
+                            return new BanInfo
+                            {
+                                SteamID = get["SteamId"].AsUnsignedLong(),
+                                CommunityBanned = get["CommunityBanned"].AsBoolean(),
+                                VacBanned = get["VACBanned"].AsBoolean(),
+                                VacBanCount = get["NumberOfVACBans"].AsInteger(),
+                                DaysSinceLastBan = get["DaysSinceLastBan"].AsInteger(),
+                                GameBanCount = get["NumberOfGameBans"].AsInteger(),
+                                EconomyBan = get["EconomyBan"].AsString()
+                            };
+                        }
                     }
                 }
+            }
+            catch (WebException ex)
+            {
+                _log.Error(ex, "A error occured when trying to get the Ban Information for {SteamID}.",
+                    steamID.ConvertToUInt64());
             }
 
             _log.Warning("Did not receive ban informations for {SteamID}. Skipping...");
