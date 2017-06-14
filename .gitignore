@@ -3,6 +3,7 @@
 ### Cake ###
 tools/*
 !tools/packages.config
+!tools/NetHook2
 
 ### Csharp ###
 ## Ignore Visual Studio temporary files, build results, and
