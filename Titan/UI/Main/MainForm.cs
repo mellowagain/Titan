@@ -141,15 +141,17 @@ namespace Titan.UI.Main
 
         public void OnDropDownIndexChange(object sender, EventArgs args)
         {
-            if(_dropDown.SelectedIndex == 0)
+            switch(_dropDown.SelectedIndex)
             {
-                _matchIDLabel.Visible = true;
-                _matchIDBox.Visible = true;
-            }
-            else if(_dropDown.SelectedIndex == 1)
-            {
-                _matchIDLabel.Visible = false;
-                _matchIDBox.Visible = false;
+                case 0:
+                    _matchIDLabel.Visible = true;
+                    _matchIDBox.Visible = true;
+                    break;
+                case 1:
+                case 2:
+                    _matchIDLabel.Visible = false;
+                    _matchIDBox.Visible = false;
+                    break;
             }
         }
 
