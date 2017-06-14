@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -57,6 +58,14 @@ namespace Titan.Account.Impl
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
+
+            // Initialize debug network sniffer when debug mode is enabled
+            if(Titan.Instance.Options.Debug)
+            {
+                _steamClient.DebugNetworkListener = new NetHookNetworkListener(
+                    Path.Combine(Environment.CurrentDirectory, Path.Combine("debug", json.Username + "-network.log"))
+                );
+            }
 
             if(json.SharedSecret != null)
             {

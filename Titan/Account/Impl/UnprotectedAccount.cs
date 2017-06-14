@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using Serilog.Core;
 using SteamKit2;
@@ -37,6 +38,14 @@ namespace Titan.Account.Impl
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
+            
+            // Initialize debug network sniffer when debug mode is enabled
+            if(Titan.Instance.Options.Debug)
+            {
+                _steamClient.DebugNetworkListener = new NetHookNetworkListener(
+                    Path.Combine(Environment.CurrentDirectory, Path.Combine("debug", json.Username + "-network.log"))
+                );
+            }
 
             _log.Debug("Successfully initialized account object for {0}.", json.Username);
         }

@@ -82,6 +82,17 @@ namespace Titan
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
 
+            // Initialize the Debug directory if Debug mode is enabled
+            if(Instance.Options.Debug)
+            {
+                var dir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "debug"));
+                
+                if(!dir.Exists)
+                {
+                    dir.Create();
+                }
+            }
+
             Logger.Debug("Startup: Initializing Gui Manager, Victim Tracker, Account Manager and Ban Manager.");
             
             Instance.UIManager = new UIManager();
