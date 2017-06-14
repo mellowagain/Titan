@@ -11,6 +11,11 @@ namespace Titan.Util
 
         public static ulong Parse(string shareCode)
         {
+            if(string.IsNullOrWhiteSpace(shareCode))
+            {
+                return 8;
+            }
+            
             if(shareCode.StartsWith("steam://"))
             {
                 return new ShareCodeDecoder(shareCode.Substring(61)).Decode().MatchID;

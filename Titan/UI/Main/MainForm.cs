@@ -104,7 +104,7 @@ namespace Titan.UI.Main
 
             if(!string.IsNullOrWhiteSpace(_targetBox.Text))
             {
-                var matchid = string.IsNullOrWhiteSpace(_matchIDBox.Text) ? 8 : SharecodeUtil.Parse(_matchIDBox.Text);
+                var matchid = SharecodeUtil.Parse(_matchIDBox.Text);
 
                 var steamID = SteamUtil.Parse(_targetBox.Text);
 
