@@ -12,16 +12,21 @@ namespace Titan.Bootstrap
 
         [Option('i', "id", Required = false,
             HelpText = "The CS:GO Match ID with which the target should get to Overwatch")]
-        public string MatchID { get; set; } // This is required when the Mode value has been set to REPORT
+        public string MatchID { get; set; }
 
         [Option('m', "mode", Required = true,
             HelpText = "The Mode in which the bot should be operating")]
-        public string Mode { get; set; } // REPORT or COMMEND
+        public string Mode { get; set; } // REPORT, COMMEND or UNCOMMEND
 
         [Option('f', "file", Required = false,
             HelpText = "The file containg a list of Steam accounts owning CS:GO that should be used")]
         [DefaultValue("accounts.json")]
         public string File { get; set; }
+        
+        [Option('d', "debug", Required = false,
+            HelpText = "Should the Titan Debug Mode be enabled?")]
+        [DefaultValue(false)]
+        public bool Debug { get; set; }
 
     }
 }

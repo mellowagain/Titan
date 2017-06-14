@@ -15,13 +15,29 @@ namespace Titan.Logging
 
         public static Logger Create(string name)
         {
+            if(Titan.Instance.Options.Debug)
+            {
+                return new LoggerConfiguration()
+                    .WriteTo.LiterateConsole(outputTemplate:
+                        "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
+                    .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
+                            name + "-{Date}.log"), outputTemplate:
+                        "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
+                    .MinimumLevel.Debug()
+                    .Enrich.WithProperty("Name", name)
+                    .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
+                    .Enrich.FromLogContext()
+                    .Enrich.WithThreadId()
+                    .CreateLogger();
+            }
+            
             return new LoggerConfiguration()
                 .WriteTo.LiterateConsole(outputTemplate:
                     "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
-                .WriteTo.Async(a => a.RollingFile(Path.Combine(_logDir.ToString(),
+                .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
                         name + "-{Date}.log"), outputTemplate:
                     "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
-                .MinimumLevel.Debug() // TODO: Change this to "INFO" on release.
+                .MinimumLevel.Information()
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
