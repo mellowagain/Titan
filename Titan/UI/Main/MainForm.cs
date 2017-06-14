@@ -128,6 +128,13 @@ namespace Titan.UI.Main
                     }
                 }
 
+                if(Titan.Instance.VictimTracker.IsVictim(steamID))
+                {
+                    _log.Warning("You already report botted this victim. " +
+                                 "Are you sure you want to bot this player? " +
+                                 "Ignore this message if the first report didn't have enough reports.");
+                }
+
                 _log.Information("Starting bombing of {Target} in Match {Match}.",
                     _targetBox.Text, matchid);
 

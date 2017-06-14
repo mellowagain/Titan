@@ -54,6 +54,11 @@ namespace Titan.Logging
             });
         }
 
+        public bool IsVictim(SteamID steamID)
+        {
+            return _victims.Select(victim => victim.SteamID == steamID.ConvertToUInt64()).FirstOrDefault();
+        }
+
         public List<Victims.Victim> GetVictimsFromFile()
         {
             if(!_file.Exists)
