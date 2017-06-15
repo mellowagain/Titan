@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
 using Titan.Account;
 using Titan.Logging;
 using Titan.Meta;
-using Titan.Mode;
 using Titan.Util;
 
 namespace Titan.Managers

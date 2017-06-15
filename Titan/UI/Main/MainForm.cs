@@ -3,7 +3,6 @@ using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
-using Titan.Mode;
 using Titan.UI.Main.Commands;
 using Titan.UI.Main.Commands.Links;
 using Titan.Util;
@@ -101,7 +100,7 @@ namespace Titan.UI.Main
 
         public void OnBombButtonClick(object sender, EventArgs args)
         {
-            var mode = (BotMode) _dropDown.SelectedIndex;
+            var mode = /*(BotMode)*/ _dropDown.SelectedIndex;
 
             if(!string.IsNullOrWhiteSpace(_targetBox.Text))
             {

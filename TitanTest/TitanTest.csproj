@@ -58,7 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BanManagerTest.cs" />
-    <Compile Include="ModeParserTest.cs" />
     <Compile Include="ShareCodeDecoderTest.cs" />
     <Compile Include="SteamUtilTest.cs" />
     <Compile Include="ThreadTimeoutTest.cs" />

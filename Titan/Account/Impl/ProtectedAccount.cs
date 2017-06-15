@@ -13,7 +13,6 @@ using SteamKit2.GC.CSGO.Internal;
 using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
-using Titan.Mode;
 using Titan.UI;
 using Titan.UI._2FA;
 
