@@ -71,7 +71,10 @@ namespace Titan.UI.General
             var dropIndexes = new DropDown();
             foreach(var i in Titan.Instance.AccountManager.Accounts)
             {
-                dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+                if(i.Key != -1)
+                {
+                    dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+                }
             }
             dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
             
@@ -247,7 +250,10 @@ namespace Titan.UI.General
             var dropIndexes = new DropDown();
             foreach(var i in Titan.Instance.AccountManager.Accounts)
             {
-                dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+                if(i.Key != -1)
+                {
+                    dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+                }
             }
             dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
             
