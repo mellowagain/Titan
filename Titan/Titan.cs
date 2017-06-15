@@ -95,9 +95,7 @@ namespace Titan
                 }
             }
 
-            Logger.Debug("Startup: Initializing Gui Manager, Victim Tracker, Account Manager and Ban Manager.");
-            
-            Instance.UIManager = new UIManager();
+            Logger.Debug("Startup: Loading Victim Tracker, Account Manager, UI Manager and Ban Manager.");
             
             Instance.VictimTracker = new VictimTracker();
             
@@ -123,12 +121,15 @@ namespace Titan
             
             if(Instance.AccountManager.ParseAccountFile())
             {
+                Logger.Debug("Startup: Loading UI Manager.");
+                
+                Instance.UIManager = new UIManager();
+                
                 Logger.Information("Hello and welcome to Titan v1.4.0-Dev.");
 
                 if(Instance.EnableUI)
                 {
-                    Instance.UIManager.ShowForm(UIType.Main);
-                    //Instance.UIManager.ShowForm(UIType.Main, new General());
+                    Instance.UIManager.ShowForm(UIType.General);
                 }
                 else
                 {
@@ -164,7 +165,7 @@ namespace Titan
                         default:
                             Log.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
                             
-                            Instance.UIManager.ShowForm(UIType.Main);
+                            Instance.UIManager.ShowForm(UIType.General);
                             break;
                     }
                 }

@@ -146,11 +146,6 @@
     <Compile Include="UI\APIKey\APIKeyForm.cs" />
     <Compile Include="UI\APIKey\Commands\SteamKeySite.cs" />
     <Compile Include="UI\General\General.cs" />
-    <Compile Include="UI\Main\Commands\About.cs" />
-    <Compile Include="UI\Main\Commands\Links\JsonValidator.cs" />
-    <Compile Include="UI\Main\Commands\Links\SteamIO.cs" />
-    <Compile Include="UI\Main\Commands\Quit.cs" />
-    <Compile Include="UI\Main\MainForm.cs" />
     <Compile Include="UI\SharedResources.cs" />
     <Compile Include="UI\UIManager.cs" />
     <Compile Include="UI\UIType.cs" />

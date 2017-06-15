@@ -3,7 +3,7 @@
     public enum UIType
     {
 
-        Main,
+        General,
         APIKeyInput,
         TwoFactorAuthentification,
         

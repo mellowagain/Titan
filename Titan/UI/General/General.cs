@@ -14,14 +14,18 @@ namespace Titan.UI.General
 
         private Logger _log = LogCreator.Create();
 
+        private UIManager _uiManager;
+
         public TrayIndicator TrayIcon;
 
-        public General()
+        public General(UIManager uiManager)
         {
             Title = "Titan";
             ClientSize = new Size(640, 450);
             Resizable = false;
-            Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
+            Icon = uiManager.SharedResources.TITAN_ICON;
+
+            _uiManager = uiManager;
             
             var tabControl = new TabControl
             {
@@ -45,7 +49,7 @@ namespace Titan.UI.General
             {
                 TrayIcon = new TrayIndicator
                 {
-                    Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON
+                    Icon = uiManager.SharedResources.TITAN_ICON
                 };
                 
                 TrayIcon.Show();
@@ -390,7 +394,7 @@ namespace Titan.UI.General
                         Text = "&File",
                         Items =
                         {
-                            new Command((sender, args) => Titan.Instance.UIManager.ShowForm(UIType.Settings))
+                            new Command((sender, args) => _uiManager.ShowForm(UIType.Settings))
                             {
                                 MenuText = "Settings"
                             }
@@ -424,11 +428,11 @@ namespace Titan.UI.General
                         Text = "&Tools",
                         Items =
                         {
-                            new Command((sender, args) => Titan.Instance.UIManager.ShowForm(UIType.History))
+                            new Command((sender, args) => _uiManager.ShowForm(UIType.History))
                             {
                                 MenuText = "History"
                             },
-                            new Command((sender, args) => Titan.Instance.UIManager.ShowForm(UIType.Accounts))
+                            new Command((sender, args) => _uiManager.ShowForm(UIType.Accounts))
                             {
                                 MenuText = "Account List"
                             }
@@ -449,15 +453,15 @@ namespace Titan.UI.General
                         Text = "&Help",
                         Items =
                         {
-                            new Command((sender, args) => Titan.Instance.UIManager.ShowForm(UIType.Help))
+                            new Command((sender, args) => _uiManager.ShowForm(UIType.Help))
                             {
                                 MenuText = "Help"
                             },
-                            new Command((sender, args) => Titan.Instance.UIManager.ShowForm(UIType.SystemInfo))
+                            new Command((sender, args) => _uiManager.ShowForm(UIType.SystemInfo))
                             {
                                 MenuText = "System Informations"
                             },
-                            new Command((sender, args) => Titan.Instance.UIManager.ShowForm(UIType.UpdateChecker))
+                            new Command((sender, args) => _uiManager.ShowForm(UIType.UpdateChecker))
                             {
                                 MenuText = "Check for Updates"
                             }
@@ -465,7 +469,7 @@ namespace Titan.UI.General
                     }
                 },
                 
-                AboutItem = new Command((sender, args) => Titan.Instance.UIManager.ShowForm(UIType.About))
+                AboutItem = new Command((sender, args) => _uiManager.ShowForm(UIType.About))
                 {
                     MenuText = "About"
                 },

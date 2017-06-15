@@ -3,7 +3,6 @@ using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
 using Titan.UI.APIKey;
-using Titan.UI.Main;
 
 namespace Titan.UI
 {
@@ -23,10 +22,10 @@ namespace Titan.UI
             _etoApp = new Application();
             SharedResources = new SharedResources();
 
-            _forms.Add(UIType.Main, new MainForm(this));
+            _forms.Add(UIType.General, new General.General(this));
             _forms.Add(UIType.APIKeyInput, new APIKeyForm(this));
 
-            _etoApp.MainForm = GetForm<MainForm>(UIType.Main);
+            _etoApp.MainForm = GetForm<General.General>(UIType.General);
         }
 
         public void ShowForm(UIType ui)

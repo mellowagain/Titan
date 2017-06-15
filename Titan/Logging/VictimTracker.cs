@@ -10,7 +10,7 @@ using Serilog.Core;
 using SteamKit2;
 using Titan.Json;
 using Titan.UI;
-using Titan.UI.Main;
+using Titan.UI.General;
 using Titan.Util;
 
 namespace Titan.Logging
@@ -147,7 +147,7 @@ namespace Titan.Logging
                         };
 
                         Application.Instance.Invoke(() => notification.Show(
-                            Titan.Instance.UIManager.GetForm<MainForm>(UIType.Main).TrayIcon
+                            Titan.Instance.UIManager.GetForm<General>(UIType.General).TrayIcon
                         ));
                     }
                 }
