@@ -145,6 +145,7 @@
     <Compile Include="UI\2FA\TwoFactorAuthForm.cs" />
     <Compile Include="UI\APIKey\APIKeyForm.cs" />
     <Compile Include="UI\APIKey\Commands\SteamKeySite.cs" />
+    <Compile Include="UI\General\General.cs" />
     <Compile Include="UI\Main\Commands\About.cs" />
     <Compile Include="UI\Main\Commands\Links\JsonValidator.cs" />
     <Compile Include="UI\Main\Commands\Links\SteamIO.cs" />
@@ -193,6 +194,9 @@
     <EmbeddedResource Include="Resources\SteamIO.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\General" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

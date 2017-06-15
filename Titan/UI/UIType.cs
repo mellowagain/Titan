@@ -5,7 +5,16 @@
 
         Main,
         APIKeyInput,
-        TwoFactorAuthentification
+        TwoFactorAuthentification,
+        
+        // TODO: Implement the following UI types:
+        Settings,
+        History,
+        Accounts,
+        Help,
+        SystemInfo,
+        UpdateChecker,
+        About
 
     }
 }

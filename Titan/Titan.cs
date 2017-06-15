@@ -13,6 +13,7 @@ using Titan.Logging;
 using Titan.Managers;
 using Titan.Mode;
 using Titan.UI;
+using Titan.UI.General;
 using Titan.Util;
 
 namespace Titan
@@ -127,6 +128,7 @@ namespace Titan
                 if(Instance.EnableUI)
                 {
                     Instance.UIManager.ShowForm(UIType.Main);
+                    //Instance.UIManager.ShowForm(UIType.Main, new General());
                 }
                 else
                 {
