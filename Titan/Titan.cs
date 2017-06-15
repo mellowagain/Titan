@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using CommandLine;
 using Quartz;
@@ -11,6 +12,7 @@ using Titan.Bans;
 using Titan.Bootstrap;
 using Titan.Logging;
 using Titan.Managers;
+using Titan.Meta;
 using Titan.Mode;
 using Titan.UI;
 using Titan.UI.General;
@@ -132,12 +134,40 @@ namespace Titan
                 }
                 else
                 {
-                    var mode = BotModeParser.Parse(Instance.Options.Mode);
-
-                    if(mode != BotMode.Unknown)
+                    switch(Regex.Replace(Instance.Options.Mode.ToLowerInvariant(), @"\s+", ""))
                     {
-                        Instance.AccountManager.StartBotting(mode, SteamUtil.Parse(Instance.Options.Target),
-                            SharecodeUtil.Parse(Instance.Options.MatchID));
+                        case "report":
+                            Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
+                                new ReportInfo
+                                {
+                                    SteamID = SteamUtil.Parse(Instance.Options.Target),
+                                    MatchID = SharecodeUtil.Parse(Instance.Options.MatchID),
+                                    
+                                    // TODO: Maybe make this customizeable
+                                    AbusiveText = true,
+                                    AbusiveVoice = true,
+                                    Griefing = true,
+                                    AimHacking = true,
+                                    WallHacking = true,
+                                    OtherHacking = true
+                                });
+                            break;
+                        case "commend":
+                            Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
+                                new CommendInfo
+                                {
+                                    SteamID = SteamUtil.Parse(Instance.Options.Target),
+                                    
+                                    Friendly = true,
+                                    Leader = true,
+                                    Teacher = true
+                                });
+                            break;
+                        default:
+                            Log.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
+                            
+                            Instance.UIManager.ShowForm(UIType.Main);
+                            break;
                     }
                 }
 

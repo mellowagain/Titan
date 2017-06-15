@@ -2,6 +2,7 @@
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using Titan.Json;
+using Titan.Meta;
 
 namespace Titan.Account
 {
@@ -53,68 +54,57 @@ namespace Titan.Account
         ////////////////////////////////////////////////////
 
         // ReSharper disable once InconsistentNaming
-        public Info _info; // Setting this to private will cause it not to be visible for inheritated classes
+        public ReportInfo _reportInfo; // Setting this to private will cause it not to be visible for inheritated classes
 
-        public void Feed(Info info)
+        public void FeedReportInfo(ReportInfo info)
         {
-            _info = info;
+            _reportInfo = info;
+        }
+        
+        // ReSharper disable once InconsistentNaming
+        public CommendInfo _commendInfo; // Setting this to private will cause it not to be visible for inheritated classes
+
+        public void FeedCommendInfo(CommendInfo info)
+        {
+            _commendInfo = info;
         }
 
         ////////////////////////////////////////////////////
         // PAYLOADS
         ////////////////////////////////////////////////////
 
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer> GetReportPayload(uint target, ulong match)
+        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer> GetReportPayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer);
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer
+            );
 
-            payload.Body.account_id = target;
-            payload.Body.match_id = match;
-            payload.Body.rpt_aimbot = 2;
-            payload.Body.rpt_wallhack = 3;
-            payload.Body.rpt_speedhack = 4;
-            payload.Body.rpt_teamharm = 5;
-            payload.Body.rpt_textabuse = 6;
-            payload.Body.rpt_voiceabuse = 7;
+            payload.Body.account_id = _reportInfo.SteamID.AccountID;
+            payload.Body.match_id = _reportInfo.MatchID;
+            payload.Body.rpt_aimbot = (uint) (_reportInfo.AimHacking ? 2 : 0);
+            payload.Body.rpt_wallhack = (uint) (_reportInfo.WallHacking ? 3 : 0);
+            payload.Body.rpt_speedhack = (uint) (_reportInfo.OtherHacking ? 4 : 0);
+            payload.Body.rpt_teamharm = (uint) (_reportInfo.Griefing ? 5 : 0);
+            payload.Body.rpt_textabuse = (uint) (_reportInfo.AbusiveText ? 6 : 0);
+            payload.Body.rpt_voiceabuse = (uint) (_reportInfo.AbusiveVoice ? 7 : 0);
 
             return payload;
         }
 
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer> GetCommendPayload(uint target)
+        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer> GetCommendPayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer);
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer
+            );
 
-            payload.Body.account_id = target;
+            payload.Body.account_id = _reportInfo.SteamID.AccountID;
             payload.Body.match_id = 0;
 
             payload.Body.commendation = new PlayerCommendationInfo
             {
-                cmd_friendly = 1,
-                cmd_teaching = 2,
-                cmd_leader = 4
-            };
-
-            payload.Body.tokens = 10; // Whatever this is
-
-            return payload;
-        }
-        
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer> GetRemoveCommendPayload(uint target)
-        {
-            var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer);
-
-            payload.Body.account_id = target;
-            payload.Body.match_id = 0;
-
-            payload.Body.commendation = new PlayerCommendationInfo
-            {
-                // Not tested if it works by setting all values to 0, but it should.
-                cmd_friendly = 0,
-                cmd_teaching = 0,
-                cmd_leader = 0
+                cmd_friendly = (uint) (_commendInfo.Friendly ? 1 : 0),
+                cmd_teaching = (uint) (_commendInfo.Teacher ? 2 : 0),
+                cmd_leader = (uint) (_commendInfo.Leader ? 4 : 0)
             };
 
             payload.Body.tokens = 10; // Whatever this is

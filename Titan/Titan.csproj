@@ -136,6 +136,8 @@
     <Compile Include="Logging\LogCreator.cs" />
     <Compile Include="Logging\VictimTracker.cs" />
     <Compile Include="Managers\AccountManager.cs" />
+    <Compile Include="Meta\CommendInfo.cs" />
+    <Compile Include="Meta\ReportInfo.cs" />
     <Compile Include="Mode\BotMode.cs" />
     <Compile Include="Sharecode\ShareCodeDecoder.cs" />
     <Compile Include="Sharecode\ShareCodeInfo.cs" />

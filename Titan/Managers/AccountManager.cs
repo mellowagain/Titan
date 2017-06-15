@@ -10,6 +10,7 @@ using Titan.Account;
 using Titan.Account.Impl;
 using Titan.Json;
 using Titan.Logging;
+using Titan.Meta;
 using Titan.Mode;
 using Titan.Util;
 
@@ -20,11 +21,11 @@ namespace Titan.Managers
 
         private Logger _log = LogCreator.Create();
 
-        private Dictionary<int, List<TitanAccount>> _accounts = new Dictionary<int, List<TitanAccount>>();
+        public Dictionary<int, List<TitanAccount>> Accounts = new Dictionary<int, List<TitanAccount>>();
         private List<TitanAccount> _allAccounts = new List<TitanAccount>();
 
         private Dictionary<int, long> _indexEntries = new Dictionary<int, long>();
-        private int _index;
+        public int Index;
 
         private FileInfo _indexFile;
         private FileInfo _file;
@@ -36,7 +37,7 @@ namespace Titan.Managers
         {
             _file = file;
             _indexFile = new FileInfo(Path.Combine(Environment.CurrentDirectory, "index.json"));
-            _index = 0;
+            Index = 0;
 
             var dirInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "sentries"));
             if(!dirInfo.Exists)
@@ -88,18 +89,18 @@ namespace Titan.Managers
 
                     _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
                                "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
-                        _index, account.Username, account.Password, account.Sentry, account.Enabled);
+                        Index, account.Username, account.Password, account.Sentry, account.Enabled);
                 }
 
                 if(accounts.Count > 11)
                 {
                     _log.Warning("You have more than 11 account specified in index {Index}. " +
-                                 "It is recommend to specify max. 11 accounts.", _index);
+                                 "It is recommend to specify max. 11 accounts.", Index);
                 }
 
-                _accounts.Add(_index, accounts);
+                Accounts.Add(Index, accounts);
 
-                _index++;
+                Index++;
             }
 
             if(_allAccounts.Count < 11)
@@ -113,7 +114,7 @@ namespace Titan.Managers
             {
                 var list = new List<object>();
 
-                foreach(var keyPair in _accounts)
+                foreach(var keyPair in Accounts)
                 {
                     list.Add(new { Index = keyPair.Key, keyPair.Value.Count });
                 }
@@ -121,8 +122,10 @@ namespace Titan.Managers
                 _log.Information("Account file has been successfully parsed. {Count} accounts " +
                                  "have been parsed. Details: {@List}", _allAccounts.Count, list);
             }
+            
+            Accounts.Add(-1, _allAccounts);
 
-            _index = 0;
+            Index = 0;
 
             ParseIndexFile();
 
@@ -175,20 +178,20 @@ namespace Titan.Managers
                     }
                 }
 
-                _index = lowest;
+                Index = lowest;
             }
             else
             {
-                _index = 0;
+                Index = 0;
                 SaveIndexFile(); // it doesn't exist, we're gonna' create it!
             }
 
             var valid = false;
-            foreach(var keyVal in _accounts)
+            foreach(var keyVal in Accounts)
             {
-                if(keyVal.Key == _index)
+                if(keyVal.Key == Index)
                 {
-                    _log.Debug("Using index #{Index} for botting.", _index);
+                    _log.Debug("Using index #{Index} for botting.", Index);
                     valid = true;
                 }
             }
@@ -197,7 +200,7 @@ namespace Titan.Managers
             {
                 _log.Warning("Index #{index} doesn't exist. The Bot will use index " +
                              "#{ForcedIndex}. Please keep in mind that it may already " +
-                             "been used.", _index, _index = 0);
+                             "been used.", Index, Index = 0);
             }
 
         }
@@ -211,7 +214,7 @@ namespace Titan.Managers
 
             var jsonIndex = new JsonIndex
             {
-                AvailableIndex = _index,
+                AvailableIndex = Index,
                 Entries = _indexEntries.Select(keyVal => new JsonIndex.JsonEntry
                     {
                         TargetedIndex = keyVal.Key,
@@ -229,16 +232,12 @@ namespace Titan.Managers
             _log.Debug("Successfully wrote index file.");
         }
 
-        public void StartBotting(BotMode mode, SteamID target, ulong matchID)
+        public void StartReporting(int index, ReportInfo info)
         {
-            _log.Debug("Checking if the index file contains a newer available index...");
-
-            ParseIndexFile(); // Before we bot, we parse the index file to get the latest available index
-
-            _log.Debug("Starting botting using index {Index}.", _index);
+            _log.Debug("Starting botting using index {Index}.", index);
 
             List<TitanAccount> accounts;
-            if(_accounts.TryGetValue(_index, out accounts))
+            if(Accounts.TryGetValue(index, out accounts))
             {
                 try
                 {
@@ -253,11 +252,11 @@ namespace Titan.Managers
                 {
                     try
                     {
-                        Titan.Instance.ThreadManager.Start(mode, acc, target.AccountID, matchID);
+                        Titan.Instance.ThreadManager.StartReport(acc, info);
                     }
                     catch (Exception ex)
                     {
-                        _log.Error(ex, "Could not start reporting for account {Account}: {Message}",
+                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
                             acc.JsonAccount.Username, ex.Message);
                     }
                 }
@@ -265,22 +264,68 @@ namespace Titan.Managers
             else
             {
                 _log.Error("Could not export accounts for current index {Index}. " +
-                           "Does it exist?", _index);
+                           "Does it exist?", Index);
                 return;
             }
-            
-            if(mode == BotMode.Report)
-                Titan.Instance.VictimTracker.AddVictim(target);
+                
+            Titan.Instance.VictimTracker.AddVictim(info.SteamID);
 
-            if(!_indexEntries.ContainsKey(_index))
+            if(!_indexEntries.ContainsKey(index))
             {
-                _indexEntries.Add(_index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(6)));
+                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(6)));
                 SaveIndexFile();
             }
 
             _log.Debug("Index #{Index} has been used. It will be unlocked on {Unlock}. " +
-                       "Using index #{NextIndex} for next botting session.",
-                _index, DateTime.Now.AddHours(6).ToLongTimeString(), ++_index);
+                       "Suggesting index #{NextIndex} for next botting session.",
+                index, DateTime.Now.AddHours(6).ToLongTimeString(), ++index);
+        }
+        
+        public void StartCommending(int index, CommendInfo info)
+        {
+            _log.Debug("Starting botting using index {Index}.", index);
+
+            List<TitanAccount> accounts;
+            if(Accounts.TryGetValue(index, out accounts))
+            {
+                try
+                {
+                    Titan.Instance.ThreadManager.StartWatchdog();
+                }
+                catch (Exception ex)
+                {
+                    _log.Warning(ex, "Could not start Watchdog thread, starting to commend without one!");
+                }
+
+                foreach(var acc in accounts)
+                {
+                    try
+                    {
+                        Titan.Instance.ThreadManager.StartCommend(acc, info);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                            acc.JsonAccount.Username, ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                _log.Error("Could not export accounts for current index {Index}. " +
+                           "Does it exist?", Index);
+                return;
+            }
+
+            if(!_indexEntries.ContainsKey(index))
+            {
+                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(6)));
+                SaveIndexFile();
+            }
+
+            _log.Debug("Index #{Index} has been used. It will be unlocked on {Unlock}. " +
+                       "Suggesting index #{NextIndex} for next botting session.",
+                index, DateTime.Now.AddHours(6).ToLongTimeString(), ++index);
         }
 
     }

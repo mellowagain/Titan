@@ -11,6 +11,7 @@ using Titan.Util;
 namespace Titan.UI.Main
 {
 
+    [Obsolete]
     public sealed class MainForm : Form
     {
 
@@ -138,7 +139,7 @@ namespace Titan.UI.Main
                 _log.Information("Starting bombing of {Target} in Match {Match}.",
                     _targetBox.Text, matchid);
 
-                Titan.Instance.AccountManager.StartBotting(mode, steamID, matchid);
+                //Titan.Instance.AccountManager.StartBotting(mode, steamID, matchid);
             }
             else
             {

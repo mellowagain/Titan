@@ -4,6 +4,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
+using Titan.Meta;
 using Titan.Util;
 
 namespace Titan.UI.General
@@ -63,7 +64,12 @@ namespace Titan.UI.General
             var cbCheatWall = new CheckBox { Text = "Wall Hacking", Checked = true };
             var cbCheatOther = new CheckBox { Text = "Other Hacking", Checked = true };
 
-            var dropIndexes = new DropDown { Items = { "#1 (11 accounts)" /* TODO */ }, SelectedIndex = 0 };
+            var dropIndexes = new DropDown();
+            foreach(var i in Titan.Instance.AccountManager.Accounts)
+            {
+                dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+            }
+            dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
             
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
             cbAllIndexes.CheckedChanged += delegate
@@ -108,7 +114,19 @@ namespace Titan.UI.General
                             _log.Information("Starting reporting of {Target} in Match {Match}.",
                                 steamID.ConvertToUInt64(), matchID);
 
-                            // TODO: Titan.Instance.AccountManager.StartBotting(mode, steamID, matchid);
+                            Titan.Instance.AccountManager.StartReporting(
+                                cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? - 1 : dropIndexes.SelectedIndex,
+                                new ReportInfo {
+                                    SteamID = steamID,
+                                    MatchID = matchID,
+                                
+                                    AbusiveText = cbAbusiveText.Checked != null && (bool) cbAbusiveText.Checked,
+                                    AbusiveVoice = cbAbusiveVoice.Checked != null && (bool) cbAbusiveVoice.Checked,
+                                    Griefing = cbGriefing.Checked != null && (bool) cbGriefing.Checked,
+                                    AimHacking = cbCheatAim.Checked != null && (bool) cbCheatAim.Checked,
+                                    WallHacking = cbCheatWall.Checked != null && (bool) cbCheatWall.Checked,
+                                    OtherHacking = cbCheatOther.Checked != null && (bool) cbCheatOther.Checked
+                                });
                         }
                     }
                     else
@@ -222,7 +240,12 @@ namespace Titan.UI.General
             var cbFriendly = new CheckBox { Text = "Friendly", Checked = true };
             var cbTeacher = new CheckBox { Text = "Teacher", Checked = true };
             
-            var dropIndexes = new DropDown { Items = { "#1 (11 accounts)" /* TODO */ }, SelectedIndex = 0 };
+            var dropIndexes = new DropDown();
+            foreach(var i in Titan.Instance.AccountManager.Accounts)
+            {
+                dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+            }
+            dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
             
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
             cbAllIndexes.CheckedChanged += delegate
@@ -249,7 +272,15 @@ namespace Titan.UI.General
                         _log.Information("Starting commending of {Target}.",
                             steamID.ConvertToUInt64());
                         
-                        // TODO: Titan.Instance.AccountManager.StartBotting(mode, steamID, matchid);
+                        Titan.Instance.AccountManager.StartCommending(
+                            cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? - 1 : dropIndexes.SelectedIndex, 
+                            new CommendInfo {
+                                SteamID = steamID,
+                            
+                                Leader = cbLeader.Checked != null && (bool) cbLeader.Checked,
+                                Friendly = cbFriendly.Checked != null && (bool) cbFriendly.Checked,
+                                Teacher = cbTeacher.Checked != null && (bool) cbTeacher.Checked
+                            });
                     }
                     else
                     {

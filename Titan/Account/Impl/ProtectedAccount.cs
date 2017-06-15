@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -86,7 +85,7 @@ namespace Titan.Account.Impl
 
         public override Result Start()
         {
-            Thread.CurrentThread.Name = JsonAccount.Username + " - " + _info.Mode;
+            Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" :"Commend");
 
             _callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             _callbacks.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
@@ -196,7 +195,7 @@ namespace Titan.Account.Impl
                     {
                         _log.Warning("The account has a ban on record. " +
                                      "If the VAC/Game ban ban is from CS:GO, a {Mode} is not possible. " +
-                                     "Proceeding with caution.", _info.Mode.ToString().ToLower());
+                                     "Proceeding with caution.", _reportInfo != null ? "report" :"commend");
                         Result = Result.AccountBanned;
                     }
 
@@ -346,19 +345,16 @@ namespace Titan.Account.Impl
 
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
-            _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...", _info.Mode);
+            _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...",
+                _reportInfo != null ? "Report" :"Commend");
 
-            switch(_info.Mode)
+            if(_reportInfo != null)
             {
-                case BotMode.Report:
-                    _gameCoordinator.Send(GetReportPayload(_info.Target, _info.MatchID), 730);
-                    break;
-                case BotMode.Commend:
-                    _gameCoordinator.Send(GetCommendPayload(_info.Target), 730);
-                    break;
-                case BotMode.RemoveCommend:
-                    _gameCoordinator.Send(GetRemoveCommendPayload(_info.Target), 730);
-                    break;
+                _gameCoordinator.Send(GetReportPayload(), 730);
+            }
+            else
+            {
+                _gameCoordinator.Send(GetCommendPayload(), 730);
             }
         }
 
@@ -366,19 +362,14 @@ namespace Titan.Account.Impl
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            switch(_info.Mode)
+            if(_reportInfo != null)
             {
-                case BotMode.Report:
-                    _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
-                    break;
-                case BotMode.Commend:
-                    _log.Information("Successfully commended {Target} with a Leader, Friendly and a Teacher.",
-                        _info.Target);
-                    break;
-                case BotMode.RemoveCommend:
-                    _log.Information("Successfully removed Leader, Friendly an Teacher commends from {Target}.",
-                        _info.Target);
-                    break;
+                _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
+            }
+            else
+            {
+                _log.Information("Successfully commended {Target} with a Leader, Friendly and a Teacher.",
+                    _commendInfo.SteamID.ConvertToUInt64());
             }
 
             Result = Result.Success;
@@ -388,8 +379,7 @@ namespace Titan.Account.Impl
 
         public override void OnCommendResponse(IPacketGCMsg msg)
         {
-            _log.Information("Successfully " + (_info.Mode == BotMode.RemoveCommend ? "un" : "") + 
-                             "commended target {Target}.", _info.Target);
+            _log.Information("Successfully commended target {Target}.", _commendInfo.SteamID.ConvertToUInt64());
 
             Result = Result.Success;
 
