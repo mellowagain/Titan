@@ -109,7 +109,7 @@ On Windows, run Titan without the `mono` part at the beginning.
 
 If no arguments have been passed with Titan, the GUI will open:
 
-![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/MainForm.png)
+![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Form.png)
 
 If one of your recently botted players got banned, you'll also receive a notification:
 
