@@ -39,7 +39,7 @@ Download the package for your operating system, unpack it and run the `Titan.exe
 #### Option 2: From Source
 
 ```
-$ git clone git@github.com:Marc3842h/Titan.git
+$ git clone https://github.com/Marc3842h/Titan.git
 $ cd Titan
 
 # Run this in a PowerShell terminal on Windows
