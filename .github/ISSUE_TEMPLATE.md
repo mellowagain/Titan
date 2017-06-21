@@ -1,23 +1,24 @@
-### Expected Behaviour
+## Description
 
-< Replace this >
+< Describe your issue here >
 
-### Actual Behaviour
+## Reproduction Steps
 
-< Replace this >
+1. < First step used for reproducing this issue >
+2. < RSecond step used for repoducing this issue >
 
-### Reproduction Steps
+## Errors
 
-1. < Replace this >
-2. < Replace this >
-3. < Replace this >
+```bash
+< Replace this with a error that occurs in the console, if any occurs >
+< Please keep the ``` at the beginning and the end of this block. >
+```
 
-### Error
+## System Information
 
-< Replace this with a link to a Pastebin or Gist of a error if any occured >
+**Operating System**: < Either Windows or Linux + Version >
+**Titan version**: < Titan version, add -DEV at the end if compiled from source code >
 
-### Specification
+*If your issue is a suggestion, only fill out the Description section and ommit everything else.*
 
-Version: < Titan Version, replace this >
-Platform: < Windows or Linux, replace this >
-
+*Also, delete this sentence and the one above before submitting your issue.*
