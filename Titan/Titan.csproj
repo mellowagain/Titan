@@ -143,6 +143,7 @@
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\2FA\TwoFactorAuthForm.cs" />
+    <Compile Include="UI\About\AboutUI.cs" />
     <Compile Include="UI\APIKey\APIKeyForm.cs" />
     <Compile Include="UI\APIKey\Commands\SteamKeySite.cs" />
     <Compile Include="UI\General\General.cs" />
@@ -162,13 +163,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="accounts.json" />
-    <Content Include="index.json" />
     <Content Include="Resources\CREDIT.txt" />
+    <Content Include="Resources\Form.png" />
     <Content Include="Resources\Logo.png" />
     <EmbeddedResource Include="Resources\Steam.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Content Include="Resources\MainForm.png" />
     <Content Include="Resources\Notification.png" />
     <Content Include="Resources\Text.png" />
     <EmbeddedResource Include="Resources\Exit.ico">
@@ -189,9 +189,6 @@
     <EmbeddedResource Include="Resources\SteamIO.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\General" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -11,9 +11,6 @@
         Settings,
         History,
         Accounts,
-        Help,
-        SystemInfo,
-        UpdateChecker,
         About
 
     }

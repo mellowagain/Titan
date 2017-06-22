@@ -400,13 +400,13 @@ namespace Titan.UI.General
                         Text = "&File",
                         Items =
                         {
-                            new Command((sender, args) => _uiManager.ShowForm(UIType.Settings))
+                            new Command((sender, args) => { MessageBox.Show("Not implemented yet.", "Titan - Error"); })
                             {
                                 MenuText = "Settings"
                             }
                         }
                     },
-                    new ButtonMenuItem
+                    /*new ButtonMenuItem
                     {
                         Text = "&Edit",
                         Items =
@@ -428,7 +428,7 @@ namespace Titan.UI.General
                                 Shortcut = Application.Instance.CommonModifier | Keys.V
                             }
                         }
-                    },
+                    },*/
                     new ButtonMenuItem
                     {
                         Text = "&Tools",
@@ -441,9 +441,8 @@ namespace Titan.UI.General
                             new Command((sender, args) => _uiManager.ShowForm(UIType.Accounts))
                             {
                                 MenuText = "Account List"
-                            }
-                            // ==============================================000
-                            ,
+                            },
+                            // ==============================================
                             new Command((sender, args) => Process.Start("https://steamid.io"))
                             {
                                 MenuText = "SteamIO"
@@ -459,15 +458,15 @@ namespace Titan.UI.General
                         Text = "&Help",
                         Items =
                         {
-                            new Command((sender, args) => _uiManager.ShowForm(UIType.Help))
+                            new Command((sender, args) => Process.Start("https://github.com/Marc3842h/Titan"))
                             {
-                                MenuText = "Help"
+                                MenuText = "GitHub"
                             },
-                            new Command((sender, args) => _uiManager.ShowForm(UIType.SystemInfo))
+                            new Command((sender, args) => { MessageBox.Show("Not implemented yet.", "Titan - Error"); })
                             {
                                 MenuText = "System Informations"
                             },
-                            new Command((sender, args) => _uiManager.ShowForm(UIType.UpdateChecker))
+                            new Command((sender, args) => { MessageBox.Show("Not implemented yet.", "Titan - Error"); })
                             {
                                 MenuText = "Check for Updates"
                             }
