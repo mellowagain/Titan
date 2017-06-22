@@ -233,12 +233,12 @@ namespace Titan.Managers
             _log.Debug("Successfully wrote index file.");
         }
 
-        public void StartReporting(int index, ReportInfo info)
+        public void StartReporting(int index, ReportInfo info, int amount = -1)
         {
             _log.Debug("Starting botting using index {Index}.", index);
 
             List<TitanAccount> accounts;
-            if(Accounts.TryGetValue(index, out accounts))
+            if(Accounts.TryGetValue(amount != -1 ? -1 : index, out accounts))
             {
                 try
                 {
@@ -249,16 +249,25 @@ namespace Titan.Managers
                     _log.Warning(ex, "Could not start Watchdog thread, starting to report without one!");
                 }
 
+                var count = 0;
                 foreach(var acc in accounts)
                 {
-                    try
+                    if(amount != -1)
                     {
-                        Titan.Instance.ThreadManager.StartReport(acc, info);
+                        count++;
                     }
-                    catch (Exception ex)
+
+                    if(amount != -1 || count <= amount)
                     {
-                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
-                            acc.JsonAccount.Username, ex.Message);
+                        try
+                        {
+                            Titan.Instance.ThreadManager.StartReport(acc, info);
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                                acc.JsonAccount.Username, ex.Message);
+                        }
                     }
                 }
             }
@@ -282,12 +291,12 @@ namespace Titan.Managers
                 index, DateTime.Now.AddHours(6).ToLongTimeString(), ++index);
         }
         
-        public void StartCommending(int index, CommendInfo info)
+        public void StartCommending(int index, CommendInfo info, int amount = -1)
         {
             _log.Debug("Starting botting using index {Index}.", index);
 
             List<TitanAccount> accounts;
-            if(Accounts.TryGetValue(index, out accounts))
+            if(Accounts.TryGetValue(amount != -1 ? -1 : index, out accounts))
             {
                 try
                 {
@@ -298,16 +307,25 @@ namespace Titan.Managers
                     _log.Warning(ex, "Could not start Watchdog thread, starting to commend without one!");
                 }
 
+                var count = 0;
                 foreach(var acc in accounts)
                 {
-                    try
+                    if(amount != -1)
                     {
-                        Titan.Instance.ThreadManager.StartCommend(acc, info);
+                        count++;
                     }
-                    catch (Exception ex)
+
+                    if(amount == -1 || count <= amount)
                     {
-                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
-                            acc.JsonAccount.Username, ex.Message);
+                        try
+                        {
+                            Titan.Instance.ThreadManager.StartCommend(acc, info);
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                                acc.JsonAccount.Username, ex.Message);
+                        }
                     }
                 }
             }
