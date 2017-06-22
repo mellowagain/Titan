@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;

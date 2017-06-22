@@ -50,9 +50,8 @@ namespace Titan
                 Options = new Options()
             };
 
+            // Create official Titan logger
             Logger = LogCreator.Create();
-            
-            Logger.Debug("Startup: Loading Titan Bootstrapper.");
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
@@ -65,14 +64,14 @@ namespace Titan
             Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler();
             Instance.Scheduler.Start();
             
-            // SteamKit
             Logger.Debug("Startup: Refreshing Steam Universe list.");
             
+            // SteamKit
             SteamDirectory.Initialize().Wait();
 
             Logger.Debug("Startup: Parsing Command Line Arguments.");
 
-            /* Parse arguments provided with the starting of this */
+            // Parse arguments provided with the starting of this
             if(Parser.Default.ParseArguments(args, Instance.Options))
             {
                 Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {ID}", Instance.Options.Target, Instance.Options.MatchID);
@@ -98,16 +97,21 @@ namespace Titan
 
             Logger.Debug("Startup: Loading Victim Tracker, Account Manager, UI Manager and Ban Manager.");
             
+            // Initialize Victim Tracker
             Instance.VictimTracker = new VictimTracker();
             
             // Schedule Victim Tracking
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
-            var file = string.IsNullOrEmpty(Instance.Options.File) ? "accounts.json" : Instance.Options.File;
-            Instance.AccountManager = new AccountManager(new FileInfo(Path.Combine(Environment.CurrentDirectory, file)));
+            // Initialize Account Manager
+            Instance.AccountManager = new AccountManager(new FileInfo(
+                Path.Combine(Environment.CurrentDirectory, Instance.Options.File))
+            );
 
+            // Initialize Thread Manager
             Instance.ThreadManager = new ThreadManager();
 
+            // Initialize Ban Manager
             Instance.BanManager = new BanManager();
             Instance.BanManager.ParseApiKeyFile();
 
@@ -115,7 +119,7 @@ namespace Titan
             
             Logger.Debug("Startup: Registering Shutdown Hook.");
 
-            // Register hook
+            // Register shutdown hook
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
             Logger.Debug("Startup: Parsing accounts.json file.");
@@ -143,13 +147,12 @@ namespace Titan
                                     SteamID = SteamUtil.Parse(Instance.Options.Target),
                                     MatchID = SharecodeUtil.Parse(Instance.Options.MatchID),
                                     
-                                    // TODO: Maybe make this customizeable
-                                    AbusiveText = true,
-                                    AbusiveVoice = true,
-                                    Griefing = true,
-                                    AimHacking = true,
-                                    WallHacking = true,
-                                    OtherHacking = true
+                                    AbusiveText = Instance.Options.AbusiveTextChat,
+                                    AbusiveVoice = Instance.Options.AbusiveVoiceChat,
+                                    Griefing = Instance.Options.Griefing,
+                                    AimHacking = Instance.Options.AimHacking,
+                                    WallHacking = Instance.Options.WallHacking,
+                                    OtherHacking = Instance.Options.OtherHacking
                                 });
                             break;
                         case "commend":
@@ -158,9 +161,9 @@ namespace Titan
                                 {
                                     SteamID = SteamUtil.Parse(Instance.Options.Target),
                                     
-                                    Friendly = true,
-                                    Leader = true,
-                                    Teacher = true
+                                    Friendly = Instance.Options.Friendly,
+                                    Leader = Instance.Options.Leader,
+                                    Teacher = Instance.Options.Teacher
                                 });
                             break;
                         default:
