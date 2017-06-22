@@ -434,10 +434,6 @@ namespace Titan.UI.General
                         Text = "&Tools",
                         Items =
                         {
-                            new Command((sender, args) => _uiManager.ShowForm(UIType.History))
-                            {
-                                MenuText = "History"
-                            },
                             new Command((sender, args) => _uiManager.ShowForm(UIType.Accounts))
                             {
                                 MenuText = "Account List"
