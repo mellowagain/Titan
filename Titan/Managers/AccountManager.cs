@@ -142,6 +142,9 @@ namespace Titan.Managers
 
                 var lowest = _parsedIndex.AvailableIndex; // find the available index and set it to lowest
 
+                if(lowest == -1) 
+                    lowest++;
+                
                 foreach(var expireEntry in _parsedIndex.Entries)
                 {
                     // check if a entry that is marked for expiration is already expired and ready to bot
@@ -268,7 +271,7 @@ namespace Titan.Managers
                 
             Titan.Instance.VictimTracker.AddVictim(info.SteamID);
 
-            if(!_indexEntries.ContainsKey(index))
+            if(!_indexEntries.ContainsKey(index) && index != -1)
             {
                 _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(6)));
                 SaveIndexFile();
