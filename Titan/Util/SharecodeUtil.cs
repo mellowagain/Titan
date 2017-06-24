@@ -18,12 +18,12 @@ namespace Titan.Util
             
             if(shareCode.StartsWith("steam://"))
             {
-                return new ShareCodeDecoder(shareCode.Substring(61)).Decode().MatchID;
+                return ShareCode.Decode(shareCode.Substring(61)).MatchID;
             }
 
             if(shareCode.StartsWith("CSGO-"))
             {
-                return new ShareCodeDecoder(shareCode).Decode().MatchID;
+                return ShareCode.Decode(shareCode).MatchID;
             }
 
             ulong matchID;

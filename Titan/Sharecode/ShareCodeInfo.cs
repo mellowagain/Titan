@@ -5,8 +5,14 @@ namespace Titan.Sharecode
     public class ShareCodeInfo
     {
 
-        [JsonProperty("matchID")]
+        [JsonProperty("matchid")]
         public ulong MatchID { get; set; }
+        
+        [JsonProperty("outcomeid")]
+        public ulong OutcomeID { get; set; }
+        
+        [JsonProperty("tokens")]
+        public uint Tokens { get; set; }
 
     }
 }

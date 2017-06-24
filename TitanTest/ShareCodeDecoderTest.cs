@@ -9,9 +9,7 @@ namespace TitanTest
         [Fact]
         public void TestDecoder()
         {
-            var decoder = new ShareCodeDecoder("CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE");
-
-            if(decoder.Decode().MatchID == 3208347562318757960)
+            if(ShareCode.Decode("CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE").MatchID == 3208347562318757960)
             {
                 Assert.True(true, "The decoded Match ID is 3208347562318757960");
             }
