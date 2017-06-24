@@ -16,6 +16,7 @@ using Titan.Managers;
 using Titan.Meta;
 using Titan.UI;
 using Titan.Util;
+using Titan.Web;
 
 namespace Titan
 {
@@ -34,9 +35,10 @@ namespace Titan
         public BanManager BanManager;
         public UIManager UIManager;
 
+        public WebAPIKeyResolver APIKeyResolver;
+
         public IScheduler Scheduler;
 
-        // May be null if Options#Debug is false
         public DirectoryInfo DebugDirectory = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "debug"));
 
         [STAThread]
@@ -95,7 +97,11 @@ namespace Titan
                 }
             }
 
-            Logger.Debug("Startup: Loading Victim Tracker, Account Manager, UI Manager and Ban Manager.");
+            Logger.Debug("Startup: Loading Web API Key, Victim Tracker, Account Manager, UI Manager and Ban Manager.");
+            
+            // Resolve API Key File
+            Instance.APIKeyResolver = new WebAPIKeyResolver();
+            Instance.APIKeyResolver.ParseKeyFile();
             
             // Initialize Victim Tracker
             Instance.VictimTracker = new VictimTracker();
@@ -113,9 +119,6 @@ namespace Titan
 
             // Initialize Ban Manager
             Instance.BanManager = new BanManager();
-            Instance.BanManager.ParseApiKeyFile();
-
-            SteamUtil.WebAPIKey = Instance.BanManager.APIKey;
             
             Logger.Debug("Startup: Registering Shutdown Hook.");
 
@@ -192,7 +195,7 @@ namespace Titan
             // Cleanup a few things before shutting down
             
             Instance.VictimTracker.SaveVictimsFile();
-            Instance.BanManager.SaveAPIKeyFile();
+            Instance.APIKeyResolver.SaveKeyFile();
             Instance.AccountManager.SaveIndexFile();
 
             Logger.Information("Thank you and have a nice day.");

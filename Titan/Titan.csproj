@@ -149,6 +149,7 @@
     <Compile Include="Util\StringUtil.cs" />
     <Compile Include="Util\TimeUtil.cs" />
     <Compile Include="Util\WaitFor.cs" />
+    <Compile Include="Web\WebAPIKeyResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
