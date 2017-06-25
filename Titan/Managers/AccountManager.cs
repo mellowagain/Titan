@@ -53,8 +53,9 @@ namespace Titan.Managers
             {
                 _log.Error("The accounts file at {0} doesn't exist! It is required and needs to " +
                            "have atleast one account specified.", _file.ToString());
-                MessageBox.Show("The account file at " + _file + " doesn't exist. \nPlease create " +
-                                "it and specify atleast one account.", "<!> Titan <!>", MessageBoxType.Error);
+                
+                // TODO: Open a Form or MessageBox allowing to create a accounts.json.
+                
                 return false;
             }
 
