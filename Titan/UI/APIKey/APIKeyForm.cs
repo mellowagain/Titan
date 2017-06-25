@@ -4,6 +4,7 @@ using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
 using Titan.UI.APIKey.Commands;
+using Titan.Web;
 
 namespace Titan.UI.APIKey
 {
@@ -65,15 +66,11 @@ namespace Titan.UI.APIKey
         {
             if(!string.IsNullOrWhiteSpace(_txtBox.Text))
             {
-                Titan.Instance.BanManager.APIKey = _txtBox.Text;
+                WebAPIKeyResolver.APIKey = _txtBox.Text;
 
                 _log.Debug("Successfully set Web API key to {WebAPIKey}.", _txtBox.Text);
 
                 Close();
-                Platform.Invoke(() =>
-                {
-
-                });
 
                 _log.Information("Successfully closed API key form.");
             }

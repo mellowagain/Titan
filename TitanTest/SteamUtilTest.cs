@@ -1,4 +1,5 @@
 ﻿using System;
+using Titan.Web;
 using Xunit;
 using static Titan.Util.SteamUtil;
 
@@ -9,52 +10,61 @@ namespace TitanTest
 
         public SteamUtilTest()
         {
-            WebAPIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
+            WebAPIKeyResolver.APIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
         }
 
         [Fact]
         public void TestSteamIDParser()
         {
-            if(FromSteamID("STEAM_0:0:131983088").ConvertToUInt64() == 76561198224231904)
+            if(WebAPIKeyResolver.APIKey != null)
             {
-                Assert.True(true, "Steam ID parsing successfull");
-            }
-            else
-            {
-                Assert.True(false);
+                if(FromSteamID("STEAM_0:0:131983088").ConvertToUInt64() == 76561198224231904)
+                {
+                    Assert.True(true, "Steam ID parsing successfull");
+                }
+                else
+                {
+                    Assert.True(false);
+                }
             }
         }
 
         [Fact]
         public void TestSteamID3Parser()
         {
-            if(FromSteamID3("[U:1:263966176]").ConvertToUInt64() == 76561198224231904)
+            if(WebAPIKeyResolver.APIKey != null)
             {
-                Assert.True(true, "Steam ID parsing successfull");
-            }
-            else
-            {
-                Assert.True(false);
+                if(FromSteamID3("[U:1:263966176]").ConvertToUInt64() == 76561198224231904)
+                {
+                    Assert.True(true, "Steam ID parsing successfull");
+                }
+                else
+                {
+                    Assert.True(false);
+                }
             }
         }
 
         [Fact]
         public void TestSteamID64Parser()
         {
-            if(FromSteamID64(76561198224231904).ConvertToUInt64() == 76561198224231904)
+            if(WebAPIKeyResolver.APIKey != null)
             {
-                Assert.True(true, "Steam ID parsing successfull");
-            }
-            else
-            {
-                Assert.True(false);
+                if(FromSteamID64(76561198224231904).ConvertToUInt64() == 76561198224231904)
+                {
+                    Assert.True(true, "Steam ID parsing successfull");
+                }
+                else
+                {
+                    Assert.True(false);
+                }
             }
         }
 
         [Fact]
         public void TestCustomURLParser()
         {
-            if(WebAPIKey != null)
+            if(WebAPIKeyResolver.APIKey != null)
             {
                 if(FromCustomUrl("https://steamcommunity.com/id/Marc3842h/").ConvertToUInt64() == 76561198224231904)
                 {
@@ -70,13 +80,17 @@ namespace TitanTest
         [Fact]
         public void TestNativeURLParser()
         {
-            if(FromNativeUrl("http://steamcommunity.com/profiles/76561198224231904").ConvertToUInt64() == 76561198224231904)
+            if(WebAPIKeyResolver.APIKey != null)
             {
-                Assert.True(true, "Steam ID parsing successfull");
-            }
-            else
-            {
-                Assert.True(false);
+                if(FromNativeUrl("http://steamcommunity.com/profiles/76561198224231904").ConvertToUInt64() ==
+                   76561198224231904)
+                {
+                    Assert.True(true, "Steam ID parsing successfull");
+                }
+                else
+                {
+                    Assert.True(false);
+                }
             }
         }
 
@@ -88,13 +102,16 @@ namespace TitanTest
         [InlineData("http://steamcommunity.com/profiles/76561198224231904")]
         public void TestAutoTypeParser(string id)
         {
-            if(Parse(id).ConvertToUInt64() == 76561198224231904)
+            if(WebAPIKeyResolver.APIKey != null)
             {
-                Assert.True(true, "Steam ID parsing successfull");
-            }
-            else
-            {
-                Assert.True(false);
+                if(Parse(id).ConvertToUInt64() == 76561198224231904)
+                {
+                    Assert.True(true, "Steam ID parsing successfull");
+                }
+                else
+                {
+                    Assert.True(false);
+                }
             }
         }
 

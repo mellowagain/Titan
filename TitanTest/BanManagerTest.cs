@@ -1,6 +1,7 @@
 ﻿using System;
 using Titan.Bans;
 using Titan.Util;
+using Titan.Web;
 using Xunit;
 
 namespace TitanTest
@@ -8,20 +9,17 @@ namespace TitanTest
     public class BanManagerTest
     {
 
-        // README: For this to work, you need to define the environment variable "TITAN_WEB_API_KEY"
-        // and put into it your Steam Web API key. Failing to do so will skip these tests.
-
         private BanManager _banManager = new BanManager();
 
         public BanManagerTest()
         {
-            _banManager.APIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
+            WebAPIKeyResolver.APIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
         }
 
         [Fact]
         public void TestGameBan()
         {
-            if(_banManager.APIKey != null)
+            if(WebAPIKeyResolver.APIKey != null)
             {
                 var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:208017504"));
 
@@ -41,9 +39,8 @@ namespace TitanTest
         [Fact]
         public void TestVacBan()
         {
-            if(_banManager.APIKey != null)
+            if(WebAPIKeyResolver.APIKey != null)
             {
-
                 var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:19877565"));
 
                 if(banInfo != null && banInfo.VacBanned)
@@ -62,7 +59,7 @@ namespace TitanTest
         [Fact]
         public void TestCleanHistory()
         {
-            if(_banManager.APIKey != null)
+            if(WebAPIKeyResolver.APIKey != null)
             {
                 var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:131983088"));
 

@@ -1,11 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Logging;
-using Titan.UI;
+using Titan.Web;
 
 namespace Titan.Bans
 {
@@ -14,50 +11,11 @@ namespace Titan.Bans
 
         private Logger _log = LogCreator.Create();
 
-        private FileInfo _apiKeyFile;
-
-        public string APIKey;
-
-        public BanManager()
-        {
-            _apiKeyFile = new FileInfo(Path.Combine(Environment.CurrentDirectory, "steamapi.key"));
-        }
-
-        public void ParseApiKeyFile()
-        {
-            if(!_apiKeyFile.Exists)
-            {
-                Titan.Instance.UIManager.ShowForm(UIType.APIKeyInput);
-            }
-            else
-            {
-                using(var reader = File.OpenText(_apiKeyFile.ToString()))
-                {
-                    APIKey = reader.ReadLine();
-                }
-
-                if(string.IsNullOrWhiteSpace(APIKey))
-                {
-                    APIKey = null;
-                    Titan.Instance.UIManager.ShowForm(UIType.APIKeyInput);
-                }
-            }
-
-            _log.Debug("Using Steam API key: {Key}", APIKey);
-        }
-
-        public void SaveAPIKeyFile()
-        {
-            Environment.SetEnvironmentVariable("TITAN_WEB_API_KEY", APIKey, EnvironmentVariableTarget.User);
-
-            File.WriteAllText(_apiKeyFile.ToString(), APIKey, Encoding.UTF8);
-        }
-
         public BanInfo GetBanInfoFor(SteamID steamID)
         {
             try
             {
-                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", APIKey))
+                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", WebAPIKeyResolver.APIKey))
                 {
                     KeyValue pair = steamUser.GetPlayerBans(steamids: steamID.ConvertToUInt64());
 

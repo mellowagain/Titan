@@ -3,6 +3,7 @@ using System.Net;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Logging;
+using Titan.Web;
 
 namespace Titan.Util
 {
@@ -10,8 +11,6 @@ namespace Titan.Util
     {
 
         private static Logger _log = LogCreator.Create();
-
-        public static string WebAPIKey;
 
         // Renders from a "STEAM_0:0:131983088" form.
         public static SteamID FromSteamID(string steamID)
@@ -54,7 +53,7 @@ namespace Titan.Util
 
             try
             {
-                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", WebAPIKey))
+                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", WebAPIKeyResolver.APIKey))
                 {    
                     KeyValue pair = steamUser.ResolveVanityURL(vanityurl: url);
 
