@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;
-using Quartz.Util;
 using Serilog.Core;
 using Titan.Logging;
 using Titan.Meta;
@@ -77,7 +76,6 @@ namespace Titan.UI.General
                     dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
                 }
             }
-            dropIndexes.Items.Add("Custom");
             dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
             
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
@@ -90,36 +88,6 @@ namespace Titan.UI.General
                 else
                 {
                     cbAllIndexes.Checked = false;
-                }
-            };
-            
-            var size = 0;
-            foreach(var i in Titan.Instance.AccountManager.Accounts)
-            {
-                if(i.Key == -1)
-                {
-                    size = i.Value.Count;
-                }
-            }
-
-            var nsCustomAmount = new NumericStepper
-            {
-                MinValue = 0,
-                MaxValue = size,
-                Visible = false
-            };
-
-            dropIndexes.SelectedKeyChanged += delegate
-            {
-                if(dropIndexes.SelectedKey == "Custom")
-                {
-                    cbAllIndexes.Visible = false;
-                    nsCustomAmount.Visible = true;
-                }
-                else
-                {
-                    cbAllIndexes.Visible = true;
-                    nsCustomAmount.Visible = false;
                 }
             };
 
@@ -165,7 +133,7 @@ namespace Titan.UI.General
                                     AimHacking = cbCheatAim.Checked != null && (bool) cbCheatAim.Checked,
                                     WallHacking = cbCheatWall.Checked != null && (bool) cbCheatWall.Checked,
                                     OtherHacking = cbCheatOther.Checked != null && (bool) cbCheatOther.Checked
-                                }, nsCustomAmount.Visible ? Convert.ToInt32(nsCustomAmount.Value) : -1);
+                                });
                         }
                     }
                     else
@@ -246,7 +214,7 @@ namespace Titan.UI.General
                                         new TableCell(dropIndexes, true)
                                     ),
                                     new TableRow(
-                                        new TableCell(nsCustomAmount),
+                                        new TableCell(new Panel()),
                                         new TableCell(cbAllIndexes)
                                     )
                                 }
@@ -287,7 +255,6 @@ namespace Titan.UI.General
                     dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
                 }
             }
-            dropIndexes.Items.Add("Custom");
             dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
             
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
@@ -300,36 +267,6 @@ namespace Titan.UI.General
                 else
                 {
                     cbAllIndexes.Checked = false;
-                }
-            };
-
-            var size = 0;
-            foreach(var i in Titan.Instance.AccountManager.Accounts)
-            {
-                if(i.Key == -1)
-                {
-                    size = i.Value.Count;
-                }
-            }
-
-            var nsCustomAmount = new NumericStepper
-            {
-                MinValue = 0,
-                MaxValue = size,
-                Visible = false
-            };
-
-            dropIndexes.SelectedKeyChanged += delegate
-            {
-                if(dropIndexes.SelectedKey == "Custom")
-                {
-                    cbAllIndexes.Visible = false;
-                    nsCustomAmount.Visible = true;
-                }
-                else
-                {
-                    cbAllIndexes.Visible = true;
-                    nsCustomAmount.Visible = false;
                 }
             };
 
@@ -353,7 +290,7 @@ namespace Titan.UI.General
                                 Leader = cbLeader.Checked != null && (bool) cbLeader.Checked,
                                 Friendly = cbFriendly.Checked != null && (bool) cbFriendly.Checked,
                                 Teacher = cbTeacher.Checked != null && (bool) cbTeacher.Checked
-                            }, nsCustomAmount.Visible ? Convert.ToInt32(nsCustomAmount.Value) : -1);
+                            });
                     }
                     else
                     {
@@ -424,7 +361,7 @@ namespace Titan.UI.General
                                         new TableCell(dropIndexes, true)
                                     ),
                                     new TableRow(
-                                        new TableCell(nsCustomAmount),
+                                        new TableCell(new Panel()),
                                         new TableCell(cbAllIndexes)
                                     )
                                 }
