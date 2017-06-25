@@ -97,11 +97,7 @@ namespace Titan
                 }
             }
 
-            Logger.Debug("Startup: Loading Web API Key, Victim Tracker, Account Manager, UI Manager and Ban Manager.");
-            
-            // Resolve API Key File
-            Instance.APIKeyResolver = new WebAPIKeyResolver();
-            Instance.APIKeyResolver.ParseKeyFile();
+            Logger.Debug("Startup: Loading Victim Tracker, Account Manager and Ban Manager.");
             
             // Initialize Victim Tracker
             Instance.VictimTracker = new VictimTracker();
@@ -132,6 +128,12 @@ namespace Titan
                 Logger.Debug("Startup: Loading UI Manager.");
                 
                 Instance.UIManager = new UIManager();
+                
+                Logger.Debug("Startup: Loading Web API Key");
+                
+                // Resolve API Key File
+                Instance.APIKeyResolver = new WebAPIKeyResolver();
+                Instance.APIKeyResolver.ParseKeyFile();
                 
                 Logger.Information("Hello and welcome to Titan v1.4.0-Dev.");
 
