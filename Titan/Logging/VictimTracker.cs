@@ -133,22 +133,11 @@ namespace Titan.Logging
                                          "{Count} ban(s) after {Delay}. Thank you for using Titan.",
                             id64, count, time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
 
-                        var notification = new Notification
-                        {
-                            Title = "Titan - " + id64 + " banned",
-                            Message = "Your recently botted target " + id64 + " " +
-                                      "has been banned and has now " + count + " Ban(s) on record.",
-                            Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON
-                        };
-
-                        notification.Activated += delegate
-                        {
-                            Process.Start("https://steamcommunity.com/profiles/" + id64 + "/");
-                        };
-
-                        Application.Instance.Invoke(() => notification.Show(
-                            Titan.Instance.UIManager.GetForm<General>(UIType.General).TrayIcon
-                        ));
+                        Titan.Instance.UIManager.SendNotification(
+                            "Titan - " + id64 + " banned", 
+                            "Your recently botted target " + id64 + " " + 
+                            "has been banned and has now " + count + " Ban(s) on record."
+                        );
                     }
                 }
             }

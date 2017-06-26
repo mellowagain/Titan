@@ -43,7 +43,7 @@ namespace Titan.Bans
                     steamID.ConvertToUInt64());
             }
 
-            _log.Warning("Did not receive ban informations for {SteamID}. Skipping...");
+            _log.Warning("Did not receive ban informations for {SteamID}. Skipping...", steamID.ConvertToUInt64());
             return null;
         }
 

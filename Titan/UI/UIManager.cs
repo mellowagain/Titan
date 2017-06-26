@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
@@ -94,6 +95,28 @@ namespace Titan.UI
 
             _log.Error("Could not find form assigned to UI enum {UI}.", ui);
             return null;
+        }
+
+        public void SendNotification(string title, string message, Action a = null)
+        {
+            var notification = new Notification
+            {
+                Title = title,
+                Message = message,
+                Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON
+            };
+
+            if(a != null)
+            {
+                notification.Activated += delegate
+                {
+                    a();
+                };
+            }
+
+            Application.Instance.Invoke(() =>
+                notification.Show(Titan.Instance.UIManager.GetForm<General.General>(UIType.General).TrayIcon)
+            );
         }
 
     }

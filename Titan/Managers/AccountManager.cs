@@ -54,7 +54,11 @@ namespace Titan.Managers
                 _log.Error("The accounts file at {0} doesn't exist! It is required and needs to " +
                            "have atleast one account specified.", _file.ToString());
                 
-                // TODO: Open a Form or MessageBox allowing to create a accounts.json.
+                Titan.Instance.UIManager.SendNotification(
+                    "Titan - Error", "The " + _file + " file doesn't exist or has not " +
+                                     "specified atleast one bot account. Please create it " +
+                                     "and specify atleast one bot account in it."
+                );
                 
                 return false;
             }
@@ -106,8 +110,12 @@ namespace Titan.Managers
             {
                 _log.Warning("Less than 11 (only {Count}) accounts have been parsed. Atleast 11 accounts " +
                              "are required to get a target into Overwatch.", _allAccounts.Count);
-                MessageBox.Show("You have less than 11 accounts specified. There are atleast 11 " +
-                                "reports needed to get a target into Overwatch.", MessageBoxType.Warning);
+                
+                Titan.Instance.UIManager.SendNotification(
+                    "Titan - Error", "You have less than 11 accounts specified. " +
+                                     "Atleast 11 bot accounts need to specified to get " +
+                                     "a target into Overwatch."
+                );
             }
             else
             {

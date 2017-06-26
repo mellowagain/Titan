@@ -138,14 +138,18 @@ namespace Titan.UI.General
                     }
                     else
                     {
-                        MessageBox.Show("Could not parse Steam ID " +
-                                        txtBoxSteamID.Text + " to Steam ID. Please provide a valid " +
-                                        "SteamID, SteamID3 or SteamID64.", "Titan - Error", MessageBoxType.Error);
+                        Titan.Instance.UIManager.SendNotification(
+                            "Titan - Error", "Could not parse Steam ID " +
+                                     txtBoxSteamID.Text + " to Steam ID. Please provide a valid " +
+                                     "SteamID, SteamID3 or SteamID64."
+                        );
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Please provide a target.", "Titan - Error", MessageBoxType.Error);
+                    Titan.Instance.UIManager.SendNotification(
+                        "Titan - Error", "Please provide a valid target."
+                    );
                 }
             };
             
@@ -294,14 +298,18 @@ namespace Titan.UI.General
                     }
                     else
                     {
-                        MessageBox.Show("Could not parse Steam ID " +
-                                        txtBoxSteamID.Text + " to Steam ID. Please provide a valid " +
-                                        "SteamID, SteamID3 or SteamID64.", "Titan - Error", MessageBoxType.Error);
+                        Titan.Instance.UIManager.SendNotification(
+                            "Titan - Error", "Could not parse Steam ID "
+                                             + txtBoxSteamID.Text + " to Steam ID. Please provide a valid " +
+                                             "SteamID, SteamID3 or SteamID64."
+                        );
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Please provide a target.", "Titan - Error", MessageBoxType.Error);
+                    Titan.Instance.UIManager.SendNotification(
+                        "Titan - Error", "Please provide a valid target."
+                    );
                 }
             };
             
@@ -400,7 +408,7 @@ namespace Titan.UI.General
                         Text = "&File",
                         Items =
                         {
-                            new Command((sender, args) => { MessageBox.Show("Not implemented yet.", "Titan - Error"); })
+                            new Command((s, a) => { Titan.Instance.UIManager.SendNotification("Titan", "Not implemented yet."); })
                             {
                                 MenuText = "Settings"
                             }
@@ -458,11 +466,11 @@ namespace Titan.UI.General
                             {
                                 MenuText = "GitHub"
                             },
-                            new Command((sender, args) => { MessageBox.Show("Not implemented yet.", "Titan - Error"); })
+                            new Command((s, a) => { Titan.Instance.UIManager.SendNotification("Titan", "Not implemented yet."); })
                             {
                                 MenuText = "System Informations"
                             },
-                            new Command((sender, args) => { MessageBox.Show("Not implemented yet.", "Titan - Error"); })
+                            new Command((s, a) => { Titan.Instance.UIManager.SendNotification("Titan", "Not implemented yet."); })
                             {
                                 MenuText = "Check for Updates"
                             }
