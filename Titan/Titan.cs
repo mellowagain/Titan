@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using CommandLine;
@@ -97,7 +96,9 @@ namespace Titan
                 }
             }
 
-            Logger.Debug("Startup: Loading Victim Tracker, Account Manager and Ban Manager.");
+            Logger.Debug("Startup: Loading UI Manager, Victim Tracker, Account Manager and Ban Manager.");
+                
+            Instance.UIManager = new UIManager();
             
             // Initialize Victim Tracker
             Instance.VictimTracker = new VictimTracker();
@@ -125,9 +126,10 @@ namespace Titan
             
             if(Instance.AccountManager.ParseAccountFile())
             {
-                Logger.Debug("Startup: Loading UI Manager.");
+                Logger.Debug("Initializing Forms...");
                 
-                Instance.UIManager = new UIManager();
+                Instance.UIManager.InitializeForms();
+                
                 
                 Logger.Debug("Startup: Loading Web API Key");
                 

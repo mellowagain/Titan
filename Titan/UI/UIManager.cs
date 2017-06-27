@@ -24,12 +24,15 @@ namespace Titan.UI
         {
             _etoApp = new Application();
             SharedResources = new SharedResources();
+        }
 
+        public void InitializeForms()
+        {
             _forms.Add(UIType.General, new General.General(this));
             _forms.Add(UIType.APIKeyInput, new APIKeyForm(this));
             _forms.Add(UIType.About, new AboutUI(this));
             _forms.Add(UIType.Accounts, new AccountUI(this));
-
+            
             _etoApp.MainForm = GetForm<General.General>(UIType.General);
         }
 
@@ -115,7 +118,7 @@ namespace Titan.UI
             }
 
             Application.Instance.Invoke(() =>
-                notification.Show(Titan.Instance.UIManager.GetForm<General.General>(UIType.General).TrayIcon)
+                notification.Show(Titan.Instance?.UIManager?.GetForm<General.General>(UIType.General)?.TrayIcon)
             );
         }
 
