@@ -16,8 +16,6 @@ namespace Titan.UI.General
 
         private UIManager _uiManager;
 
-        public TrayIndicator TrayIcon;
-
         public General(UIManager uiManager)
         {
             Title = "Titan";
@@ -44,16 +42,6 @@ namespace Titan.UI.General
             Content = tabControl;
             
             AddMenuBar();
-
-            if(Platform.IsWpf || Platform.IsWinForms)
-            {
-                TrayIcon = new TrayIndicator
-                {
-                    Icon = uiManager.SharedResources.TITAN_ICON
-                };
-                
-                TrayIcon.Show();
-            }
         }
 
         public TabPage GetReportTab()

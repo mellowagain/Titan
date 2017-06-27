@@ -18,8 +18,10 @@ namespace Titan.UI
         private Application _etoApp;
 
         private Dictionary<UIType, Form> _forms = new Dictionary<UIType, Form>();
+        
         public SharedResources SharedResources;
-
+        public TrayIndicator TrayIcon;
+        
         public UIManager()
         {
             _etoApp = new Application();
@@ -34,6 +36,44 @@ namespace Titan.UI
             _forms.Add(UIType.Accounts, new AccountUI(this));
             
             _etoApp.MainForm = GetForm<General.General>(UIType.General);
+            
+            InitializeTrayIcon();
+        }
+
+        private void InitializeTrayIcon()
+        {
+            TrayIcon = new TrayIndicator
+            {
+                Title = "Titan",
+                Icon = SharedResources.TITAN_ICON,
+                Visible = true
+            };
+            
+            TrayIcon.SetMenu(new ContextMenu
+            {
+                Items =
+                {
+                    new Command((sender, args) => ShowForm(UIType.General))
+                    {
+                        MenuText = "Show"
+                    },
+                    new Command((sender, args) => Environment.Exit(0))
+                    {
+                        MenuText = "Exit"
+                    }
+                }
+            });
+
+            GetForm<General.General>(UIType.General).Closing += (sender, args) =>
+            {
+                HideForm(UIType.General);
+                
+                SendNotification("Titan", "Titan will continue to run in the background " +
+                                          "and will notify you as soon as a victim got banned.",
+                                          () => ShowForm(UIType.General));
+
+                args.Cancel = true;
+            };
         }
 
         public void ShowForm(UIType ui)
@@ -61,6 +101,20 @@ namespace Titan.UI
         {
             dialog.Focus();
             dialog.ShowModal();
+        }
+
+        public void HideForm(UIType ui)
+        {
+            Form form;
+
+            if(_forms.TryGetValue(ui, out form))
+            {
+                form.Visible = false;
+            }
+            else
+            {
+                _log.Error("Could not find form assigned to UI enum {UI}.", ui);
+            }
         }
 
         public void RunForm(UIType ui)
@@ -118,7 +172,7 @@ namespace Titan.UI
             }
 
             Application.Instance.Invoke(() =>
-                notification.Show(Titan.Instance?.UIManager?.GetForm<General.General>(UIType.General)?.TrayIcon)
+                notification.Show(Titan.Instance?.UIManager?.TrayIcon)
             );
         }
 
