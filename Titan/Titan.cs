@@ -196,6 +196,12 @@ namespace Titan
 
         public static void OnShutdown(object sender, EventArgs args)
         {
+            // Check if Titan got closed via Process Manager or by the TrayIcon
+            if(!Instance.Scheduler.IsShutdown)
+            {
+                Instance.Scheduler.Shutdown();
+            }
+
             // Cleanup a few things before shutting down
             
             Instance.VictimTracker.SaveVictimsFile();
