@@ -97,7 +97,7 @@ namespace Titan.Account
                 (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer
             );
 
-            payload.Body.account_id = _reportInfo.SteamID.AccountID;
+            payload.Body.account_id = _commendInfo.SteamID.AccountID;
             payload.Body.match_id = 0;
 
             payload.Body.commendation = new PlayerCommendationInfo
