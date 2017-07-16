@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Titan.Sharecode
+namespace Titan.MatchID.Sharecode
 {
     public class ShareCodeInfo
     {

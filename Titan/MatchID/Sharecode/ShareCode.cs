@@ -6,7 +6,7 @@ using Serilog.Core;
 using Titan.Logging;
 using Titan.Util;
 
-namespace Titan.Sharecode
+namespace Titan.MatchID.Sharecode
 {
     
     [Credit("akiver/CSGO-Demos-Manager")]

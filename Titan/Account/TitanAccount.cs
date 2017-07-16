@@ -2,6 +2,7 @@
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using Titan.Json;
+using Titan.MatchID.Live;
 using Titan.Meta;
 
 namespace Titan.Account
@@ -48,6 +49,7 @@ namespace Titan.Account
         public abstract void OnClientWelcome(IPacketGCMsg msg);
         public abstract void OnReportResponse(IPacketGCMsg msg);
         public abstract void OnCommendResponse(IPacketGCMsg msg);
+        public abstract void OnLiveGameRequestResponse(IPacketGCMsg msg);
 
         ////////////////////////////////////////////////////
         // BOTTING SESSION INFORMATIONS
@@ -68,6 +70,16 @@ namespace Titan.Account
         {
             _commendInfo = info;
         }
+
+        // ReSharper disable once InconsistentNaming
+        public LiveGameInfo _liveGameInfo; // Setting this to private will cause it not to be visible for inheritated classes
+
+        public void FeedLiveGameInfo(LiveGameInfo info)
+        {
+            _liveGameInfo = info;
+        }
+
+        public MatchInfo MatchInfo;
 
         ////////////////////////////////////////////////////
         // PAYLOADS
@@ -109,6 +121,17 @@ namespace Titan.Account
 
             payload.Body.tokens = 10; // Whatever this is
 
+            return payload;
+        }
+
+        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser> GetLiveGamePayload()
+        {
+            var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser>(
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchListRequestLiveGameForUser
+            );
+
+            payload.Body.accountid = _liveGameInfo.SteamID.AccountID;
+            
             return payload;
         }
 

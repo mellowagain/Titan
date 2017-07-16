@@ -53,6 +53,10 @@ namespace Titan.Managers
                                          "have not been submitted.");
                             _count++;
                             break;
+                        case Result.NoMatches:
+                            _log.Error("Could not receive match information for {Account}: User is not in live match.",
+                                       account._liveGameInfo.SteamID.ConvertToUInt64());
+                            break;
                         case Result.TimedOut:
                             _log.Error("Processing thread for {Account} has timed out.");
                             break;

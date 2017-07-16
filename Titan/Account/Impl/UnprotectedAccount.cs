@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Serilog.Core;
 using SteamKit2;
@@ -9,6 +10,7 @@ using SteamKit2.GC.CSGO.Internal;
 using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
+using Titan.MatchID.Live;
 
 namespace Titan.Account.Impl
 {
@@ -78,7 +80,11 @@ namespace Titan.Account.Impl
 
         public override void Stop()
         {
-            if(_steamFriends.GetPersonaState() == EPersonaState.Online)
+            _reportInfo = null;
+            _commendInfo = null;
+            _liveGameInfo = null;
+            
+            if(_steamFriends.GetPersonaState() != EPersonaState.Offline)
             {
                 _steamFriends.SetPersonaState(EPersonaState.Offline);
             }
@@ -223,7 +229,8 @@ namespace Titan.Account.Impl
             {
                 { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
-                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse }
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse },
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
             };
 
             Action<IPacketGCMsg> func;
@@ -236,9 +243,13 @@ namespace Titan.Account.Impl
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
             _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...",
-                _reportInfo != null ? "Report" :"Commend");
-
-            if(_reportInfo != null)
+                _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend"));
+            
+            if(_liveGameInfo != null)
+            {
+                _gameCoordinator.Send(GetLiveGamePayload(), 730);
+            }
+            else if(_reportInfo != null)
             {
                 _gameCoordinator.Send(GetReportPayload(), 730);
             }
@@ -276,5 +287,42 @@ namespace Titan.Account.Impl
             Stop();
         }
 
+        public override void OnLiveGameRequestResponse(IPacketGCMsg msg)
+        {
+            var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchList>(msg);
+
+            if(response.Body.matches.Count >= 1)
+            {
+                var matchInfos = response.Body.matches.Select(match => new MatchInfo
+                    {
+                        MatchID = match.matchid,
+                        MatchTime = match.matchtime,
+                        WatchableMatchInfo = match.watchablematchinfo,
+                        RoundsStats = match.roundstatsall
+                    }
+                ).ToList();
+
+                MatchInfo = matchInfos[0]; // TODO: Maybe change this into a better than meme than just using the 0 index
+
+                _log.Information("Received live game Match ID: {MatchID}", MatchInfo.MatchID);
+
+                Result = Result.Success;
+            }
+            else
+            {
+                MatchInfo = new MatchInfo
+                {
+                    MatchID = 8,
+                    MatchTime = 0,
+                    WatchableMatchInfo = null,
+                    RoundsStats = null
+                };
+                
+                Result = Result.NoMatches;
+            }
+            
+            Stop();
+        }
+        
     }
 }

@@ -8,7 +8,8 @@
         AccountBanned,
         TimedOut,
         SentryRequired,
-        RateLimit
+        RateLimit,
+        NoMatches
 
     }
 }

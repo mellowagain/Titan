@@ -127,10 +127,12 @@
     <Compile Include="Logging\LogCreator.cs" />
     <Compile Include="Logging\VictimTracker.cs" />
     <Compile Include="Managers\AccountManager.cs" />
+    <Compile Include="MatchID\Live\MatchInfo.cs" />
+    <Compile Include="MatchID\Sharecode\ShareCode.cs" />
+    <Compile Include="MatchID\Sharecode\ShareCodeInfo.cs" />
     <Compile Include="Meta\CommendInfo.cs" />
+    <Compile Include="Meta\LiveGameInfo.cs" />
     <Compile Include="Meta\ReportInfo.cs" />
-    <Compile Include="Sharecode\ShareCode.cs" />
-    <Compile Include="Sharecode\ShareCodeInfo.cs" />
     <Compile Include="Managers\ThreadManager.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
