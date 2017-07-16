@@ -89,6 +89,16 @@ namespace Titan.UI.General
 
                     if(steamID != null)
                     {
+                        if(matchID == 8)
+                        {
+                            _log.Warning("Could not convert {ID} to a valid Match ID. Trying to resolve the " +
+                                         "the Match ID in which the target is playing at the moment.", matchID);
+                        
+                            Titan.Instance.AccountManager.StartMatchIDResolving(
+                                cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex,
+                                new LiveGameInfo { SteamID = steamID } );
+                        }
+                        
                         var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(steamID.ConvertToUInt64());
                         if(targetBanInfo != null)
                         {
@@ -110,7 +120,7 @@ namespace Titan.UI.General
                                 steamID.ConvertToUInt64(), matchID);
 
                             Titan.Instance.AccountManager.StartReporting(
-                                cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? - 1 : dropIndexes.SelectedIndex,
+                                cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex,
                                 new ReportInfo {
                                     SteamID = steamID,
                                     MatchID = matchID,
@@ -275,7 +285,7 @@ namespace Titan.UI.General
                             steamID.ConvertToUInt64());
                         
                         Titan.Instance.AccountManager.StartCommending(
-                            cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? - 1 : dropIndexes.SelectedIndex, 
+                            cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex, 
                             new CommendInfo {
                                 SteamID = steamID,
                             

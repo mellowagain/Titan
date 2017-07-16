@@ -158,6 +158,69 @@ namespace Titan.Managers
             }));
         }
 
+        public void StartMatchResolving(TitanAccount account, LiveGameInfo info)
+        {
+            account.FeedLiveGameInfo(info);
+            
+            _log.Debug("Starting Match ID resolving thread for {Target} using account {Account}.",
+                info.SteamID, account.JsonAccount.Username);
+            
+            _taskDic.Add(account, Task.Run(() =>
+            {
+                var timedOut = false;
+
+                try
+                {
+                    account.StartTick = DateTime.Now.Ticks;
+
+                    // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
+                    var result = WaitFor<Result>.Run(account.JsonAccount.Sentry ?
+                        TimeSpan.FromMinutes(3) : TimeSpan.FromSeconds(60), account.Start);
+
+                    switch(result)
+                    {
+                        case Result.Success:
+                            _count++;
+                            break;
+                        case Result.AlreadyLoggedInSomewhereElse:
+                            _log.Error("Could not resolve Match ID with account {Account}. The account is " +
+                                       "already logged in somewhere else.", account.JsonAccount.Username);
+                            break;
+                        case Result.TimedOut:
+                            _log.Error("Processing thread for {Account} has timed out.");
+                            break;
+                        case Result.SentryRequired:
+                            _log.Error("The account has 2FA enabled. Please set {sentry} to {true} " +
+                                       "in the accounts.json file.", "sentry", true);
+                            break;
+                        case Result.RateLimit:
+                            _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
+                                       "few minutes.");
+                            break;
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    var timeSpent = new DateTime(DateTime.Now.Ticks).Subtract(new DateTime(account.StartTick));
+
+                    _log.Error("Connection to account {Account} timed out. It was not possible to resolve the Match " +
+                               "ID for the target after {Timespan} seconds.", account.JsonAccount.Username, timeSpent.Seconds);
+                    timedOut = true;
+                }
+                finally
+                {
+                    if(timedOut)
+                    {
+                        account.Stop();
+                    }
+
+                    _taskDic.Remove(account);
+                }
+            }));
+            
+            _count = 0;
+        }
+
         /// <todo>
         /// This method requires reworking as it doesn't work.
         /// FIXME: 01.04.17 19:09

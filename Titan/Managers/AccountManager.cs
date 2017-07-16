@@ -337,6 +337,28 @@ namespace Titan.Managers
                        "Suggesting index #{NextIndex} for next botting session.",
                 index, DateTime.Now.AddHours(6).ToLongTimeString(), ++index);
         }
+        
+        public void StartMatchIDResolving(int index, LiveGameInfo info)
+        {
+            List<TitanAccount> accounts;
+            if(Accounts.TryGetValue(index, out accounts))
+            {
+                try
+                {
+                    Titan.Instance.ThreadManager.StartMatchResolving(accounts[0], info);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Could not start resolving for account {Account}: {Message}",
+                               accounts[0].JsonAccount.Username, ex.Message);
+                }
+            }
+            else
+            {
+                _log.Error("Could not export accounts for current index {Index}. " +
+                           "Does it exist?", Index);
+            }
+        }
 
     }
 }
