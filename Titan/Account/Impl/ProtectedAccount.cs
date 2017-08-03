@@ -238,7 +238,7 @@ namespace Titan.Account.Impl
                             UIType.TwoFactorAuthentification,
                             new TwoFactorAuthForm(Titan.Instance.UIManager, this, null)));
 
-                        while(_2FactorCode == null)
+                        while(string.IsNullOrEmpty(_2FactorCode))
                         {
                             /* Wait until the Form inputted the 2FA code from the Steam Guard App */
                         }
@@ -253,7 +253,7 @@ namespace Titan.Account.Impl
                     Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(UIType.TwoFactorAuthentification,
                         new TwoFactorAuthForm(Titan.Instance.UIManager, this, callback.EmailDomain)));
 
-                    while(_authCode == null)
+                    while(string.IsNullOrEmpty(_authCode))
                     {
                         /* Wait until the Form inputted the Auth code from the Email Steam sent */
                     }
