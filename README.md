@@ -7,7 +7,7 @@
 [![Travis CI](https://img.shields.io/travis/Marc3842h/Titan.svg?label=linux%20build)](https://travis-ci.org/Marc3842h/Titan)
 [![Dependencies](https://img.shields.io/librariesio/github/Marc3842h/Titan.svg)](https://libraries.io/github/Marc3842h/Titan)
 [![Downloads](https://img.shields.io/github/downloads/Marc3842h/Titan/total.svg)](https://github.com/Marc3842h/Titan/releases)
-[![License](https://img.shields.io/github/license/Marc3842h/Titan.svg)](https://github.com/Marc3842h/Titan/blob/master/LICENSE.txt)
+[![Discord](https://img.shields.io/discord/342308069897928706.svg?label=discord)](https://discord.me/titanbot)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 Titan `/ˈtaɪtən/` is an advanced Counter-Strike Global Offensive report and commendation bot.
