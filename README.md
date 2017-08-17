@@ -19,17 +19,18 @@ It provides a advanced set of features and high effiency when compared against o
 * Support for both a graphical user interface (GUI) and command line.
 * High performance thanks to multi-threaded reporting and commending (when compared to other report bots).
 * Ban checking for both target and bot accounts. (Requires own generated [Steam Web API](https://steamcommunity.com/dev/apikey) key)
-* Integrated Sharecode parser that automaticly pauses the Match ID from a CS:GO Demo Share URL
-* Automatic index timer which outputs when an account has finished its 6 hours cooldown.
+* Integrated Sharecode parser that automatically parses the Match ID from a CS:GO Demo Share URL.
+* Integrated Match ID resolver that automatically resolves the Match ID from the targets current match.
+* Automatic index timer which outputs when an account has finished its 12 hours cooldown.
 * Cross-platform compatibility, supports both Windows and Linux. Darwin support is coming soon.
-* No installation necessary, every release is provided as binary archives.
+* No installation necessary, every release is provided as binary archive.
 * Tracking of botted victims with automatic notification when a ban occurs.
-* Automatic Steam Guard code generation from Shared Secrets
-* Steam Guard support
+* Automatic Steam Guard code generation from Shared Secrets.
+* Steam Guard support.
 
 ## Installation
 
-Every version of Titan is provided as binary archives. An installation process is not required.
+Every version of Titan is provided as binary archive. An installation process is not required.
 
 #### Option 1: Binary
 
