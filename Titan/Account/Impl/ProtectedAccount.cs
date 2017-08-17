@@ -17,6 +17,7 @@ using Titan.Logging;
 using Titan.MatchID.Live;
 using Titan.UI;
 using Titan.UI._2FA;
+using Titan.Util;
 
 namespace Titan.Account.Impl
 {
@@ -158,7 +159,8 @@ namespace Titan.Account.Impl
                     Password = JsonAccount.Password,
                     AuthCode = _authCode,
                     TwoFactorCode = _2FactorCode,
-                    SentryFileHash = sentryHash
+                    SentryFileHash = sentryHash,
+                    LoginID = RandomUtil.RandomUInt32()
                 });
             }
             else

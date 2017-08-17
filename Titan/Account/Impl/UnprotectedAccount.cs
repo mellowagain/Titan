@@ -11,6 +11,7 @@ using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
 using Titan.MatchID.Live;
+using Titan.Util;
 
 namespace Titan.Account.Impl
 {
@@ -115,7 +116,8 @@ namespace Titan.Account.Impl
                 _steamUser.LogOn(new SteamUser.LogOnDetails
                 {
                     Username = JsonAccount.Username,
-                    Password = JsonAccount.Password
+                    Password = JsonAccount.Password,
+                    LoginID = RandomUtil.RandomUInt32()
                 });
             }
             else
