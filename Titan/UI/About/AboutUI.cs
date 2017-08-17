@@ -1,15 +1,12 @@
+using System;
 using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;
-using Serilog.Core;
-using Titan.Logging;
 
 namespace Titan.UI.About
 {
     public class AboutUI : Form
     {
-
-        private Logger _log = LogCreator.Create();
 
         private UIManager _uiManager;
 
@@ -195,7 +192,7 @@ namespace Titan.UI.About
                                     new TableRow(
                                         TableLayout.AutoSized(new Label
                                         {
-                                            Text = "Copyright (c) 2017 Marc3842h",
+                                            Text = "Copyright (c) " + DateTime.Now.Year + " Marc3842h",
                                             TextAlignment = TextAlignment.Center,
                                             Wrap = WrapMode.Word
                                         }, centered: true)
