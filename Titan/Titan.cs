@@ -137,7 +137,7 @@ namespace Titan
                 Instance.APIKeyResolver = new WebAPIKeyResolver();
                 Instance.APIKeyResolver.ParseKeyFile();
                 
-                Logger.Information("Hello and welcome to Titan v1.4.0-Dev.");
+                Logger.Information("Hello and welcome to Titan v1.5.0-Dev.");
 
                 if(Instance.EnableUI)
                 {
