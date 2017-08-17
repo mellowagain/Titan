@@ -444,7 +444,7 @@ namespace Titan.UI.General
                             {
                                 MenuText = "Account List"
                             },
-                            // ==============================================
+                            new SeparatorMenuItem(),
                             new Command((sender, args) => Process.Start("https://steamid.io"))
                             {
                                 MenuText = "SteamIO"
@@ -464,6 +464,11 @@ namespace Titan.UI.General
                             {
                                 MenuText = "GitHub"
                             },
+                            new Command((sender, args) => Process.Start("https://discord.me/titanbot"))
+                            {
+                                MenuText = "Discord"
+                            },
+                            new SeparatorMenuItem(),
                             new Command((s, a) => { Titan.Instance.UIManager.SendNotification("Titan", "Not implemented yet."); })
                             {
                                 MenuText = "System Informations"
