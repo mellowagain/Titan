@@ -102,12 +102,13 @@ Create a ```accounts.json``` in main directory with data:
 Run the program from command line with the following syntax:
 
 ```bash
-$ mono Titan.exe (--target) (--mode) [--id] [--file]
+$ mono Titan.exe <Arguments>
 ```
 
 On Windows, run Titan without the `mono` part at the beginning.
 
-If no arguments have been passed with Titan, the GUI will open:
+You can find a list of command line arguments [here](https://github.com/Marc3842h/Titan/blob/master/Titan/Bootstrap/Options.cs).  
+If no (or not enough) arguments have been supplied, Titan will open the GUI:
 
 ![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Form.png)
 
