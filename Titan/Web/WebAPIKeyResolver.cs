@@ -50,9 +50,12 @@ namespace Titan.Web
 
         public void SaveKeyFile()
         {
-            Environment.SetEnvironmentVariable("TITAN_WEB_API_KEY", APIKey, EnvironmentVariableTarget.User);
-            
-            File.WriteAllText(_file.ToString(), APIKey, Encoding.UTF8);
+            if(!string.IsNullOrWhiteSpace(APIKey))
+            {
+                Environment.SetEnvironmentVariable("TITAN_WEB_API_KEY", APIKey, EnvironmentVariableTarget.User);
+
+                File.WriteAllText(_file.ToString(), APIKey, Encoding.UTF8);
+            }
         }
 
     }
