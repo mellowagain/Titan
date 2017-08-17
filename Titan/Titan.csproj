@@ -120,7 +120,6 @@
     <Compile Include="Bans\BanInfo.cs" />
     <Compile Include="Bans\BanManager.cs" />
     <Compile Include="Bootstrap\Options.cs" />
-    <Compile Include="Json\GitHubResponse.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
     <Compile Include="Json\Victims.cs" />
