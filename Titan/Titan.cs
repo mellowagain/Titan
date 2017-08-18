@@ -75,7 +75,8 @@ namespace Titan
             // Parse arguments provided with the starting of this
             if(Parser.Default.ParseArguments(args, Instance.Options))
             {
-                Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {ID}", Instance.Options.Target, Instance.Options.MatchID);
+                Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {ID}", 
+                                    Instance.Options.Target, Instance.Options.MatchID);
                 Instance.EnableUI = false;
             }
             else
@@ -174,7 +175,7 @@ namespace Titan
                                 });
                             break;
                         default:
-                            Log.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
+                            Logger.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
                             
                             Instance.UIManager.ShowForm(UIType.General);
                             break;

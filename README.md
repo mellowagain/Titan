@@ -119,6 +119,14 @@ If one of your recently botted players got banned, you'll also receive a notific
 
 <sup>All screenshots have been taken on <b>Arch Linux</b> using <b>Gnome</b> with the <b>Ark-Dark</b> theme.</sup>
 
+#### i3wm
+
+If you are using i3 window manager, I suggest enabling floating for Titan in the `.config/i3/config`:
+
+```i3config
+for_window [class="Titan"] floating enable
+```
+
 ## Benchmarks
 
 Titan is a multi-threaded C# report bot for Counter-Strike Global Offensive.
