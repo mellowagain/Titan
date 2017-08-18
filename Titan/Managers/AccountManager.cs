@@ -282,13 +282,13 @@ namespace Titan.Managers
 
             if(!_indexEntries.ContainsKey(index) && index != -1)
             {
-                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(6)));
+                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(12)));
                 SaveIndexFile();
             }
 
             _log.Debug("Index #{Index} has been used. It will be unlocked on {Unlock}. " +
                        "Suggesting index #{NextIndex} for next botting session.",
-                index, DateTime.Now.AddHours(6).ToLongTimeString(), ++index);
+                index, DateTime.Now.AddHours(12).ToLongTimeString(), ++index);
         }
         
         public void StartCommending(int index, CommendInfo info)
@@ -329,13 +329,13 @@ namespace Titan.Managers
 
             if(!_indexEntries.ContainsKey(index))
             {
-                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(6)));
+                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(12)));
                 SaveIndexFile();
             }
 
             _log.Debug("Index #{Index} has been used. It will be unlocked on {Unlock}. " +
                        "Suggesting index #{NextIndex} for next botting session.",
-                index, DateTime.Now.AddHours(6).ToLongTimeString(), ++index);
+                index, DateTime.Now.AddHours(12).ToLongTimeString(), ++index);
         }
         
         public void StartMatchIDResolving(int index, LiveGameInfo info)
