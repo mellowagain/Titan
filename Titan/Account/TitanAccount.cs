@@ -7,6 +7,8 @@ using Titan.Meta;
 
 namespace Titan.Account
 {
+    
+    // ReSharper disable InconsistentNaming
     public abstract class TitanAccount
     {
 
@@ -55,7 +57,6 @@ namespace Titan.Account
         // BOTTING SESSION INFORMATIONS
         ////////////////////////////////////////////////////
 
-        // ReSharper disable once InconsistentNaming
         public ReportInfo _reportInfo; // Setting this to private will cause it not to be visible for inheritated classes
 
         public void FeedReportInfo(ReportInfo info)
@@ -63,7 +64,6 @@ namespace Titan.Account
             _reportInfo = info;
         }
         
-        // ReSharper disable once InconsistentNaming
         public CommendInfo _commendInfo; // Setting this to private will cause it not to be visible for inheritated classes
 
         public void FeedCommendInfo(CommendInfo info)
@@ -71,15 +71,20 @@ namespace Titan.Account
             _commendInfo = info;
         }
 
-        // ReSharper disable once InconsistentNaming
         public LiveGameInfo _liveGameInfo; // Setting this to private will cause it not to be visible for inheritated classes
+        public MatchInfo MatchInfo;
 
         public void FeedLiveGameInfo(LiveGameInfo info)
         {
             _liveGameInfo = info;
         }
 
-        public MatchInfo MatchInfo;
+        public IdleInfo _idleInfo;
+
+        public void FeedIdleInfo(IdleInfo info)
+        {
+            _idleInfo = info;
+        }
 
         ////////////////////////////////////////////////////
         // PAYLOADS

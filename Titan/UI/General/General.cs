@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
@@ -16,6 +19,8 @@ namespace Titan.UI.General
 
         private UIManager _uiManager;
 
+        public string CustomGameName;
+
         public General(UIManager uiManager)
         {
             Title = "Titan";
@@ -30,13 +35,33 @@ namespace Titan.UI.General
                 Pages =
                 {
                     GetReportTab(),
-                    GetCommendTab()
+                    GetCommendTab(),
+                    GetIdleTabPage()
                 }
             };
             
             tabControl.SelectedIndexChanged += delegate
             {
-                ClientSize = tabControl.SelectedIndex == 0 ? new Size(640, 450) : new Size(640, 385);
+                Size size;
+                
+                switch(tabControl.SelectedIndex)
+                {
+                    case 0:
+                        size = new Size(640, 450);
+                        break;
+                    case 1:
+                        size = new Size(640, 385);
+                        break;
+                    case 2:
+                        size = new Size(640, 450);
+                        break;
+                    default:
+                        size = new Size(640, 500);
+                        // If this case happens somebody failed to introduce the case here in the switch block.
+                        break;
+                }
+                
+                ClientSize = size;
             };
             
             Content = tabControl;
@@ -393,6 +418,241 @@ namespace Titan.UI.General
                     }
                 }
             };
+        }
+
+        public TabPage GetIdleTabPage()
+        {
+            var games = new List<int> { 730 };
+            
+            var labelGames = new Label { Text = GetFormattedGameIDList(games) };
+            
+            var nsGameID = new NumericStepper
+            {
+                MinValue = 0,
+                MaxValue = double.MaxValue
+            };
+
+            var btnAddGame = new Button { Text = "Add" };
+            btnAddGame.Click += delegate
+            {
+                var available = true;
+                var gameID = Convert.ToInt32(Math.Round(nsGameID.Value));
+                
+                for(var i = 0; i < games.Count; i++)
+                {
+                    if(games[i] == gameID)
+                    {
+                        Titan.Instance.UIManager.SendNotification("Titan - Error", "The game id is already in the " +
+                                                                                   "list of idle games.");
+
+                        available = false;
+                    }
+                }
+
+                if(available)
+                {
+                    if(gameID == 0)
+                    {
+                        Titan.Instance.UIManager.ShowForm(UIType.ExtraGameInfo);
+                        
+                        Titan.Instance.UIManager.SendNotification("Titan", "You inputted game id 0. Please specify " +
+                                                                           "the custom game for your game in the popup.");
+                    }
+                    
+                    games.Add(gameID);
+                    labelGames.Text = GetFormattedGameIDList(games);
+                }
+            };
+
+            var btnRemoveGame = new Button { Text = "Remove" };
+            btnRemoveGame.Click += delegate
+            {
+                var available = false;
+                var gameID = Convert.ToInt32(Math.Round(nsGameID.Value));
+                
+                for(var i = 0; i < games.Count; i++)
+                {
+                    if(games[i] == gameID)
+                    {
+                        games.RemoveAt(i);
+                        labelGames.Text = GetFormattedGameIDList(games);
+                        
+                        Titan.Instance.UIManager.SendNotification("Titan", "Successfully removed game id " 
+                                                                           + gameID + " from the list of" +
+                                                                           "idle games.");
+
+                        available = true;
+                    }
+                }
+
+                if(!available)
+                {
+                    Titan.Instance.UIManager.SendNotification("Titan - Error", "Could not find game id " 
+                                                                               + gameID + " in the list of " +
+                                                                               "idle games.");
+                }
+            };
+            
+            ////////////////////////////////////////////////////////////////////////////
+            
+            var nsMinutes = new NumericStepper
+            {
+                MinValue = 0,
+                Increment = 10
+            };
+            
+            var dropIndexes = new DropDown();
+            foreach(var i in Titan.Instance.AccountManager.Accounts)
+            {
+                if(i.Key != -1)
+                {
+                    dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+                }
+            }
+            dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
+            
+            var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
+            cbAllIndexes.CheckedChanged += delegate
+            {
+                if(cbAllIndexes.Checked != null)
+                {
+                    dropIndexes.Enabled = (bool) !cbAllIndexes.Checked;
+                }
+                else
+                {
+                    cbAllIndexes.Checked = false;
+                }
+            };
+
+            var btnIdle = new Button { Text = "Idle" };
+            btnIdle.Click += delegate
+            {
+                if(games.Count > 0)
+                {
+                    var minutes = Convert.ToInt32(Math.Round(nsMinutes.Value));
+
+                    Titan.Instance.AccountManager.StartIdleing(
+                        cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex,
+                        new IdleInfo
+                        {
+                            GameID = games.ToArray(),
+                            Minutes = minutes
+                        }
+                    );
+                }
+                else
+                {
+                    Titan.Instance.UIManager.SendNotification("Titan - Error", "Please enter atleast one game " +
+                                                                               "to idle in.");
+                }
+            };
+            
+            return new TabPage
+            {
+                Text = "Idle",
+                Content = new TableLayout
+                {
+                    Spacing = new Size(5, 5),
+                    Padding = new Padding(10, 10, 10, 10),
+                    Rows =
+                    {
+                        new GroupBox
+                        {
+                            Text = "Games",
+                            Content = new TableLayout
+                            {
+                                Spacing = new Size(5, 5),
+                                Padding = new Padding(10, 10, 10, 10),
+                                Rows =
+                                {
+                                    new TableRow(
+                                        new TableCell(new Label
+                                        {
+                                            Text = "List of games: ", Font = new Font(SystemFont.Bold) 
+                                        }, true),
+                                        new TableCell(labelGames, true)
+                                    ),
+                                    new TableRow(
+                                        new TableCell(new Label { Text = "Game ID" }),
+                                        new TableCell(nsGameID)
+                                    ),
+                                    new TableRow(
+                                        new TableCell(btnAddGame),
+                                        new TableCell(btnRemoveGame)
+                                    )
+                                }
+                            }
+                        },
+                        new GroupBox
+                        {
+                            Text = "Time",
+                            Content = new TableLayout
+                            {
+                                Spacing = new Size(5, 5),
+                                Padding = new Padding(10, 10, 10, 10),
+                                Rows =
+                                {
+                                    new TableRow(
+                                        new TableCell(new Label { Text = "Idle for minutes" }, true),
+                                        new TableCell(nsMinutes, true)
+                                    )
+                                }
+                            }
+                        },
+                        new GroupBox
+                        {
+                            Text = "Bots",
+                            Content = new TableLayout
+                            {
+                                Spacing = new Size(5, 5),
+                                Padding = new Padding(10, 10, 10, 10),
+                                Rows =
+                                {
+                                    new TableRow(
+                                        new TableCell(new Label { Text = "Use Index" }, true),
+                                        new TableCell(dropIndexes, true)
+                                    ),
+                                    new TableRow(
+                                        new TableCell(new Panel()),
+                                        new TableCell(cbAllIndexes)
+                                    )
+                                }
+                            }
+                        },
+                        new TableLayout
+                        {
+                            Spacing = new Size(5, 5),
+                            Padding = new Padding(10, 10, 10, 10),
+                            Rows =
+                            {
+                                new TableRow(
+                                    new TableCell(new Panel(), true),
+                                    new TableCell(new Panel(), true),
+                                    new TableCell(btnIdle)
+                                ),
+                                new TableRow
+                                {
+                                    ScaleHeight = true
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        private string GetFormattedGameIDList(List<int> gameList)
+        {
+            var list = "";
+
+            for(var i = 0; i < gameList.Count; i++)
+            {
+                list += gameList[i];
+                if(gameList.Last() != gameList[i])
+                    list += ", ";
+            }
+
+            return list;
         }
 
         public void AddMenuBar()

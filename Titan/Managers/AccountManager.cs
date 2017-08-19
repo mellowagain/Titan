@@ -360,5 +360,39 @@ namespace Titan.Managers
             }
         }
 
+        public void StartIdleing(int index, IdleInfo info)
+        {
+            List<TitanAccount> accounts;
+            if(Accounts.TryGetValue(index, out accounts))
+            {
+                try
+                {
+                    Titan.Instance.ThreadManager.StartWatchdog();
+                }
+                catch (Exception ex)
+                {
+                    _log.Warning(ex, "Could not start Watchdog thread, starting to idle without one!");
+                }
+
+                foreach(var acc in accounts)
+                {
+                    try
+                    {
+                        Titan.Instance.ThreadManager.StartIdling(acc, info);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                            acc.JsonAccount.Username, ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                _log.Error("Could not export accounts for current index {Index}. " +
+                           "Does it exist?", Index);
+            }
+        }
+
     }
 }

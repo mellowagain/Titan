@@ -112,6 +112,7 @@ namespace Titan.Account.Impl
             _reportInfo = null;
             _commendInfo = null;
             _liveGameInfo = null;
+            _idleInfo = null;
             
             if(_steamFriends.GetPersonaState() == EPersonaState.Online)
             {

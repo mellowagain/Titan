@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Quartz;
 using Serilog.Core;
 using SteamKit2;
 using SteamKit2.GC;
@@ -11,11 +12,14 @@ using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
 using Titan.MatchID.Live;
+using Titan.UI;
+using Titan.UI.General;
 using Titan.Util;
 
 namespace Titan.Account.Impl
 {
-    public class UnprotectedAccount : TitanAccount
+    
+    public class UnprotectedAccount : TitanAccount, IJob
     {
 
         private Logger _log;
@@ -30,6 +34,9 @@ namespace Titan.Account.Impl
 
         public Result Result { get; private set; }
         public bool IsRunning { get; private set; }
+
+        public IJobDetail Job;
+        public ITrigger Trigger;
 
         public UnprotectedAccount(JsonAccounts.JsonAccount json) : base(json)
         {
@@ -54,6 +61,10 @@ namespace Titan.Account.Impl
                     dir.ToString()
                 );
             }
+
+            Job = JobBuilder.Create<UnprotectedAccount>()
+                .WithIdentity("Idle Job - " + json.Username + " (Unprotected)", "Titan")
+                .Build();
 
             _log.Debug("Successfully initialized account object for {0}.", json.Username);
         }
@@ -84,6 +95,7 @@ namespace Titan.Account.Impl
             _reportInfo = null;
             _commendInfo = null;
             _liveGameInfo = null;
+            _idleInfo = null;
             
             if(_steamFriends.GetPersonaState() != EPersonaState.Offline)
             {
@@ -168,18 +180,60 @@ namespace Titan.Account.Impl
                     _steamFriends.SetPersonaState(EPersonaState.Online);
 
                     var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-                    playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                    if(_idleInfo != null)
                     {
-                        game_id = 730
-                    });
+                        foreach(var gameID in _idleInfo.GameID)
+                        {
+                            var gamesPlayed = new CMsgClientGamesPlayed.GamePlayed
+                            {
+                                game_id = Convert.ToUInt64(gameID)
+                            };
+
+                            if(gameID == 0)
+                            {
+                                gamesPlayed.game_extra_info = Titan.Instance.UIManager.GetForm<General>(UIType.General)
+                                    .CustomGameName;
+                            }
+                            
+                            playGames.Body.games_played.Add(gamesPlayed);
+                        }
+                    }
+                    else
+                    {
+                        playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                        {
+                            game_id = 730
+                        });
+                    }
                     _steamClient.Send(playGames);
 
                     Thread.Sleep(5000);
 
-                    _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
 
-                    var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>((uint) EGCBaseClientMsg.k_EMsgGCClientHello);
-                    _gameCoordinator.Send(clientHello, 730);
+                    if(_idleInfo == null)
+                    {
+                        _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
+
+                        var clientHello =
+                            new ClientGCMsgProtobuf<CMsgClientHello>((uint) EGCBaseClientMsg.k_EMsgGCClientHello);
+                        _gameCoordinator.Send(clientHello, 730);
+                    }
+                    else
+                    {
+                        Trigger = TriggerBuilder.Create()
+                            .WithIdentity("Idle Trigger - " + JsonAccount.Username + " (Unprotected)", "Titan")
+                            .StartNow()
+                            .WithSimpleSchedule(x => x
+                                .WithIntervalInMinutes(_idleInfo.Minutes)
+                                .WithRepeatCount(1))
+                            .Build();
+
+                        Titan.Instance.Scheduler.ScheduleJob(Job, Trigger);
+
+                        _idleInfo.StartTick = DateTime.Now.Ticks;
+                        
+                        _log.Debug("Successfully registered idling in requested games. Starting scheduler.");
+                    }
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                 case EResult.AccountLogonDenied:
@@ -324,6 +378,30 @@ namespace Titan.Account.Impl
             }
             
             Stop();
+        }
+        
+        ////////////////////////////////////////////////////
+        // QUARTZ.NET SCHEDULER
+        ////////////////////////////////////////////////////
+
+        public void Execute(IJobExecutionContext context)
+        {
+            var difference = DateTime.Now.Subtract(new DateTime(_idleInfo.StartTick));
+            
+            // Quartz.NET may be off by 2 minutes. We accept that (2 minutes less idling wow, what are you gonna do, cry?)
+            if(difference.Minutes >= _idleInfo.Minutes || _idleInfo.Minutes - difference.Minutes <= 2) 
+            {
+                _log.Information("Successfully finished idling after {Minutes} minutes.", _idleInfo.Minutes);
+
+                Result = Result.Success;
+                Stop();
+            }
+            else
+            {
+                _log.Debug("Quartz.NET requested stop of idling already after {Minutes} minutes.", difference.Minutes);
+                
+                _log.Debug("Continueing idling for {Remaining} minutes.", _idleInfo.Minutes - difference.Minutes);
+            }
         }
         
     }

@@ -221,6 +221,68 @@ namespace Titan.Managers
             _count = 0;
         }
 
+        public void StartIdling(TitanAccount account, IdleInfo info)
+        {
+            account.FeedIdleInfo(info);
+
+            _count = 0;
+            
+            _log.Debug("Starting idling thread in games {@Games} using account {Account}.",
+                info.GameID, account.JsonAccount.Username);
+            
+            _taskDic.Add(account, Task.Run(() =>
+            {
+                var timedOut = false;
+
+                try
+                {
+                    account.StartTick = DateTime.Now.Ticks;
+
+                    var result = WaitFor<Result>.Run(TimeSpan.FromMinutes(info.Minutes + 2), account.Start);
+
+                    switch(result)
+                    {
+                        case Result.Success:
+                            _count++;
+                            break;
+                        case Result.AlreadyLoggedInSomewhereElse:
+                            _log.Error("Could not idle with account {Account}. The account is " +
+                                       "already logged in somewhere else.", account.JsonAccount.Username);
+                            break;
+                        case Result.TimedOut:
+                            _log.Error("Processing thread for {Account} has timed out.");
+                            break;
+                        case Result.SentryRequired:
+                            _log.Error("The account has 2FA enabled. Please set {sentry} to {true} " +
+                                       "in the accounts.json file.", "sentry", true);
+                            break;
+                        case Result.RateLimit:
+                            _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
+                                       "few minutes.");
+                            break;
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    var timeSpent = new DateTime(DateTime.Now.Ticks).Subtract(new DateTime(account.StartTick));
+
+                    _log.Error("Connection to account {Account} timed out. It was not possible to " +
+                               "stop idle in the games after {Timespan} seconds.", 
+                        account.JsonAccount.Username, timeSpent.Seconds);
+                    timedOut = true;
+                }
+                finally
+                {
+                    if(timedOut)
+                    {
+                        account.Stop();
+                    }
+
+                    _taskDic.Remove(account);
+                }
+            }));
+        }
+
         /// <todo>
         /// This method requires reworking as it doesn't work.
         /// FIXME: 01.04.17 19:09

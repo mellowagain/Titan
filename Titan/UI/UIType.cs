@@ -6,12 +6,11 @@
         General,
         APIKeyInput,
         TwoFactorAuthentification,
-        
-        // TODO: Implement the following UI types:
         Settings,
         History,
         Accounts,
-        About
+        About,
+        ExtraGameInfo
 
     }
 }

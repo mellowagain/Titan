@@ -130,6 +130,7 @@
     <Compile Include="MatchID\Sharecode\ShareCode.cs" />
     <Compile Include="MatchID\Sharecode\ShareCodeInfo.cs" />
     <Compile Include="Meta\CommendInfo.cs" />
+    <Compile Include="Meta\IdleInfo.cs" />
     <Compile Include="Meta\LiveGameInfo.cs" />
     <Compile Include="Meta\ReportInfo.cs" />
     <Compile Include="Managers\ThreadManager.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="UI\Accounts\AccountUI.cs" />
     <Compile Include="UI\APIKey\APIKeyForm.cs" />
     <Compile Include="UI\APIKey\Commands\SteamKeySite.cs" />
+    <Compile Include="UI\GameInfo\ExtraGameInfo.cs" />
     <Compile Include="UI\General\General.cs" />
     <Compile Include="UI\SharedResources.cs" />
     <Compile Include="UI\UIManager.cs" />
