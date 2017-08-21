@@ -120,8 +120,9 @@ namespace Titan
             
             Logger.Debug("Startup: Registering Shutdown Hook.");
 
-            // Register shutdown hook
+            // Register shutdown hook and exception handler
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
+            AppDomain.CurrentDomain.UnhandledException += OnException;
 
             Logger.Debug("Startup: Parsing accounts.json file.");
             
@@ -212,6 +213,21 @@ namespace Titan
             Logger.Information("Thank you and have a nice day.");
 
             Log.CloseAndFlush();
+        }
+
+        public static void OnException(object sender, UnhandledExceptionEventArgs args)
+        {
+            var exception = args.ExceptionObject;
+            
+            if(exception.GetType() == typeof(InvalidOperationException))
+            {
+                var ioe = (InvalidOperationException) exception;
+
+                if(ioe.Message.Contains("Invalid platform"))
+                {
+                    Logger.Information("Can't detect platform. Contact Marc3842h on Discord.");
+                }
+            }
         }
 
     }
