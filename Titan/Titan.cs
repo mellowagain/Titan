@@ -45,13 +45,11 @@ namespace Titan
         {
             Thread.CurrentThread.Name = "Main";
 
-            // Initialize Titan Singleton
             Instance = new Titan
             {
                 Options = new Options()
             };
 
-            // Create official Titan logger
             Logger = LogCreator.Create();
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
@@ -67,12 +65,10 @@ namespace Titan
             
             Logger.Debug("Startup: Refreshing Steam Universe list.");
             
-            // SteamKit
             SteamDirectory.Initialize().Wait();
 
             Logger.Debug("Startup: Parsing Command Line Arguments.");
 
-            // Parse arguments provided with the starting of this
             if(Parser.Default.ParseArguments(args, Instance.Options))
             {
                 Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {ID}", 
@@ -88,7 +84,6 @@ namespace Titan
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
 
-            // Initialize the Debug directory if Debug mode is enabled
             if(Instance.Options.Debug)
             {
                 if(!Instance.DebugDirectory.Exists)
@@ -101,26 +96,20 @@ namespace Titan
                 
             Instance.UIManager = new UIManager();
             
-            // Initialize Victim Tracker
             Instance.VictimTracker = new VictimTracker();
             
-            // Schedule Victim Tracking
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
-            // Initialize Account Manager
             Instance.AccountManager = new AccountManager(new FileInfo(
                 Path.Combine(Environment.CurrentDirectory, Instance.Options.File))
             );
 
-            // Initialize Thread Manager
             Instance.ThreadManager = new ThreadManager();
 
-            // Initialize Ban Manager
             Instance.BanManager = new BanManager();
             
             Logger.Debug("Startup: Registering Shutdown Hook.");
 
-            // Register shutdown hook and exception handler
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
             AppDomain.CurrentDomain.UnhandledException += OnException;
 
@@ -203,8 +192,6 @@ namespace Titan
             {
                 Instance.Scheduler.Shutdown();
             }
-
-            // Cleanup a few things before shutting down
             
             Instance.VictimTracker.SaveVictimsFile();
             Instance.APIKeyResolver.SaveKeyFile();

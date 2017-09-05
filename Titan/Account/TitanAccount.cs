@@ -98,12 +98,12 @@ namespace Titan.Account
 
             payload.Body.account_id = _reportInfo.SteamID.AccountID;
             payload.Body.match_id = _reportInfo.MatchID;
-            payload.Body.rpt_aimbot = (uint) (_reportInfo.AimHacking ? 2 : 0);
-            payload.Body.rpt_wallhack = (uint) (_reportInfo.WallHacking ? 3 : 0);
-            payload.Body.rpt_speedhack = (uint) (_reportInfo.OtherHacking ? 4 : 0);
-            payload.Body.rpt_teamharm = (uint) (_reportInfo.Griefing ? 5 : 0);
-            payload.Body.rpt_textabuse = (uint) (_reportInfo.AbusiveText ? 6 : 0);
-            payload.Body.rpt_voiceabuse = (uint) (_reportInfo.AbusiveVoice ? 7 : 0);
+            payload.Body.rpt_aimbot = (uint) (_reportInfo.AimHacking ? 1 : 0);
+            payload.Body.rpt_wallhack = (uint) (_reportInfo.WallHacking ? 1 : 0);
+            payload.Body.rpt_speedhack = (uint) (_reportInfo.OtherHacking ? 1 : 0);
+            payload.Body.rpt_teamharm = (uint) (_reportInfo.Griefing ? 1 : 0);
+            payload.Body.rpt_textabuse = (uint) (_reportInfo.AbusiveText ? 1 : 0);
+            payload.Body.rpt_voiceabuse = (uint) (_reportInfo.AbusiveVoice ? 1 : 0);
 
             return payload;
         }
@@ -120,11 +120,11 @@ namespace Titan.Account
             payload.Body.commendation = new PlayerCommendationInfo
             {
                 cmd_friendly = (uint) (_commendInfo.Friendly ? 1 : 0),
-                cmd_teaching = (uint) (_commendInfo.Teacher ? 2 : 0),
-                cmd_leader = (uint) (_commendInfo.Leader ? 4 : 0)
+                cmd_teaching = (uint) (_commendInfo.Teacher ? 1 : 0),
+                cmd_leader = (uint) (_commendInfo.Leader ? 1 : 0)
             };
 
-            payload.Body.tokens = 10; // Whatever this is
+            payload.Body.tokens = 0; // Whatever this is
 
             return payload;
         }
