@@ -84,6 +84,14 @@ namespace Titan.Account.Impl
             _log.Debug("Successfully initialized account object for " + json.Username + ".");
         }
 
+        ~ProtectedAccount()
+        {
+            if(IsRunning)
+            {
+                Stop();
+            }
+        }
+
         public override Result Start()
         {
             Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" :"Commend");
