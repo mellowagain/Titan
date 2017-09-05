@@ -174,7 +174,7 @@ namespace Titan.UI
             }
 
             Application.Instance.Invoke(() =>
-                notification.Show(Titan.Instance?.UIManager?.TrayIcon)
+                notification.Show(TrayIcon)
             );
         }
 

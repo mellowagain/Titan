@@ -311,5 +311,20 @@ namespace Titan.Managers
             });*/
         }
 
+        public void FinishBotting(TitanAccount acc)
+        {
+            if(acc.IsRunning)
+            {
+                acc.Stop();
+            }
+            else
+            {
+                if(_taskDic.ContainsKey(acc))
+                {
+                    _taskDic.Remove(acc);
+                }
+            }
+        }
+
     }
 }

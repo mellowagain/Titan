@@ -28,6 +28,8 @@ namespace Titan.Account
         ////////////////////////////////////////////////////
 
         public long StartTick { get; set; }
+        
+        public bool IsRunning { get; set; }
 
         ////////////////////////////////////////////////////
         // GENERAL

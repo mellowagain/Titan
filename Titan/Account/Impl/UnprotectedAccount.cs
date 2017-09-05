@@ -33,7 +33,6 @@ namespace Titan.Account.Impl
         private CallbackManager _callbacks;
 
         public Result Result { get; private set; }
-        public bool IsRunning { get; private set; }
 
         public IJobDetail Job;
         public ITrigger Trigger;
@@ -113,6 +112,8 @@ namespace Titan.Account.Impl
             }
 
             IsRunning = false;
+            
+            Titan.Instance.ThreadManager.FinishBotting(this);
         }
 
         ////////////////////////////////////////////////////
