@@ -93,9 +93,38 @@ namespace Titan
             }
 
             Logger.Debug("Startup: Loading UI Manager, Victim Tracker, Account Manager and Ban Manager.");
+
+            try
+            {
+                Instance.UIManager = new UIManager();
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(InvalidOperationException))
+                {
+                    var osEx = (InvalidOperationException) ex;
+
+                    if (osEx.Message.ToLower().Contains("could not detect platform"))
+                    {
+                        Log.Error("---------------------------------------");
+                        Log.Error("A fatal error has been detected!");
+                        Log.Error("You are missing a Eto.Forms platform assembly.");
+                        if (Type.GetType("Mono.Runtime") != null)
+                        {
+                            Log.Error("Please read the README.md file and install all required dependencies.");
+                        }
+                        Log.Error("Either {0} or {1} Titan. Titan will now shutdown.", "redownload", "rebuild");
+                        Log.Error("Contact {Marc} on Discord for more information.", "Marc3842h#7312");
+                        Log.Error("---------------------------------------");
+
+                        Environment.Exit(-1);
+                    }
+                }
                 
-            Instance.UIManager = new UIManager();
-            
+                Log.Error(ex, "A error occured while loading UI.");
+                throw;
+            }
+
             Instance.VictimTracker = new VictimTracker();
             
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
@@ -111,7 +140,6 @@ namespace Titan
             Logger.Debug("Startup: Registering Shutdown Hook.");
 
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
-            AppDomain.CurrentDomain.UnhandledException += OnException;
 
             Logger.Debug("Startup: Parsing accounts.json file.");
             
@@ -200,21 +228,6 @@ namespace Titan
             Logger.Information("Thank you and have a nice day.");
 
             Log.CloseAndFlush();
-        }
-
-        public static void OnException(object sender, UnhandledExceptionEventArgs args)
-        {
-            var exception = args.ExceptionObject;
-            
-            if(exception.GetType() == typeof(InvalidOperationException))
-            {
-                var ioe = (InvalidOperationException) exception;
-
-                if(ioe.Message.Contains("Invalid platform"))
-                {
-                    Logger.Information("Can't detect platform. Contact Marc3842h on Discord.");
-                }
-            }
         }
 
     }

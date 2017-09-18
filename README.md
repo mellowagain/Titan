@@ -32,6 +32,13 @@ It provides a advanced set of features and high effiency when compared against o
 
 Every version of Titan is provided as binary archive. An installation process is not required.
 
+#### Dependencies
+
+For Linux, [Mono](http://www.mono-project.com), 
+[Gtk 3](https://www.archlinux.org/packages/extra/i686/gtk3/) and 
+[Gtk#](https://www.archlinux.org/packages/community/x86_64/gtk-sharp-3/) is required. 
+Install it from the package repository of your distribution.
+
 #### Option 1: Binary
 
 Download the latest binary from the [releases](https://github.com/Marc3842h/Titan/releases) tab.

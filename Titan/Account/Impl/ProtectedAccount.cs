@@ -32,8 +32,8 @@ namespace Titan.Account.Impl
 
         private int _reconnects;
 
-        private FileInfo _file;
-
+        private Sentry.Sentry _sentry;
+        
         private SteamGuardAccount _sgAccount;
         private string _authCode;
         private string _2FactorCode;
@@ -50,9 +50,8 @@ namespace Titan.Account.Impl
         {
             _log = LogCreator.Create("GC - " + json.Username + " (Protected)");
 
-            _file = new FileInfo(Path.Combine(Path.Combine(Environment.CurrentDirectory, "sentries"),
-                json.Username + ".sentry"));
-
+            _sentry = new Sentry.Sentry(this);
+            
             _steamClient = new SteamClient();
             _callbacks = new CallbackManager(_steamClient);
             _steamUser = _steamClient.GetHandler<SteamUser>();
@@ -152,24 +151,15 @@ namespace Titan.Account.Impl
                 _log.Debug("Sentry has been activated for this account. Checking if a sentry file " +
                            "exists and hashing it...");
 
-                byte[] sentryHash = null;
-                if(_file.Exists)
-                {
-                    _log.Debug("Sentry file found. Hashing...");
-
-                    var fileBytes = File.ReadAllBytes(_file.ToString());
-                    sentryHash = CryptoHelper.SHAHash(fileBytes);
-
-                    _log.Debug("Hash for sentry file found: {Hash}", Encoding.UTF8.GetString(sentryHash));
-                }
-
+                var hash = _sentry.Hash();
+                
                 _steamUser.LogOn(new SteamUser.LogOnDetails
                 {
                     Username = JsonAccount.Username,
                     Password = JsonAccount.Password,
                     AuthCode = _authCode,
                     TwoFactorCode = _2FactorCode,
-                    SentryFileHash = sentryHash,
+                    SentryFileHash = hash.Length > 0 ? hash : null,
                     LoginID = RandomUtil.RandomUInt32()
                 });
             }
@@ -312,21 +302,7 @@ namespace Titan.Account.Impl
         {
             _log.Debug("Checking if a sentry file exists...");
 
-            int size;
-            byte[] hash;
-
-            using(var fwr = File.Open(_file.ToString(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            {
-                fwr.Seek(callback.Offset, SeekOrigin.Begin);
-                fwr.Write(callback.Data, 0, callback.BytesToWrite);
-                size = (int) fwr.Length;
-
-                fwr.Seek(0, SeekOrigin.Begin);
-                using(var sha = SHA1.Create())
-                {
-                    hash = sha.ComputeHash(fwr);
-                }
-            }
+            var hash = _sentry.Save(callback.Offset, callback.Data, callback.BytesToWrite, out int size);
 
             _log.Debug("Successfully opened / created sentry file. Hash: {Hash}", Encoding.UTF8.GetString(hash));
 
@@ -337,10 +313,10 @@ namespace Titan.Account.Impl
                 BytesWritten = callback.BytesToWrite,
                 FileSize = size,
                 Offset = callback.Offset,
-                Result = EResult.OK,
-                LastError = 0,
+                Result = hash.Length > 0 ? EResult.OK : EResult.Fail,
+                LastError = hash.Length > 0 ? 0 : (int) EResult.Fail,
                 OneTimePassword = callback.OneTimePassword,
-                SentryFileHash = hash
+                SentryFileHash = hash.Length > 0 ? hash : null
             });
         }
 
@@ -354,8 +330,7 @@ namespace Titan.Account.Impl
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
             };
 
-            Action<IPacketGCMsg> func;
-            if(map.TryGetValue(callback.EMsg, out func))
+            if(map.TryGetValue(callback.EMsg, out Action<IPacketGCMsg> func))
             {
                 func(callback.Message);
             }
