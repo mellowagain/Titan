@@ -154,6 +154,7 @@
     <Compile Include="Util\TimeUtil.cs" />
     <Compile Include="Util\WaitFor.cs" />
     <Compile Include="Web\WebAPIKeyResolver.cs" />
+    <Compile Include="Sentry\Sentry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
