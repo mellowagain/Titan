@@ -36,7 +36,7 @@ Every version of Titan is provided as binary archive. An installation process is
 
 For Linux, [Mono](http://www.mono-project.com), 
 [Gtk 3](https://www.archlinux.org/packages/extra/i686/gtk3/) and 
-[Gtk#](https://www.archlinux.org/packages/community/x86_64/gtk-sharp-3/) is required. 
+[Gtk# 3](https://www.archlinux.org/packages/community/x86_64/gtk-sharp-3/) is required. 
 Install it from the package repository of your distribution.
 
 #### Option 1: Binary

@@ -48,11 +48,8 @@
     <Reference Include="Eto, Version=2.3.6365.37573, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Forms.2.4.0-build1054\lib\net45\Eto.dll</HintPath>
     </Reference>
-    <Reference Include="Eto.Gtk2, Version=2.3.6365.37579, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Gtk.2.4.0-build1054\lib\net45\Eto.Gtk2.dll</HintPath>
-    </Reference>
-    <Reference Include="Eto.Mac, Version=2.3.6365.37578, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Mac.2.4.0-build1054\lib\net45\Eto.Mac.dll</HintPath>
+    <Reference Include="Eto.Gtk3, Version=2.3.6365.37583, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Gtk3.2.4.0-build1054\lib\net45\Eto.Gtk3.dll</HintPath>
     </Reference>
     <Reference Include="Eto.Wpf, Version=2.3.6365.37582, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Platform.Wpf.2.4.0-build1054\lib\net45\Eto.Wpf.dll</HintPath>
@@ -63,9 +60,6 @@
     </Reference>
     <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Mac.2.4.0-build1054\lib\net45\MonoMac.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -134,6 +128,7 @@
     <Compile Include="Meta\LiveGameInfo.cs" />
     <Compile Include="Meta\ReportInfo.cs" />
     <Compile Include="Managers\ThreadManager.cs" />
+    <Compile Include="Sentry\Sentry.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\2FA\TwoFactorAuthForm.cs" />
