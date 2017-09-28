@@ -4,7 +4,7 @@ using Titan.MatchID.Sharecode;
 
 namespace Titan.Util
 {
-    public class SharecodeUtil
+    public static class SharecodeUtil
     {
 
         private static Logger _log = LogCreator.Create();

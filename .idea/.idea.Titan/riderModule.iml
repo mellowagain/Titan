@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RIDER_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$/../..">
-      <sourceFolder url="file://$MODULE_DIR$/../../Titan" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../TitanTest" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/../../Titan/bin" />
-      <excludeFolder url="file://$MODULE_DIR$/../../Titan/obj" />
-      <excludeFolder url="file://$MODULE_DIR$/../../TitanTest/bin" />
-      <excludeFolder url="file://$MODULE_DIR$/../../TitanTest/obj" />
-      <excludeFolder url="file://$MODULE_DIR$/../../packages" />
-    </content>
+    <content url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.3.0-beta5-build3769/build/netcoreapp1.0/xunit.runner.reporters.netcoreapp10.dll" />
+    <content url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.3.0-beta5-build3769/build/netcoreapp1.0/xunit.runner.utility.netcoreapp10.dll" />
+    <content url="file://$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.3.0-beta5-build3769/build/netcoreapp1.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll" />
+    <content url="file://$MODULE_DIR$/../.." />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

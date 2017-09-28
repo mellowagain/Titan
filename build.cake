@@ -1,13 +1,11 @@
+#addin "Cake.Incubator"
 #tool "nuget:?package=xunit.runner.console"
-
-var config = Argument("configuration", "Release");
-
-var buildDir = Directory("./Titan/bin/") + Directory(config);
 
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectory(buildDir);
+    DotNetCoreClean("./Titan");
+    DotNetCoreClean("./Titan.Test");
 });
 
 Task("Restore-NuGet-Packages")
@@ -29,19 +27,11 @@ Task("Build")
     .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
 {
-    if(IsRunningOnWindows())
-    {
-      // Use MSBuild
-      MSBuild("./Titan.sln", settings => settings.SetConfiguration(config));
-    }
-    else
-    {
-      // Use XBuild
-      XBuild("./Titan.sln", settings => settings.SetConfiguration(config));
-    }
+    DotNetCoreBuild("./Titan/");
+    DotNetCoreBuild("./Titan.Test/");
 });
 
-Task("Run-Unit-Tests")
+/*Task("Run-Unit-Tests")
     .IsDependentOn("Build")
     .Does(() =>
 {
@@ -50,7 +40,7 @@ Task("Run-Unit-Tests")
         Parallelism = ParallelismOption.All,
         OutputDirectory = "./TitanTest/bin/" + config + "/results"
     });
-});
+});*/
 
-Task("Default").IsDependentOn("Run-Unit-Tests");
+Task("Default").IsDependentOn(/*"Run-Unit-Tests"*/ "Build");
 RunTarget("Default");

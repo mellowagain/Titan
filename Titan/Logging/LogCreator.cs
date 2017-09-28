@@ -7,7 +7,7 @@ using Serilog.Core;
 
 namespace Titan.Logging
 {
-    public class LogCreator
+    public static class LogCreator
     {
 
         private static DirectoryInfo _logDir = new DirectoryInfo(Environment.CurrentDirectory +
@@ -35,7 +35,6 @@ namespace Titan.Logging
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
-                .Enrich.WithThreadId()
                 .CreateLogger();
         }
 
@@ -51,7 +50,6 @@ namespace Titan.Logging
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
-                .Enrich.WithThreadId()
                 .CreateLogger();
         }
  

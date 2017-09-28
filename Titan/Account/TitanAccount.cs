@@ -95,17 +95,21 @@ namespace Titan.Account
         public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer> GetReportPayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer
-            );
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer)
+            {
+                Body =
+                {
+                    account_id = _reportInfo.SteamID.AccountID,
+                    match_id = _reportInfo.MatchID,
+                    rpt_aimbot = (uint) (_reportInfo.AimHacking ? 1 : 0),
+                    rpt_wallhack = (uint) (_reportInfo.WallHacking ? 1 : 0),
+                    rpt_speedhack = (uint) (_reportInfo.OtherHacking ? 1 : 0),
+                    rpt_teamharm = (uint) (_reportInfo.Griefing ? 1 : 0),
+                    rpt_textabuse = (uint) (_reportInfo.AbusiveText ? 1 : 0),
+                    rpt_voiceabuse = (uint) (_reportInfo.AbusiveVoice ? 1 : 0)
+                }
+            };
 
-            payload.Body.account_id = _reportInfo.SteamID.AccountID;
-            payload.Body.match_id = _reportInfo.MatchID;
-            payload.Body.rpt_aimbot = (uint) (_reportInfo.AimHacking ? 1 : 0);
-            payload.Body.rpt_wallhack = (uint) (_reportInfo.WallHacking ? 1 : 0);
-            payload.Body.rpt_speedhack = (uint) (_reportInfo.OtherHacking ? 1 : 0);
-            payload.Body.rpt_teamharm = (uint) (_reportInfo.Griefing ? 1 : 0);
-            payload.Body.rpt_textabuse = (uint) (_reportInfo.AbusiveText ? 1 : 0);
-            payload.Body.rpt_voiceabuse = (uint) (_reportInfo.AbusiveVoice ? 1 : 0);
 
             return payload;
         }
@@ -113,20 +117,25 @@ namespace Titan.Account
         public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer> GetCommendPayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer
-            );
-
-            payload.Body.account_id = _commendInfo.SteamID.AccountID;
-            payload.Body.match_id = 0;
-
-            payload.Body.commendation = new PlayerCommendationInfo
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer)
             {
-                cmd_friendly = (uint) (_commendInfo.Friendly ? 1 : 0),
-                cmd_teaching = (uint) (_commendInfo.Teacher ? 1 : 0),
-                cmd_leader = (uint) (_commendInfo.Leader ? 1 : 0)
+                Body =
+                {
+                    account_id = _commendInfo.SteamID.AccountID,
+                    match_id = 0,
+                    commendation = new PlayerCommendationInfo
+                    {
+                        cmd_friendly = (uint) (_commendInfo.Friendly ? 1 : 0),
+                        cmd_teaching = (uint) (_commendInfo.Teacher ? 1 : 0),
+                        cmd_leader = (uint) (_commendInfo.Leader ? 1 : 0)
+                    },
+                    tokens = 0
+                }
             };
 
-            payload.Body.tokens = 0; // Whatever this is
+
+
+            // Whatever this is
 
             return payload;
         }
@@ -134,11 +143,15 @@ namespace Titan.Account
         public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser> GetLiveGamePayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchListRequestLiveGameForUser
-            );
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchListRequestLiveGameForUser)
+            {
+                Body =
+                {
+                    accountid = _liveGameInfo.SteamID.AccountID
+                }
+            };
 
-            payload.Body.accountid = _liveGameInfo.SteamID.AccountID;
-            
+
             return payload;
         }
 

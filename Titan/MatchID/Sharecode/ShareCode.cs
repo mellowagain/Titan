@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using Serilog.Core;
+using Titan.Attributes;
 using Titan.Logging;
 using Titan.Util;
 
@@ -10,7 +11,7 @@ namespace Titan.MatchID.Sharecode
 {
     
     [Credit("akiver/CSGO-Demos-Manager")]
-    public class ShareCode
+    public static class ShareCode
     {
 
         private static Logger _log = LogCreator.Create();
@@ -77,11 +78,6 @@ namespace Titan.MatchID.Sharecode
 
             return $"CSGO-{c.Substring(0, 5)}-{c.Substring(5, 5)}-{c.Substring(10, 5)}-{c.Substring(15, 5)}-{c.Substring(20, 5)}";
         }
-    }
-
-    public class CreditAttribute : Attribute
-    {
-        public CreditAttribute(string @null) {}
     }
     
 }

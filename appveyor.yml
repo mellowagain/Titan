@@ -15,7 +15,8 @@ build_script:
   - ps: .\build.ps1
 
 artifacts:
-  - path: Titan/bin/Release/*.exe
+  - path: Titan/*.exe
+  - path: Titan/*.dll
 
 test: off
 deploy: off

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 using Serilog.Core;
 using SteamKit2;
@@ -130,22 +131,14 @@ namespace Titan.Account.Impl
 
         public override void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            if(callback.Result == EResult.OK)
-            {
-                _log.Debug("Successfully connected to Steam. Logging in...");
+            _log.Debug("Successfully connected to Steam. Logging in...");
 
-                _steamUser.LogOn(new SteamUser.LogOnDetails
-                {
-                    Username = JsonAccount.Username,
-                    Password = JsonAccount.Password,
-                    LoginID = RandomUtil.RandomUInt32()
-                });
-            }
-            else
+            _steamUser.LogOn(new SteamUser.LogOnDetails
             {
-                _log.Error("Unable to connect to Steam: {Result}", callback.Result);
-                IsRunning = false;
-            }
+                Username = JsonAccount.Username,
+                Password = JsonAccount.Password,
+                LoginID = RandomUtil.RandomUInt32()
+            });
         }
 
         public override void OnDisconnected(SteamClient.DisconnectedCallback callback)
@@ -393,24 +386,27 @@ namespace Titan.Account.Impl
         // QUARTZ.NET SCHEDULER
         ////////////////////////////////////////////////////
 
-        public void Execute(IJobExecutionContext context)
+        public Task Execute(IJobExecutionContext context)
         {
-            var difference = DateTime.Now.Subtract(new DateTime(_idleInfo.StartTick));
+            return Task.Run(() =>
+            {
+                var difference = DateTime.Now.Subtract(new DateTime(_idleInfo.StartTick));
             
-            // Quartz.NET may be off by 2 minutes. We accept that (2 minutes less idling wow, what are you gonna do, cry?)
-            if(difference.Minutes >= _idleInfo.Minutes || _idleInfo.Minutes - difference.Minutes <= 2) 
-            {
-                _log.Information("Successfully finished idling after {Minutes} minutes.", _idleInfo.Minutes);
+                // Quartz.NET may be off by 2 minutes. We accept that (2 minutes less idling wow, what are you gonna do, cry?)
+                if(difference.Minutes >= _idleInfo.Minutes || _idleInfo.Minutes - difference.Minutes <= 2) 
+                {
+                    _log.Information("Successfully finished idling after {Minutes} minutes.", _idleInfo.Minutes);
 
-                Result = Result.Success;
-                Stop();
-            }
-            else
-            {
-                _log.Debug("Quartz.NET requested stop of idling already after {Minutes} minutes.", difference.Minutes);
+                    Result = Result.Success;
+                    Stop();
+                }
+                else
+                {
+                    _log.Debug("Quartz.NET requested stop of idling already after {Minutes} minutes.", difference.Minutes);
                 
-                _log.Debug("Continueing idling for {Remaining} minutes.", _idleInfo.Minutes - difference.Minutes);
-            }
+                    _log.Debug("Continueing idling for {Remaining} minutes.", _idleInfo.Minutes - difference.Minutes);
+                }
+            });
         }
         
     }

@@ -438,9 +438,9 @@ namespace Titan.UI.General
                 var available = true;
                 var gameID = Convert.ToInt32(Math.Round(nsGameID.Value));
                 
-                for(var i = 0; i < games.Count; i++)
+                foreach (var t in games)
                 {
-                    if(games[i] == gameID)
+                    if(t == gameID)
                     {
                         Titan.Instance.UIManager.SendNotification("Titan - Error", "The game id is already in the " +
                                                                                    "list of idle games.");
@@ -645,10 +645,10 @@ namespace Titan.UI.General
         {
             var list = "";
 
-            for(var i = 0; i < gameList.Count; i++)
+            foreach (var t in gameList)
             {
-                list += gameList[i];
-                if(gameList.Last() != gameList[i])
+                list += t;
+                if(gameList.Last() != t)
                     list += ", ";
             }
 
