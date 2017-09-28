@@ -34,10 +34,8 @@ Every version of Titan is provided as binary archive. An installation process is
 
 #### Dependencies
 
-For Linux, [Mono](http://www.mono-project.com), 
-[Gtk 3](https://www.archlinux.org/packages/extra/i686/gtk3/) and 
-[Gtk# 3](https://www.archlinux.org/packages/community/x86_64/gtk-sharp-3/) is required. 
-Install it from the package repository of your distribution.
+**Windows**: [.NET Framework 4.6+](https://www.microsoft.com/en-us/download/details.aspx?id=53344) (and for building [Visual Studio 2017](https://www.visualstudio.com/downloads/)).  
+**Linux**: [Mono](http://www.mono-project.com), [Gtk 3](https://www.archlinux.org/packages/extra/i686/gtk3/) and [Gtk# 3](https://www.archlinux.org/packages/community/x86_64/gtk-sharp-3/) (and for building [MsBuild](https://aur.archlinux.org/packages/msbuild-15-bin/)).
 
 #### Option 1: Binary
 
