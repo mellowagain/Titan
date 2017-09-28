@@ -7,7 +7,7 @@ using Titan.Web;
 
 namespace Titan.Util
 {
-    public class SteamUtil
+    public static class SteamUtil
     {
 
         private static Logger _log = LogCreator.Create();
@@ -90,8 +90,7 @@ namespace Titan.Util
             
             url = url.Replace("/", "");
 
-            ulong steamID;
-            return ulong.TryParse(url, out steamID) ? FromSteamID64(steamID) : FromCustomUrl(nativeUrl);
+            return ulong.TryParse(url, out var steamID) ? FromSteamID64(steamID) : FromCustomUrl(nativeUrl);
         }
 
         public static SteamID Parse(string s)

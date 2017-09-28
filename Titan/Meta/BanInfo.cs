@@ -1,4 +1,4 @@
-﻿namespace Titan.Bans
+﻿namespace Titan.Meta
 {
     public class BanInfo
     {

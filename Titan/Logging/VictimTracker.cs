@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Eto.Forms;
 using Newtonsoft.Json;
 using Quartz;
@@ -71,7 +72,7 @@ namespace Titan.Logging
             {
                 var json = (Victims) new JsonSerializer().Deserialize(reader, typeof(Victims));
 
-                if(json?.Array != null)
+                if (json?.Array != null)
                 {
                     var victims = new List<Victims.Victim>(json.Array);
 
@@ -108,39 +109,42 @@ namespace Titan.Logging
 
             _log.Debug("Successfully wrote Victim file.");
         }
-
+        
         // Quartz.NET Job Executor
-        public void Execute(IJobExecutionContext context)
+        public Task Execute(IJobExecutionContext context)
         {
-            _log.Debug("Checking all victims if they have bans on record.");
-            
-            _log.Information("Victims: {a}", _victims);
-            
-            foreach(var victim in _victims.ToArray())
+            return Task.Run(() =>
             {
-                var target = SteamUtil.FromSteamID64(victim.SteamID);
-                var bans = Titan.Instance.BanManager.GetBanInfoFor(target);
-                var time = DateTime.Now.Subtract(new DateTime(victim.Ticks));
-                
-                if(bans.GameBanCount > 0 || bans.VacBanned)
+                _log.Debug("Checking all victims if they have bans on record.");
+            
+                _log.Information("Victims: {a}", _victims);
+            
+                foreach(var victim in _victims.ToArray())
                 {
-                    var count = bans.GameBanCount == 0 ? bans.VacBanCount : bans.GameBanCount;
-                    var id64 = target.ConvertToUInt64();
-
-                    if(_victims.Remove(victim))
+                    var target = SteamUtil.FromSteamID64(victim.SteamID);
+                    var bans = Titan.Instance.BanManager.GetBanInfoFor(target);
+                    var time = DateTime.Now.Subtract(new DateTime(victim.Ticks));
+                
+                    if(bans.GameBanCount > 0 || bans.VacBanned)
                     {
-                        _log.Information("Your recently botted target {Target} received " +
-                                         "{Count} ban(s) after {Delay}. Thank you for using Titan.",
-                            id64, count, time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
+                        var count = bans.GameBanCount == 0 ? bans.VacBanCount : bans.GameBanCount;
+                        var id64 = target.ConvertToUInt64();
 
-                        Titan.Instance.UIManager.SendNotification(
-                            "Titan - " + id64 + " banned", 
-                            "Your recently botted target " + id64 + " " + 
-                            "has been banned and has now " + count + " Ban(s) on record."
-                        );
+                        if(_victims.Remove(victim))
+                        {
+                            _log.Information("Your recently botted target {Target} received " +
+                                             "{Count} ban(s) after {Delay}. Thank you for using Titan.",
+                                id64, count, time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
+
+                            Titan.Instance.UIManager.SendNotification(
+                                "Titan - " + id64 + " banned", 
+                                "Your recently botted target " + id64 + " " + 
+                                "has been banned and has now " + count + " Ban(s) on record."
+                            );
+                        }
                     }
                 }
-            }
+            });
         }
         
     }

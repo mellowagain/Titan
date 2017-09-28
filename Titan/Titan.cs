@@ -1,14 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using CommandLine;
 using Quartz;
 using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
-using SteamKit2;
-using Titan.Bans;
 using Titan.Bootstrap;
 using Titan.Logging;
 using Titan.Managers;
@@ -27,6 +24,7 @@ namespace Titan
 
         public Options Options;
         public bool EnableUI = true;
+        public object ParseMode;
 
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
@@ -60,26 +58,32 @@ namespace Titan
             Logger.Debug("Startup: Loading Quartz.NET.");
             
             // Quartz.NET
-            Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler();
+            Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             Instance.Scheduler.Start();
-            
-            Logger.Debug("Startup: Refreshing Steam Universe list.");
-            
-            SteamDirectory.Initialize().Wait();
 
             Logger.Debug("Startup: Parsing Command Line Arguments.");
 
-            if(Parser.Default.ParseArguments(args, Instance.Options))
-            {
-                Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {ID}", 
-                                    Instance.Options.Target, Instance.Options.MatchID);
-                Instance.EnableUI = false;
-            }
-            else
-            {
-                Logger.Information("The arguments --target and --mode were omitted - opening the UI.");
-                Instance.EnableUI = true;
-            }
+            Parser.Default.ParseArguments<Options.ReportOptions, Options.CommendOptions, Options.IdleOptions>(args)
+                .WithParsed<Options.ReportOptions>(options =>
+                {
+                    Instance.EnableUI = false;
+                    Instance.ParseMode = options;
+                })
+                .WithParsed<Options.CommendOptions>(options =>
+                {
+                    Instance.EnableUI = false;
+                    Instance.ParseMode = options;
+                })
+                .WithParsed<Options.IdleOptions>(options =>
+                {
+                    Instance.EnableUI = false;
+                    Instance.ParseMode = options;
+                })
+                .WithNotParsed(error =>
+                {
+                    Instance.EnableUI = true;
+                    Logger.Information("No valid verb has been provided while parsing. Opening UI...");
+                });
             
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
@@ -100,26 +104,22 @@ namespace Titan
             }
             catch (Exception ex)
             {
-                if (ex.GetType() == typeof(InvalidOperationException))
+                /*if (ex.GetType() == typeof(InvalidOperationException))
                 {
                     var osEx = (InvalidOperationException) ex;
 
                     if (osEx.Message.ToLower().Contains("could not detect platform"))
                     {
-                        Log.Error("---------------------------------------");
-                        Log.Error("A fatal error has been detected!");
-                        Log.Error("You are missing a Eto.Forms platform assembly.");
-                        if (Type.GetType("Mono.Runtime") != null)
-                        {
-                            Log.Error("Please read the README.md file and install all required dependencies.");
-                        }
-                        Log.Error("Either {0} or {1} Titan. Titan will now shutdown.", "redownload", "rebuild");
-                        Log.Error("Contact {Marc} on Discord for more information.", "Marc3842h#7312");
-                        Log.Error("---------------------------------------");
+                        Logger.Error("---------------------------------------");
+                        Logger.Error("A fatal error has been detected!");
+                        Logger.Error("You are missing a Eto.Forms platform assembly. Please install dependencies.");
+                        Logger.Error("Either {0} or {1} Titan. Titan will now shutdown.", "redownload", "rebuild");
+                        Logger.Error("Contact {Marc} on Discord for more information.", "Marc3842h#7312");
+                        Logger.Error("---------------------------------------");
 
                         Environment.Exit(-1);
                     }
-                }
+                }*/
                 
                 Log.Error(ex, "A error occured while loading UI.");
                 throw;
@@ -130,7 +130,7 @@ namespace Titan
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             Instance.AccountManager = new AccountManager(new FileInfo(
-                Path.Combine(Environment.CurrentDirectory, Instance.Options.File))
+                Path.Combine(Environment.CurrentDirectory, Instance.Options.AccountsFile))
             );
 
             Instance.ThreadManager = new ThreadManager();
@@ -158,45 +158,54 @@ namespace Titan
                 
                 Logger.Information("Hello and welcome to Titan v1.5.0-Dev.");
 
-                if(Instance.EnableUI)
+                if(Instance.EnableUI || Instance.ParseMode == null)
                 {
                     Instance.UIManager.ShowForm(UIType.General);
                 }
                 else
                 {
-                    switch(Regex.Replace(Instance.Options.Mode.ToLowerInvariant(), @"\s+", ""))
+                    if (Instance.ParseMode.GetType() == typeof(Options.ReportOptions))
                     {
-                        case "report":
-                            Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
-                                new ReportInfo
-                                {
-                                    SteamID = SteamUtil.Parse(Instance.Options.Target),
-                                    MatchID = SharecodeUtil.Parse(Instance.Options.MatchID),
+                        var opt = (Options.ReportOptions) Instance.ParseMode;
+                        
+                        Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
+                            new ReportInfo
+                            {
+                                SteamID = SteamUtil.Parse(opt.Target),
+                                MatchID = SharecodeUtil.Parse(opt.MatchID),
                                     
-                                    AbusiveText = Instance.Options.AbusiveTextChat,
-                                    AbusiveVoice = Instance.Options.AbusiveVoiceChat,
-                                    Griefing = Instance.Options.Griefing,
-                                    AimHacking = Instance.Options.AimHacking,
-                                    WallHacking = Instance.Options.WallHacking,
-                                    OtherHacking = Instance.Options.OtherHacking
-                                });
-                            break;
-                        case "commend":
-                            Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
-                                new CommendInfo
-                                {
-                                    SteamID = SteamUtil.Parse(Instance.Options.Target),
+                                AbusiveText = opt.AbusiveTextChat,
+                                AbusiveVoice = opt.AbusiveVoiceChat,
+                                Griefing = opt.Griefing,
+                                AimHacking = opt.AimHacking,
+                                WallHacking = opt.WallHacking,
+                                OtherHacking = opt.OtherHacking
+                            });
+                    } 
+                    else if (Instance.ParseMode.GetType() == typeof(Options.CommendOptions))
+                    {
+                        var opt = (Options.CommendOptions) Instance.ParseMode;
+                        
+                        Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
+                            new CommendInfo
+                            {
+                                SteamID = SteamUtil.Parse(opt.Target),
                                     
-                                    Friendly = Instance.Options.Friendly,
-                                    Leader = Instance.Options.Leader,
-                                    Teacher = Instance.Options.Teacher
-                                });
-                            break;
-                        default:
-                            Logger.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
+                                Friendly = opt.Friendly,
+                                Leader = opt.Leader,
+                                Teacher = opt.Teacher
+                            });
+                    }
+                    else if (Instance.ParseMode.GetType() == typeof(Options.IdleOptions))
+                    {
+                        var opt = (Options.IdleOptions) Instance.ParseMode;
+                        // TODO
+                    }
+                    else
+                    {
+                        Logger.Error("Could not parse {@ParseMode} to valid ParseMode.", Instance.ParseMode.GetType());
                             
-                            Instance.UIManager.ShowForm(UIType.General);
-                            break;
+                        Instance.UIManager.ShowForm(UIType.General);
                     }
                 }
 

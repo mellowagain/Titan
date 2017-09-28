@@ -283,34 +283,6 @@ namespace Titan.Managers
             }));
         }
 
-        /// <todo>
-        /// This method requires reworking as it doesn't work.
-        /// FIXME: 01.04.17 19:09
-        /// </todo>
-        public void StartWatchdog()
-        {
-            /*Task.Run(() =>
-            {
-                Info info = null;
-
-                foreach(var pair in _taskDic)
-                {
-                    while(!pair.Value.IsCompleted)
-                    {
-                        Thread.Sleep(TimeSpan.FromSeconds(5));
-                    }
-
-                    if(info == null) info = pair.Key._info;
-                }
-
-                if(info != null)
-                {
-                    _log.Information("Successfully {mode} {Target} {Count}x.",
-                        info.Mode.ToString().ToLower() + "ed", info.Target, _count);
-                }
-            });*/
-        }
-
         public void FinishBotting(TitanAccount acc)
         {
             if(acc.IsRunning)

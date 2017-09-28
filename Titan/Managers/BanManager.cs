@@ -2,9 +2,10 @@
 using Serilog.Core;
 using SteamKit2;
 using Titan.Logging;
+using Titan.Meta;
 using Titan.Web;
 
-namespace Titan.Bans
+namespace Titan.Managers
 {
     public class BanManager
     {

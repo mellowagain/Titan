@@ -6,58 +6,91 @@ namespace Titan.Bootstrap
     public class Options
     {
 
-        [Option('t', "target", Required = true,
-            HelpText = "The Steam64 ID of that target that should be commended / reported")]
-        public string Target { get; set; }
-
-        [Option('i', "id", Required = false,
-            HelpText = "The CS:GO Match ID with which the target should get to Overwatch")]
-        public string MatchID { get; set; }
-
-        [Option('m', "mode", Required = true,
-            HelpText = "The Mode in which the bot should be operating")]
-        public string Mode { get; set; } // REPORT, COMMEND
-
-        //////////////////////////////////////////////////////////////////////////////
-        
-        [Option("abusivetext", Required = false)]
-        public bool AbusiveTextChat { get; set; } = true;
-        
-        [Option("abusivevoice", Required = false)]
-        public bool AbusiveVoiceChat { get; set; } = true;
-        
-        [Option("griefing", Required = false)]
-        public bool Griefing { get; set; } = true;
-        
-        [Option("aimhacking", Required = false)]
-        public bool AimHacking { get; set; } = true;
-        
-        [Option("wallhacking", Required = false)]
-        public bool WallHacking { get; set; } = true;
-        
-        [Option("otherhacking", Required = false)]
-        public bool OtherHacking { get; set; } = true;
-        
-        [Option("leader", Required = false)]
-        public bool Leader { get; set; } = true;
-        
-        [Option("friendly", Required = false)]
-        public bool Friendly { get; set; } = true;
-        
-        [Option("teacher", Required = false)]
-        public bool Teacher { get; set; } = true;
-        
-        //////////////////////////////////////////////////////////////////////////////
-
-        [Option('f', "file", Required = false,
+        [Option('f', "file", Default = "accounts.json", Required = false,
             HelpText = "The file containg a list of Steam accounts owning CS:GO that should be used")]
         [DefaultValue("accounts.json")]
-        public string File { get; set; } = "accounts.json";
+        public string AccountsFile { get; } = "accounts.json";
 
-        [Option('d', "debug", Required = false,
+        [Option('d', "debug", Default = true, Required = false, Hidden = true,
             HelpText = "Should the Titan Debug Mode be enabled?")]
-        [DefaultValue(false)]
-        public bool Debug { get; set; } = true; // TODO: Remove this "true" on release.
+        [DefaultValue(true)]
+        public bool Debug { get; } = true; 
+
+        [Verb("report", 
+            HelpText = "Reports the provided target in the provided Match ID with the provided options")]
+        public class ReportOptions
+        {
+            
+            [Option('t', "target", Required = true,
+                HelpText = "The Steam64 ID of that target that should be reported")]
+            public string Target { get; }
+
+            [Option('i', "id", Default = "8", Required = false,
+                HelpText = "The CS:GO Match ID in which the target should get to Overwatch")]
+            [DefaultValue("8")]
+            public string MatchID { get; } = "8";
+            
+            // -----------------------------------------------------------------------
+            
+            [Option("abusivetext", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool AbusiveTextChat { get; } = true;
+        
+            [Option("abusivevoice", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool AbusiveVoiceChat { get; } = true;
+        
+            [Option("griefing", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool Griefing { get; } = true;
+        
+            [Option("aimhacking", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool AimHacking { get; } = true;
+        
+            [Option("wallhacking", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool WallHacking { get; } = true;
+        
+            [Option("otherhacking", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool OtherHacking { get; } = true;
+
+        }
+
+        [Verb("commend", 
+            HelpText = "Commends the provided target with the provided options")]
+        public class CommendOptions
+        {
+            
+            [Option('t', "target", Required = true,
+                HelpText = "The Steam64 ID of that target that should be commended")]
+            public string Target { get; }
+            
+            // -----------------------------------------------------------------------
+            
+            [Option("leader", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool Leader { get; } = true;
+        
+            [Option("friendly", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool Friendly { get; } = true;
+        
+            [Option("teacher", Default = true, Required = false)]
+            [DefaultValue(true)]
+            public bool Teacher { get; } = true;
+            
+        }
+
+        [Verb("idle", Hidden = true,
+            HelpText = "Idles the provided account in the provided game for provided hours")]
+        public class IdleOptions
+        {
+            
+            // TODO
+            
+        }
 
     }
 }

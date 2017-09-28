@@ -80,9 +80,7 @@ namespace Titan.UI
 
         public void ShowForm(UIType ui)
         {
-            Form form;
-
-            if(_forms.TryGetValue(ui, out form))
+            if(_forms.TryGetValue(ui, out var form))
             {
                 form.Show();
                 form.Focus();
@@ -93,13 +91,13 @@ namespace Titan.UI
             }
         }
 
-        public void ShowForm(UIType ui, Form form)
+        public void ShowForm(Form form)
         {
             form.Show();
             form.Focus();
         }
 
-        public void ShowForm(UIType ui, Dialog dialog)
+        public void ShowForm(Dialog dialog)
         {
             dialog.Focus();
             dialog.ShowModal();
@@ -107,9 +105,7 @@ namespace Titan.UI
 
         public void HideForm(UIType ui)
         {
-            Form form;
-
-            if(_forms.TryGetValue(ui, out form))
+            if(_forms.TryGetValue(ui, out var form))
             {
                 form.Visible = false;
             }
@@ -121,9 +117,7 @@ namespace Titan.UI
 
         public void RunForm(UIType ui)
         {
-            Form form;
-
-            if(_forms.TryGetValue(ui, out form))
+            if(_forms.TryGetValue(ui, out var form))
             {
                 _etoApp.Run(form);
             }
@@ -133,7 +127,7 @@ namespace Titan.UI
             }
         }
 
-        public void RunForm(UIType ui, Form form)
+        public void RunForm(Form form)
         {
             _etoApp.Run(form);
         }
@@ -145,9 +139,7 @@ namespace Titan.UI
 
         public T GetForm<T>(UIType ui) where T : Form
         {
-            Form form;
-
-            if(_forms.TryGetValue(ui, out form))
+            if(_forms.TryGetValue(ui, out var form))
             {
                 return (T) form;
             }

@@ -43,13 +43,13 @@ namespace Titan.Util
             var sync = new object();
             var isCompleted = false;
 
-            WaitCallback watcher = obj =>
+            void Watcher(object obj)
             {
                 var watchedThread = obj as Thread;
 
-                lock(sync)
+                lock (sync)
                 {
-                    if(!isCompleted)
+                    if (!isCompleted)
                     {
                         Monitor.Wait(sync, _timeout);
                     }
@@ -59,15 +59,15 @@ namespace Titan.Util
                 // Hence, it should not be called with the 'lock' as it could deadlock
                 // with the 'finally' block below.
 
-                if(!isCompleted)
+                if (!isCompleted)
                 {
-                    watchedThread.Abort();
+                    watchedThread?.Abort();
                 }
-            };
+            }
 
             try
             {
-                ThreadPool.QueueUserWorkItem(watcher, Thread.CurrentThread);
+                ThreadPool.QueueUserWorkItem(Watcher, Thread.CurrentThread);
                 return function();
             }
             catch (ThreadAbortException)
@@ -75,7 +75,7 @@ namespace Titan.Util
                 // This is our own exception.
                 Thread.ResetAbort();
 
-                throw new TimeoutException(_timeout.TotalSeconds.ToString());
+                throw new TimeoutException(_timeout.TotalSeconds.ToString(CultureInfo.InvariantCulture));
             }
             finally
             {

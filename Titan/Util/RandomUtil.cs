@@ -2,7 +2,7 @@
 
 namespace Titan.Util
 {
-    public class RandomUtil
+    public static class RandomUtil
     {
         
         public static Random Random = new Random();
