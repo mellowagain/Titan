@@ -159,3 +159,8 @@ Titan is licensed under the [MIT License](https://github.com/Marc3842h/Titan/blo
 Please visit the `LICENSE.txt` file in the root directory tree for more informations.
 All external resources that do not fall unter the MIT license (Images etc.) have been credited
 in the `CREDIT.txt` under the Resources directory.
+
+## Special
+
+Titan is supporting and is beeing support by the [TuxCheats](https://www.tuxcheats.com/) community.
+Huge thanks to them.
