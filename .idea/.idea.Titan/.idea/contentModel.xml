@@ -1,5 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.local/share/JetBrains/Transient/ReSharperHost/v10/SolutionCaches/_Titan.867293279.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="Titan" t="IncludeRecursive">
+        <e p="Account" t="Include">
+          <e p="Impl" t="Include">
+            <e p="ProtectedAccount.cs" t="Include" />
+            <e p="UnprotectedAccount.cs" t="Include" />
+          </e>
+          <e p="Result.cs" t="Include" />
+          <e p="TitanAccount.cs" t="Include" />
+        </e>
+        <e p="Bans" t="Include">
+          <e p="BanInfo.cs" t="Include" />
+          <e p="BanManager.cs" t="Include" />
+        </e>
+        <e p="Bootstrap" t="Include">
+          <e p="Options.cs" t="Include" />
+        </e>
+        <e p="Json" t="Include">
+          <e p="JsonAccounts.cs" t="Include" />
+          <e p="JsonIndex.cs" t="Include" />
+          <e p="Victims.cs" t="Include" />
+        </e>
+        <e p="Logging" t="Include">
+          <e p="LogCreator.cs" t="Include" />
+          <e p="VictimTracker.cs" t="Include" />
+        </e>
+        <e p="Managers" t="Include">
+          <e p="AccountManager.cs" t="Include" />
+          <e p="ThreadManager.cs" t="Include" />
+        </e>
+        <e p="MatchID" t="Include">
+          <e p="Live" t="Include">
+            <e p="MatchInfo.cs" t="Include" />
+          </e>
+          <e p="Sharecode" t="Include">
+            <e p="ShareCode.cs" t="Include" />
+            <e p="ShareCodeInfo.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Meta" t="Include">
+          <e p="CommendInfo.cs" t="Include" />
+          <e p="IdleInfo.cs" t="Include" />
+          <e p="LiveGameInfo.cs" t="Include" />
+          <e p="ReportInfo.cs" t="Include" />
+        </e>
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Resources" t="Include">
+          <e p="CREDIT.txt" t="Include" />
+          <e p="Form.png" t="Include" />
+          <e p="Logo.ico" t="Include" />
+          <e p="Logo.png" t="Include" />
+          <e p="Notification.png" t="Include" />
+          <e p="Steam.ico" t="Include" />
+          <e p="Text.png" t="Include" />
+        </e>
+        <e p="Sentry" t="Include">
+          <e p="Sentry.cs" t="Include" />
+        </e>
+        <e p="Titan.cs" t="Include" />
+        <e p="Titan.csproj" t="IncludeRecursive" />
+        <e p="UI" t="Include">
+          <e p="2FA" t="Include">
+            <e p="TwoFactorAuthForm.cs" t="Include" />
+          </e>
+          <e p="APIKey" t="Include">
+            <e p="APIKeyForm.cs" t="Include" />
+            <e p="Commands" t="Include">
+              <e p="SteamKeySite.cs" t="Include" />
+            </e>
+          </e>
+          <e p="About" t="Include">
+            <e p="AboutUI.cs" t="Include" />
+          </e>
+          <e p="Accounts" t="Include">
+            <e p="AccountUI.cs" t="Include" />
+          </e>
+          <e p="GameInfo" t="Include">
+            <e p="ExtraGameInfo.cs" t="Include" />
+          </e>
+          <e p="General" t="Include">
+            <e p="General.cs" t="Include" />
+          </e>
+          <e p="SharedResources.cs" t="Include" />
+          <e p="UIManager.cs" t="Include" />
+          <e p="UIType.cs" t="Include" />
+        </e>
+        <e p="Util" t="Include">
+          <e p="ArrayUtil.cs" t="Include" />
+          <e p="RandomUtil.cs" t="Include" />
+          <e p="SharecodeUtil.cs" t="Include" />
+          <e p="SteamUtil.cs" t="Include" />
+          <e p="StringUtil.cs" t="Include" />
+          <e p="TimeUtil.cs" t="Include" />
+          <e p="WaitFor.cs" t="Include" />
+        </e>
+        <e p="Web" t="Include">
+          <e p="WebAPIKeyResolver.cs" t="Include" />
+        </e>
+        <e p="accounts.json" t="Include" />
+        <e p="app.config" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="Titan.sln" t="IncludeFlat" />
+      <e p="TitanTest" t="IncludeRecursive">
+        <e p="BanManagerTest.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="ShareCodeDecoderTest.cs" t="Include" />
+        <e p="SteamUtilTest.cs" t="Include" />
+        <e p="ThreadTimeoutTest.cs" t="Include" />
+        <e p="TitanTest.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
   <component name="RiderRiderContentModelStore">
     <excludedPaths />
   </component>

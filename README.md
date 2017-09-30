@@ -162,5 +162,5 @@ in the `CREDIT.txt` under the Resources directory.
 
 ## Special
 
-Titan is supporting and is beeing support by the [TuxCheats](https://www.tuxcheats.com/) community.
+Titan is supporting and is being supported by the [TuxCheats](https://www.tuxcheats.com/) community.  
 Huge thanks to them.
