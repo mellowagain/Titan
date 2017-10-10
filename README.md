@@ -104,6 +104,7 @@ Create a ```accounts.json``` in main directory with data:
     ]
 }
 ```
+
 #### Start
 Run the program from command line with the following syntax:
 
@@ -123,6 +124,20 @@ If one of your recently botted players got banned, you'll also receive a notific
 ![Notification](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Notification.png)
 
 <sup>All screenshots have been taken on <b>Arch Linux</b> using <b>Gnome</b> with the <b>Ark-Dark</b> theme.</sup>
+
+#### Converting existing accounts file
+
+Titan brings a Python3 script that can convert an existing `accounts.txt` file (in the format of `username:password`,
+from for example [Askwrite's report bot](https://github.com/Askwrite/node-csgo-reportbot)) to a Titan-compatible `accounts.json`
+file that can be used with the Titan report & commend bot.
+
+Use it like this:
+
+```python
+python3 convert.py <original accounts file>
+```
+
+After it ran successfully you can find a `accounts.json` file in the current directory.
 
 #### i3wm
 
