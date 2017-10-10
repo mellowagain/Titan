@@ -4,6 +4,9 @@ solution: Titan.sln
 notifications:
   email: false
 
+mono:
+  - alpha
+
 install:
   - chmod +x build.sh
 script:

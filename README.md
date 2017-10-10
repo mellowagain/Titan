@@ -34,8 +34,8 @@ Every version of Titan is provided as binary archive. An installation process is
 
 #### Dependencies
 
-**Windows**: [.NET Framework 4.6+](https://www.microsoft.com/en-us/download/details.aspx?id=53344) (and for building [Visual Studio 2017](https://www.visualstudio.com/downloads/)).  
-**Linux**: [Mono](http://www.mono-project.com), [Gtk 3](https://www.archlinux.org/packages/extra/i686/gtk3/) and [Gtk# 3](https://www.archlinux.org/packages/community/x86_64/gtk-sharp-3/) (and for building [MsBuild](https://aur.archlinux.org/packages/msbuild-15-bin/)).
+**Windows**: [.NET Framework ≥4.6.1](https://www.microsoft.com/en-us/download/details.aspx?id=53344) (and for building [Visual Studio 2017](https://www.visualstudio.com/downloads/)).  
+**Linux**: [Mono ≥5.4](http://www.mono-project.com), [Gtk 3](https://www.gtk.org/) and [Gtk# 3](http://www.mono-project.com/docs/gui/gtksharp/) (and for building [MsBuild](https://github.com/Microsoft/msbuild)).
 
 #### Option 1: Binary
 
@@ -109,7 +109,7 @@ Create a ```accounts.json``` in main directory with data:
 Run the program from command line with the following syntax:
 
 ```bash
-$ mono Titan.exe <Arguments>
+$ mono Titan.exe [Verb] [Arguments ...]
 ```
 
 On Windows, run Titan without the `mono` part at the beginning.
@@ -134,7 +134,7 @@ file that can be used with the Titan report & commend bot.
 Use it like this:
 
 ```python
-python3 convert.py <original accounts file>
+python convert.py <original accounts file>
 ```
 
 After it ran successfully you can find a `accounts.json` file in the current directory.

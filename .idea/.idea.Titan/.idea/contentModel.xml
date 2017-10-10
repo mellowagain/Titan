@@ -18,7 +18,6 @@
         </e>
         <e p="Bootstrap" t="Include">
           <e p="Options.cs" t="Include" />
-          <e p="Options__old.cs" t="Include" />
           <e p="Verbs" t="Include">
             <e p="CommendOptions.cs" t="Include" />
             <e p="IdleOptions.cs" t="Include" />

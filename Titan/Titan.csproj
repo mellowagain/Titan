@@ -124,7 +124,6 @@
     <Compile Include="Bootstrap\Verbs\IdleOptions.cs" />
     <Compile Include="Bootstrap\Verbs\ReportOptions.cs" />
     <Compile Include="Restrictions\Blacklist.cs" />
-    <Compile Include="Bootstrap\Options__old.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
     <Compile Include="Json\Victims.cs" />

@@ -14,7 +14,7 @@ namespace Titan.Restrictions
         
         // Purchasing yourself into this blacklist is not possible
         // and this whole application is open-source. If users
-        // wish to disable the blacklist, they coudl either remove
+        // wish to disable the blacklist, they could either remove
         // the whole blacklist or include the "--noblacklist" command
         // line argument when starting Titan.
 
