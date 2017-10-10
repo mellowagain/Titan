@@ -18,6 +18,12 @@
         </e>
         <e p="Bootstrap" t="Include">
           <e p="Options.cs" t="Include" />
+          <e p="Options__old.cs" t="Include" />
+          <e p="Verbs" t="Include">
+            <e p="CommendOptions.cs" t="Include" />
+            <e p="IdleOptions.cs" t="Include" />
+            <e p="ReportOptions.cs" t="Include" />
+          </e>
         </e>
         <e p="Json" t="Include">
           <e p="JsonAccounts.cs" t="Include" />

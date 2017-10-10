@@ -146,28 +146,20 @@ namespace Titan.Account.Impl
 
         public override void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            if(callback.Result == EResult.OK)
-            {
-                _log.Debug("Sentry has been activated for this account. Checking if a sentry file " +
-                           "exists and hashing it...");
+            _log.Debug("Sentry has been activated for this account. Checking if a sentry file " +
+                       "exists and hashing it...");
 
-                var hash = _sentry.Hash();
-                
-                _steamUser.LogOn(new SteamUser.LogOnDetails
-                {
-                    Username = JsonAccount.Username,
-                    Password = JsonAccount.Password,
-                    AuthCode = _authCode,
-                    TwoFactorCode = _2FactorCode,
-                    SentryFileHash = hash.Length > 0 ? hash : null,
-                    LoginID = RandomUtil.RandomUInt32()
-                });
-            }
-            else
+            var hash = _sentry.Hash();
+
+            _steamUser.LogOn(new SteamUser.LogOnDetails
             {
-                _log.Error("Unable to connect to Steam: {Result}", callback.Result);
-                IsRunning = false;
-            }
+                Username = JsonAccount.Username,
+                Password = JsonAccount.Password,
+                AuthCode = _authCode,
+                TwoFactorCode = _2FactorCode,
+                SentryFileHash = hash.Length > 0 ? hash : null,
+                LoginID = RandomUtil.RandomUInt32()
+            });
         }
 
         public override void OnDisconnected(SteamClient.DisconnectedCallback callback)

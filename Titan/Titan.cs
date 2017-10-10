@@ -11,6 +11,7 @@ using Serilog.Core;
 using SteamKit2;
 using Titan.Bans;
 using Titan.Bootstrap;
+using Titan.Bootstrap.Verbs;
 using Titan.Logging;
 using Titan.Managers;
 using Titan.Meta;
@@ -29,6 +30,7 @@ namespace Titan
 
         public Options Options;
         public bool EnableUI = true;
+        public object ParsedObject;
 
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
@@ -62,26 +64,32 @@ namespace Titan
             Logger.Debug("Startup: Loading Quartz.NET.");
             
             // Quartz.NET
-            Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler();
+            Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             Instance.Scheduler.Start();
-            
-            Logger.Debug("Startup: Refreshing Steam Universe list.");
-            
-            SteamDirectory.Initialize().Wait();
 
             Logger.Debug("Startup: Parsing Command Line Arguments.");
 
-            if(Parser.Default.ParseArguments(args, Instance.Options))
-            {
-                Logger.Information("Skipping UI and going directly to botting - Target: {Target} - Match ID: {ID}", 
-                                    Instance.Options.Target, Instance.Options.MatchID);
-                Instance.EnableUI = false;
-            }
-            else
-            {
-                Logger.Information("The arguments --target and --mode were omitted - opening the UI.");
-                Instance.EnableUI = true;
-            }
+            Parser.Default.ParseArguments<Options, ReportOptions, CommendOptions, IdleOptions>(args)
+                .WithParsed<ReportOptions>(options =>
+                {
+                    Instance.EnableUI = false;
+                    Instance.ParsedObject = options;
+                })
+                .WithParsed<CommendOptions>(options =>
+                {
+                    Instance.EnableUI = false;
+                    Instance.ParsedObject = options;
+                })
+                .WithParsed<IdleOptions>(options =>
+                {
+                    Instance.EnableUI = false;
+                    Instance.ParsedObject = options;
+                })
+                .WithNotParsed(error =>
+                {
+                    Instance.EnableUI = true;
+                    Logger.Information("No valid verb has been provided while parsing. Opening UI...");
+                });
             
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
@@ -137,7 +145,7 @@ namespace Titan
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             Instance.AccountManager = new AccountManager(new FileInfo(
-                Path.Combine(Environment.CurrentDirectory, Instance.Options.File))
+                Path.Combine(Environment.CurrentDirectory, Instance.Options.AccountsFile))
             );
 
             Instance.ThreadManager = new ThreadManager();
@@ -165,59 +173,66 @@ namespace Titan
                 
                 Logger.Information("Hello and welcome to Titan v1.5.0-Dev.");
 
-                if(Instance.EnableUI)
+                if(Instance.EnableUI || Instance.ParsedObject == null)
                 {
                     Instance.UIManager.ShowForm(UIType.General);
                 }
                 else
                 {
-                    var steamID = SteamUtil.Parse(Instance.Options.Target);
-                    
-                    if (Blacklist.IsBlacklisted(steamID))
+                    if (Instance.ParsedObject.GetType() == typeof(ReportOptions))
                     {
-                        Instance.UIManager.SendNotification(
-                            "Restriction applied",
-                            "The target you are trying to report is blacklisted from botting " +
-                            "in Titan.",
-                            delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
-                        );
+                        var opt = (ReportOptions) Instance.ParsedObject;
+
+                        var steamID = SteamUtil.Parse(opt.Target);
+                        if (Blacklist.IsBlacklisted(steamID))
+                        {
+                            Instance.UIManager.SendNotification(
+                                "Restriction applied",
+                                "The target you are trying to report is blacklisted from botting " +
+                                "in Titan.",
+                                delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
+                            );
+                        }
+                        else
+                        {
+                            Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
+                                new ReportInfo
+                                {
+                                    SteamID = SteamUtil.Parse(opt.Target),
+                                    MatchID = SharecodeUtil.Parse(opt.Match),
+                                    
+                                    AbusiveText = opt.AbusiveTextChat,
+                                    AbusiveVoice = opt.AbusiveVoiceChat,
+                                    Griefing = opt.Griefing,
+                                    AimHacking = opt.AimHacking,
+                                    WallHacking = opt.WallHacking,
+                                    OtherHacking = opt.OtherHacking
+                                });
+                        }
+                    } 
+                    else if (Instance.ParsedObject.GetType() == typeof(CommendOptions))
+                    {
+                        var opt = (CommendOptions) Instance.ParsedObject;
+                        
+                        Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
+                            new CommendInfo
+                            {
+                                SteamID = SteamUtil.Parse(opt.Target),
+                                    
+                                Friendly = opt.Friendly,
+                                Leader = opt.Leader,
+                                Teacher = opt.Teacher
+                            });
+                    }
+                    else if (Instance.ParsedObject.GetType() == typeof(IdleOptions))
+                    {
+                        var opt = (IdleOptions) Instance.ParsedObject;
+                        
+                        // TODO: Parse the idle options as soon as idling is implemented
                     }
                     else
                     {
-                        switch (Regex.Replace(Instance.Options.Mode.ToLowerInvariant(), @"\s+", ""))
-                        {
-                            case "report":
-                                Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
-                                    new ReportInfo
-                                    {
-                                        SteamID = steamID,
-                                        MatchID = SharecodeUtil.Parse(Instance.Options.MatchID),
-
-                                        AbusiveText = Instance.Options.AbusiveTextChat,
-                                        AbusiveVoice = Instance.Options.AbusiveVoiceChat,
-                                        Griefing = Instance.Options.Griefing,
-                                        AimHacking = Instance.Options.AimHacking,
-                                        WallHacking = Instance.Options.WallHacking,
-                                        OtherHacking = Instance.Options.OtherHacking
-                                    });
-                                break;
-                            case "commend":
-                                Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
-                                    new CommendInfo
-                                    {
-                                        SteamID = steamID,
-
-                                        Friendly = Instance.Options.Friendly,
-                                        Leader = Instance.Options.Leader,
-                                        Teacher = Instance.Options.Teacher
-                                    });
-                                break;
-                            default:
-                                Logger.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
-
-                                Instance.UIManager.ShowForm(UIType.General);
-                                break;
-                        }
+                        Instance.UIManager.ShowForm(UIType.General);
                     }
                 }
 
