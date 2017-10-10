@@ -54,6 +54,11 @@ namespace Titan.Bootstrap
         [DefaultValue("accounts.json")]
         public string File { get; set; } = "accounts.json";
 
+        [Option('b', "noblacklist", Required = false,
+            HelpText = "Disables the Blacklist that is preventing botting of the authors own bot accounts")]
+        [DefaultValue(false)]
+        public bool DisableBlacklist { get; set; } = false;
+
         [Option('d', "debug", Required = false,
             HelpText = "Should the Titan Debug Mode be enabled?")]
         [DefaultValue(false)]

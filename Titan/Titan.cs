@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -13,6 +14,7 @@ using Titan.Bootstrap;
 using Titan.Logging;
 using Titan.Managers;
 using Titan.Meta;
+using Titan.Restrictions;
 using Titan.UI;
 using Titan.Util;
 using Titan.Web;
@@ -92,6 +94,11 @@ namespace Titan
                 }
             }
 
+            if (Instance.Options.DisableBlacklist)
+            {
+                Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");
+            }
+
             Logger.Debug("Startup: Loading UI Manager, Victim Tracker, Account Manager and Ban Manager.");
 
             try
@@ -164,39 +171,53 @@ namespace Titan
                 }
                 else
                 {
-                    switch(Regex.Replace(Instance.Options.Mode.ToLowerInvariant(), @"\s+", ""))
+                    var steamID = SteamUtil.Parse(Instance.Options.Target);
+                    
+                    if (Blacklist.IsBlacklisted(steamID))
                     {
-                        case "report":
-                            Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
-                                new ReportInfo
-                                {
-                                    SteamID = SteamUtil.Parse(Instance.Options.Target),
-                                    MatchID = SharecodeUtil.Parse(Instance.Options.MatchID),
-                                    
-                                    AbusiveText = Instance.Options.AbusiveTextChat,
-                                    AbusiveVoice = Instance.Options.AbusiveVoiceChat,
-                                    Griefing = Instance.Options.Griefing,
-                                    AimHacking = Instance.Options.AimHacking,
-                                    WallHacking = Instance.Options.WallHacking,
-                                    OtherHacking = Instance.Options.OtherHacking
-                                });
-                            break;
-                        case "commend":
-                            Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
-                                new CommendInfo
-                                {
-                                    SteamID = SteamUtil.Parse(Instance.Options.Target),
-                                    
-                                    Friendly = Instance.Options.Friendly,
-                                    Leader = Instance.Options.Leader,
-                                    Teacher = Instance.Options.Teacher
-                                });
-                            break;
-                        default:
-                            Logger.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
-                            
-                            Instance.UIManager.ShowForm(UIType.General);
-                            break;
+                        Instance.UIManager.SendNotification(
+                            "Restriction applied",
+                            "The target you are trying to report is blacklisted from botting " +
+                            "in Titan.",
+                            delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
+                        );
+                    }
+                    else
+                    {
+                        switch (Regex.Replace(Instance.Options.Mode.ToLowerInvariant(), @"\s+", ""))
+                        {
+                            case "report":
+                                Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
+                                    new ReportInfo
+                                    {
+                                        SteamID = steamID,
+                                        MatchID = SharecodeUtil.Parse(Instance.Options.MatchID),
+
+                                        AbusiveText = Instance.Options.AbusiveTextChat,
+                                        AbusiveVoice = Instance.Options.AbusiveVoiceChat,
+                                        Griefing = Instance.Options.Griefing,
+                                        AimHacking = Instance.Options.AimHacking,
+                                        WallHacking = Instance.Options.WallHacking,
+                                        OtherHacking = Instance.Options.OtherHacking
+                                    });
+                                break;
+                            case "commend":
+                                Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
+                                    new CommendInfo
+                                    {
+                                        SteamID = steamID,
+
+                                        Friendly = Instance.Options.Friendly,
+                                        Leader = Instance.Options.Leader,
+                                        Teacher = Instance.Options.Teacher
+                                    });
+                                break;
+                            default:
+                                Logger.Error("Could not parse {Mode} to Mode.", Instance.Options.Mode);
+
+                                Instance.UIManager.ShowForm(UIType.General);
+                                break;
+                        }
                     }
                 }
 

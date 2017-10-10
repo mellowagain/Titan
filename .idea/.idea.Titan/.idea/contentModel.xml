@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.local/share/JetBrains/Transient/ReSharperHost/v10/SolutionCaches/_Titan.867293279.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.Rider2017.2/system/resharper-host/local/Transient/ReSharperHost/v10/SolutionCaches/_Titan.867293279.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="Titan" t="IncludeRecursive">
         <e p="Account" t="Include">
@@ -58,6 +58,9 @@
           <e p="Notification.png" t="Include" />
           <e p="Steam.ico" t="Include" />
           <e p="Text.png" t="Include" />
+        </e>
+        <e p="Restrictions" t="Include">
+          <e p="Blacklist.cs" t="Include" />
         </e>
         <e p="Sentry" t="Include">
           <e p="Sentry.cs" t="Include" />

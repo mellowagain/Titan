@@ -7,7 +7,7 @@ using Titan.Web;
 
 namespace Titan.Util
 {
-    public class SteamUtil
+    public static class SteamUtil
     {
 
         private static Logger _log = LogCreator.Create();

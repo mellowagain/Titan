@@ -113,6 +113,7 @@
     <Compile Include="Account\TitanAccount.cs" />
     <Compile Include="Bans\BanInfo.cs" />
     <Compile Include="Bans\BanManager.cs" />
+    <Compile Include="Restrictions\Blacklist.cs" />
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />

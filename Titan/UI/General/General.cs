@@ -8,6 +8,7 @@ using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
 using Titan.Meta;
+using Titan.Restrictions;
 using Titan.Util;
 
 namespace Titan.UI.General
@@ -122,6 +123,17 @@ namespace Titan.UI.General
                             Titan.Instance.AccountManager.StartMatchIDResolving(
                                 cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex,
                                 new LiveGameInfo { SteamID = steamID } );
+                        }
+
+                        if (Blacklist.IsBlacklisted(steamID))
+                        {
+                            Titan.Instance.UIManager.SendNotification(
+                                "Restriction applied", 
+                                "The target you are trying to report is blacklisted from botting " +
+                                "in Titan.", 
+                                delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
+                            );
+                            return;
                         }
                         
                         var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(steamID.ConvertToUInt64());
@@ -306,6 +318,17 @@ namespace Titan.UI.General
 
                     if(steamID != null)
                     {
+                        if (Blacklist.IsBlacklisted(steamID))
+                        {
+                            Titan.Instance.UIManager.SendNotification(
+                                "Restriction applied", 
+                                "The target you are trying to report is blacklisted from botting " +
+                                "in Titan.", 
+                                delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
+                            );
+                            return;
+                        }
+                        
                         _log.Information("Starting commending of {Target}.",
                             steamID.ConvertToUInt64());
                         
