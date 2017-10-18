@@ -55,7 +55,6 @@ PS> .\build.ps1
 $ chmod +x build.sh && ./build.sh
 ```
 
-
 ## Usage
 
 #### Accounts file
