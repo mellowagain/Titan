@@ -49,6 +49,10 @@ namespace Titan.Managers
                                 _log.Information("SUCCESS! Titan has successfully sent {Amount} reports to {Target}.",
                                     _count, account._reportInfo.SteamID.ConvertToUInt64());
                                 
+                                Titan.Instance.UIManager.SendNotification(
+                                    "Titan", _count + " reports have been successfully sent!"
+                                );
+                                
                                 account.IsLast = false;
                             }
                             break;
@@ -128,6 +132,10 @@ namespace Titan.Managers
                             {
                                 _log.Information("SUCCESS! Titan has successfully sent {Amount} commends to {Target}.",
                                     _count, account._reportInfo.SteamID.ConvertToUInt64());
+                                
+                                Titan.Instance.UIManager.SendNotification(
+                                    "Titan", _count + " commends have been successfully sent!"
+                                );
                                 
                                 account.IsLast = false;
                             }
@@ -265,6 +273,10 @@ namespace Titan.Managers
                             {
                                 _log.Information("SUCCESS! Titan has successfully idled {Amount} times in {Games}.",
                                     _count, account._idleInfo.GameID.ToString());
+                                
+                                Titan.Instance.UIManager.SendNotification(
+                                    "Titan", _count + "x was idled in " + account._idleInfo.GameID + " games!"
+                                );
                                 
                                 account.IsLast = false;
                             }
