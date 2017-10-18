@@ -44,8 +44,11 @@ namespace Titan.Web
             {
                 Titan.Instance.UIManager.ShowForm(UIType.APIKeyInput);
             }
-            
-            _log.Debug("Using Steam API Key {Key} for the Steam Web API.", APIKey);
+
+            if (!Titan.Instance.Options.Secure)
+            {
+                _log.Debug("Using Steam API Key {Key} for the Steam Web API.", APIKey);
+            }
         }
 
         public void SaveKeyFile()

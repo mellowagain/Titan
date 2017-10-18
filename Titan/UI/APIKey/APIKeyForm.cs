@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
-using Titan.UI.APIKey.Commands;
 using Titan.Web;
 
 namespace Titan.UI.APIKey
@@ -56,7 +56,12 @@ namespace Titan.UI.APIKey
                 {
                     new ButtonMenuItem { Text = "Steam", Items =
                     {
-                        new SteamKeySite(uiManager)
+                        new Command((sender, args) => Process.Start("https://steamcommunity.com/dev/apikey"))
+                        {
+                            MenuText = "Web API Key Site",
+                            Image = uiManager.SharedResources.STEAM_ICON,
+                            Shortcut = Application.Instance.CommonModifier | Keys.A
+                        }
                     }}
                 }
             };

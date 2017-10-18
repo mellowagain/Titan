@@ -90,9 +90,12 @@ namespace Titan.Managers
                         _allAccounts.Add(acc);
                     }
 
-                    _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
-                               "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
-                        Index, account.Username, account.Password, account.Sentry, account.Enabled);
+                    if (!Titan.Instance.Options.Secure)
+                    {
+                        _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
+                                   "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
+                            Index, account.Username, account.Password, account.Sentry, account.Enabled);
+                    }
                 }
 
                 if(accounts.Count > 11)
@@ -246,18 +249,8 @@ namespace Titan.Managers
         {
             _log.Debug("Starting botting using index {Index}.", index);
 
-            List<TitanAccount> accounts;
-            if(Accounts.TryGetValue(index, out accounts))
+            if(Accounts.TryGetValue(index, out var accounts))
             {
-                try
-                {
-                    Titan.Instance.ThreadManager.StartWatchdog();
-                }
-                catch (Exception ex)
-                {
-                    _log.Warning(ex, "Could not start Watchdog thread, starting to report without one!");
-                }
-
                 foreach(var acc in accounts)
                 {
                     try
@@ -295,18 +288,8 @@ namespace Titan.Managers
         {
             _log.Debug("Starting botting using index {Index}.", index);
 
-            List<TitanAccount> accounts;
-            if(Accounts.TryGetValue(index, out accounts))
+            if(Accounts.TryGetValue(index, out var accounts))
             {
-                try
-                {
-                    Titan.Instance.ThreadManager.StartWatchdog();
-                }
-                catch (Exception ex)
-                {
-                    _log.Warning(ex, "Could not start Watchdog thread, starting to commend without one!");
-                }
-
                 foreach(var acc in accounts)
                 {
                     try
@@ -340,8 +323,7 @@ namespace Titan.Managers
         
         public void StartMatchIDResolving(int index, LiveGameInfo info)
         {
-            List<TitanAccount> accounts;
-            if(Accounts.TryGetValue(index, out accounts))
+            if(Accounts.TryGetValue(index, out var accounts))
             {
                 try
                 {
@@ -362,18 +344,8 @@ namespace Titan.Managers
 
         public void StartIdleing(int index, IdleInfo info)
         {
-            List<TitanAccount> accounts;
-            if(Accounts.TryGetValue(index, out accounts))
+            if(Accounts.TryGetValue(index, out var accounts))
             {
-                try
-                {
-                    Titan.Instance.ThreadManager.StartWatchdog();
-                }
-                catch (Exception ex)
-                {
-                    _log.Warning(ex, "Could not start Watchdog thread, starting to idle without one!");
-                }
-
                 foreach(var acc in accounts)
                 {
                     try

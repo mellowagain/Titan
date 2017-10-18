@@ -10,6 +10,12 @@ namespace Titan.Bootstrap
             HelpText = "The file containg a list of Steam accounts owning CS:GO that should be used")]
         [DefaultValue("accounts.json")]
         public string AccountsFile { get; } = "accounts.json";
+
+        [Option('s', "secure", Default = false, Required = false,
+            HelpText = "If Secure Mode is enabled, all logs in the console like account passwords and Web API key" +
+                       "will be hidden. Use this if you're recording a video or taking a screenshot of Titan.")]
+        [DefaultValue(false)]
+        public bool Secure { get; } = false;
         
         [Option('b', "noblacklist", Default = false, Required = false,
             HelpText = "Disables the Blacklist that is preventing botting of the authors and friend's own bots")]

@@ -145,7 +145,6 @@
     <Compile Include="UI\About\AboutUI.cs" />
     <Compile Include="UI\Accounts\AccountUI.cs" />
     <Compile Include="UI\APIKey\APIKeyForm.cs" />
-    <Compile Include="UI\APIKey\Commands\SteamKeySite.cs" />
     <Compile Include="UI\GameInfo\ExtraGameInfo.cs" />
     <Compile Include="UI\General\General.cs" />
     <Compile Include="UI\SharedResources.cs" />

@@ -132,16 +132,20 @@ namespace Titan.Logging
 
                         if(_victims.Remove(victim))
                         {
-                            _log.Information("Your recently botted target {Target} received " +
-                                             "{Count} ban(s) after {Delay}. Thank you for using Titan.",
-                                id64, count, time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
+                            if (!Titan.Instance.Options.Secure)
+                            {
+                                _log.Information("Your recently botted target {Target} received " +
+                                                 "{Count} ban(s) after {Delay}. Thank you for using Titan.",
+                                    id64, count,
+                                    time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
 
-                            Titan.Instance.UIManager.SendNotification(
-                                "Titan - " + id64 + " banned", 
-                                "Your recently botted target " + id64 + " " + 
-                                "has been banned and has now " + count + " Ban(s) on record.",
-                                delegate { Process.Start("http://steamcommunity.com/profiles/" + id64); }
-                            );
+                                Titan.Instance.UIManager.SendNotification(
+                                    "Titan - " + id64 + " banned",
+                                    "Your recently botted target " + id64 + " " +
+                                    "has been banned and has now " + count + " Ban(s) on record.",
+                                    delegate { Process.Start("http://steamcommunity.com/profiles/" + id64); }
+                                );
+                            }
                         }
                     }
                 }

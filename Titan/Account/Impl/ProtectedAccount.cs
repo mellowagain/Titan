@@ -48,7 +48,7 @@ namespace Titan.Account.Impl
 
         public ProtectedAccount(JsonAccounts.JsonAccount json) : base(json)
         {
-            _log = LogCreator.Create("GC - " + json.Username + " (Protected)");
+            _log = LogCreator.Create("GC - " + json.Username + (!Titan.Instance.Options.Secure ? " (Protected)" : ""));
 
             _sentry = new Sentry.Sentry(this);
             

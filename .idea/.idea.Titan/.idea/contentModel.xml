@@ -78,9 +78,6 @@
           </e>
           <e p="APIKey" t="Include">
             <e p="APIKeyForm.cs" t="Include" />
-            <e p="Commands" t="Include">
-              <e p="SteamKeySite.cs" t="Include" />
-            </e>
           </e>
           <e p="About" t="Include">
             <e p="AboutUI.cs" t="Include" />

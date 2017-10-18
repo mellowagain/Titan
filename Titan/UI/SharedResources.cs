@@ -2,18 +2,15 @@
 using System.IO;
 using Eto.Drawing;
 
-// ReSharper disable InconsistentNaming
 namespace Titan.UI
 {
 
+    // ReSharper disable InconsistentNaming
     public class SharedResources
     {
 
         public Icon TITAN_ICON;
 
-        // 2FA
-
-        // API KEY
         public Icon STEAM_ICON;
 
         public SharedResources()

@@ -1,7 +1,4 @@
 I do not claim any of the files in this directory.
 Copyright goes to the direct authors of these files:
 
-- JsonLint: http://jsonlint.com
-- SteamIO: https://steamid.io
-- Icon, Info & Steam: http://www.flaticon.com. License: CC 3.0 BY
-- CSGO: twitter.com/csgodev
+http://www.flaticon.com. License: CC 3.0 BY
