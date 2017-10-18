@@ -251,6 +251,8 @@ namespace Titan.Managers
 
             if(Accounts.TryGetValue(index, out var accounts))
             {
+                accounts.Last().IsLast = true;
+                
                 foreach(var acc in accounts)
                 {
                     try
@@ -290,6 +292,8 @@ namespace Titan.Managers
 
             if(Accounts.TryGetValue(index, out var accounts))
             {
+                accounts.Last().IsLast = true;
+                
                 foreach(var acc in accounts)
                 {
                     try
@@ -346,6 +350,8 @@ namespace Titan.Managers
         {
             if(Accounts.TryGetValue(index, out var accounts))
             {
+                accounts.Last().IsLast = true;
+                
                 foreach(var acc in accounts)
                 {
                     try

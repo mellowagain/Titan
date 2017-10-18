@@ -23,6 +23,8 @@ namespace Titan.Account
             JsonAccount = json;
         }
 
+        public bool IsLast = false;
+
         ////////////////////////////////////////////////////
         // TICKS
         ////////////////////////////////////////////////////
@@ -111,7 +113,6 @@ namespace Titan.Account
                 }
             };
 
-
             return payload;
         }
 
@@ -135,10 +136,6 @@ namespace Titan.Account
                 }
             };
 
-
-
-            // Whatever this is
-
             return payload;
         }
 
@@ -153,7 +150,6 @@ namespace Titan.Account
                     accountid = _liveGameInfo.SteamID.AccountID
                 }
             };
-
 
             return payload;
         }

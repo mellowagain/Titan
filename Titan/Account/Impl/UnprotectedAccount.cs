@@ -326,8 +326,8 @@ namespace Titan.Account.Impl
             }
             else
             {
-                _log.Information("Successfully commended {Target} with a Leader, Friendly and a Teacher.",
-                    _commendInfo.SteamID.ConvertToUInt64());
+                _log.Information("Successfully commended {Target} with {Pretty}.",
+                    _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
             }
 
             Result = Result.Success;
@@ -337,7 +337,8 @@ namespace Titan.Account.Impl
 
         public override void OnCommendResponse(IPacketGCMsg msg)
         {
-            _log.Information("Successfully commended target {Target}.", _commendInfo.SteamID.ConvertToUInt64());
+            _log.Information("Successfully commended target {Target} with {Pretty}.", 
+                _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
 
             Result = Result.Success;
 

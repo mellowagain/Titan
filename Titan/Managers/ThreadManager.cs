@@ -43,6 +43,14 @@ namespace Titan.Managers
                     {
                         case Result.Success:
                             _count++;
+
+                            if (account.IsLast)
+                            {
+                                _log.Information("SUCCESS! Titan has successfully sent {Amount} reports to {Target}.",
+                                    _count, account._reportInfo.SteamID.ConvertToUInt64());
+                                
+                                account.IsLast = false;
+                            }
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
                             _log.Error("Could not report with account {Account}. The account is " +
@@ -115,6 +123,14 @@ namespace Titan.Managers
                     {
                         case Result.Success:
                             _count++;
+                            
+                            if (account.IsLast)
+                            {
+                                _log.Information("SUCCESS! Titan has successfully sent {Amount} commends to {Target}.",
+                                    _count, account._reportInfo.SteamID.ConvertToUInt64());
+                                
+                                account.IsLast = false;
+                            }
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
                             _log.Error("Could not commend with account {Account}. The account is " +
@@ -244,6 +260,14 @@ namespace Titan.Managers
                     {
                         case Result.Success:
                             _count++;
+                            
+                            if (account.IsLast)
+                            {
+                                _log.Information("SUCCESS! Titan has successfully idled {Amount} times in {Games}.",
+                                    _count, account._idleInfo.GameID.ToString());
+                                
+                                account.IsLast = false;
+                            }
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
                             _log.Error("Could not idle with account {Account}. The account is " +
