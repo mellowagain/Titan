@@ -29,7 +29,7 @@ def main():
                 if line.find(":") != -1:
                     parts = line.split(":")
                     list.append({ 
-                        "username:": parts[0], 
+                        "username": parts[0], 
                         "password": parts[1].replace("\n", "") # https://www.python.org/dev/peps/pep-0278/
                     })
         

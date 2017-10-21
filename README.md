@@ -35,7 +35,8 @@ Every version of Titan is provided as binary archive. An installation process is
 #### Dependencies
 
 **Windows**: [.NET Framework ≥4.6.1](https://www.microsoft.com/en-us/download/details.aspx?id=53344) (and for building [Visual Studio 2017](https://www.visualstudio.com/downloads/)).  
-**Linux**: [Mono ≥5.4](http://www.mono-project.com), [Gtk 3](https://www.gtk.org/) and [Gtk# 3](http://www.mono-project.com/docs/gui/gtksharp/) (and for building [MsBuild](https://github.com/Microsoft/msbuild)).
+**Linux**: [Mono ≥5.4](http://www.mono-project.com), [Gtk 3](https://www.gtk.org/), [Gtk# 3](http://www.mono-project.com/docs/gui/gtksharp/),
+[libNotify](https://launchpad.net/ubuntu/+source/libnotify) and [libAppindicator 3](https://packages.ubuntu.com/trusty/libappindicator3-dev) (and for building [MsBuild](https://github.com/Microsoft/msbuild)).
 
 #### Option 1: Binary
 
