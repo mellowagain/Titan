@@ -37,7 +37,7 @@ namespace Titan.UI.General
                 {
                     GetReportTab(),
                     GetCommendTab(),
-                    GetIdleTabPage()
+                    //GetIdleTabPage()
                 }
             };
             
@@ -318,17 +318,6 @@ namespace Titan.UI.General
 
                     if(steamID != null)
                     {
-                        if (Blacklist.IsBlacklisted(steamID))
-                        {
-                            Titan.Instance.UIManager.SendNotification(
-                                "Restriction applied", 
-                                "The target you are trying to report is blacklisted from botting " +
-                                "in Titan.", 
-                                delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
-                            );
-                            return;
-                        }
-                        
                         _log.Information("Starting commending of {Target}.",
                             steamID.ConvertToUInt64());
                         
