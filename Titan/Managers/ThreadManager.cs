@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Quartz.Util;
 using Serilog.Core;
 using Titan.Account;
 using Titan.Logging;
@@ -20,6 +21,13 @@ namespace Titan.Managers
 
         public void StartReport(TitanAccount account, ReportInfo info)
         {
+            if (_taskDic.ContainsKey(account))
+            {
+                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                
+                FinishBotting(account);
+            }
+            
             account.FeedReportInfo(info);
 
             _count = 0;
@@ -104,6 +112,13 @@ namespace Titan.Managers
 
         public void StartCommend(TitanAccount account, CommendInfo info)
         {
+            if (_taskDic.ContainsKey(account))
+            {
+                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                
+                FinishBotting(account);
+            }
+            
             account.FeedCommendInfo(info);
 
             _count = 0;
@@ -184,6 +199,13 @@ namespace Titan.Managers
 
         public void StartMatchResolving(TitanAccount account, LiveGameInfo info)
         {
+            if (_taskDic.ContainsKey(account))
+            {
+                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                
+                FinishBotting(account);
+            }
+            
             account.FeedLiveGameInfo(info);
             
             _log.Debug("Starting Match ID resolving thread for {Target} using account {Account}.",
@@ -247,6 +269,13 @@ namespace Titan.Managers
 
         public void StartIdling(TitanAccount account, IdleInfo info)
         {
+            if (_taskDic.ContainsKey(account))
+            {
+                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                
+                FinishBotting(account);
+            }
+            
             account.FeedIdleInfo(info);
 
             _count = 0;
@@ -328,12 +357,10 @@ namespace Titan.Managers
             {
                 acc.Stop();
             }
-            else
+            
+            if(_taskDic.ContainsKey(acc))
             {
-                if(_taskDic.ContainsKey(acc))
-                {
-                    _taskDic.Remove(acc);
-                }
+                _taskDic.Remove(acc);
             }
         }
 
