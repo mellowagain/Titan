@@ -36,8 +36,11 @@ Task("Build")
     }
     else
     {
-      // Use XBuild
-      XBuild("./Titan.sln", settings => settings.SetConfiguration(config));
+      // Use MSBuild 15 provided by Mono
+      MSBuild("./Titan.sln", new MSBuildSettings {
+              Configuration = config,
+              ToolPath = "/usr/lib/mono/msbuild/15.0/bin/MSBuild.dll"
+      });
     }
 });
 
