@@ -56,10 +56,6 @@ PS> .\build.ps1
 $ chmod +x build.sh && ./build.sh
 ```
 
-Users building on Linux using Mono may need to change the path for the .NET Standard Library in both
-the `Titan.csproj` and the `TitanTest.csproj` to point to their own location of the .NET Standard Library
-provided by Mono.
-
 ## Usage
 
 #### Accounts file
