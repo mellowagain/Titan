@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using CommandLine;
 using Quartz;
 using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
-using SteamKit2;
 using Titan.Bans;
 using Titan.Bootstrap;
 using Titan.Bootstrap.Verbs;
@@ -55,6 +53,17 @@ namespace Titan
             };
 
             Logger = LogCreator.Create();
+            
+            // Microsoft is a dick and is making the features inside of System.Net.Http.dll proprietary software.
+            // Mono is trying to be smart and tries to redirect the calls to System.Net.Http.dll to their
+            // own implementation of System.Net.Http. More detail: https://github.com/dotnet/corefx/issues/19914
+
+            var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
+            
+            if (systemNetHttpDll.Exists && !PlatformUtil.IsWindows())
+            {
+                systemNetHttpDll.Delete();
+            }
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
