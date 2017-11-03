@@ -54,9 +54,8 @@ namespace Titan
 
             Logger = LogCreator.Create();
             
-            // Microsoft is a dick and is making the features inside of System.Net.Http.dll proprietary software.
-            // Mono is trying to be smart and tries to redirect the calls to System.Net.Http.dll to their
-            // own implementation of System.Net.Http. More detail: https://github.com/dotnet/corefx/issues/19914
+            // Workaround for mono related issue regarding System.Net.Http.
+            // More detail: https://github.com/dotnet/corefx/issues/19914
 
             var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
             
