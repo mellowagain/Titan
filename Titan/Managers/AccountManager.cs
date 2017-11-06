@@ -75,7 +75,13 @@ namespace Titan.Managers
                 foreach(var account in indexes.Accounts)
                 {
                     TitanAccount acc;
-                    if(account.Sentry || account.SharedSecret != null)
+
+                    var sentry = account.Sentry ||
+                                 account.SharedSecret != null &&
+                                 !account.SharedSecret.Equals("Shared Secret for SteamGuard",
+                                     StringComparison.InvariantCultureIgnoreCase); // Paster proofing
+                    
+                    if(sentry)
                     {
                         acc = new ProtectedAccount(account);
                     }
@@ -90,7 +96,7 @@ namespace Titan.Managers
                         _allAccounts.Add(acc);
                     }
 
-                    if (!Titan.Instance.Options.Secure)
+                    if(!Titan.Instance.Options.Secure)
                     {
                         _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
                                    "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
