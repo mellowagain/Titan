@@ -208,7 +208,7 @@ namespace Titan.Managers
             var valid = false;
             foreach(var keyVal in Accounts)
             {
-                if(keyVal.Key == Index)
+                if(keyVal.Key == Index && Index != -1)
                 {
                     _log.Debug("Using index #{Index} for botting.", Index);
                     valid = true;

@@ -23,10 +23,6 @@ namespace Titan.Account.Impl
 {
     public class ProtectedAccount : TitanAccount
     {
-        
-        //////////////////////////////////////////////////////////////
-        // TODO: This class seems to be broken. See GH Issue #8 
-        //////////////////////////////////////////////////////////////
 
         private Logger _log;
 
