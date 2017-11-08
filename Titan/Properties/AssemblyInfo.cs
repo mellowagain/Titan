@@ -13,6 +13,10 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(true)]
 [assembly: Guid("9657B506-5F2D-4699-8030-31442C3D8A16")]
 
-// Titan uses SemVar, against all code guidelines of Microsoft, but I prefer SemVer.
-[assembly: AssemblyVersion("1.5.0")]
-[assembly: AssemblyFileVersion("1.5.0")]
+#pragma warning disable 7035
+
+// Titan uses SemVer (Microsoft doesn't prefer that and displays a warning), thats why we disable the compiler warnings.
+[assembly: AssemblyVersion("1.6.0")]
+[assembly: AssemblyFileVersion("1.6.0")]
+
+#pragma warning restore 7035

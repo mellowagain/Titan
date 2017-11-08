@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using CommandLine;
+using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
 using Serilog;
@@ -36,8 +37,10 @@ namespace Titan
         public BanManager BanManager;
         public UIManager UIManager;
 
+        public JsonSerializer JsonSerializer;
         public WebAPIKeyResolver APIKeyResolver;
 
+        public bool DummyMode = false;
         public IScheduler Scheduler;
 
         public DirectoryInfo DebugDirectory = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "debug"));
@@ -54,7 +57,7 @@ namespace Titan
 
             Logger = LogCreator.Create();
             
-            // Workaround for mono related issue regarding System.Net.Http.
+            // Workaround for Mono related issue regarding System.Net.Http.
             // More detail: https://github.com/dotnet/corefx/issues/19914
 
             var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
@@ -117,6 +120,8 @@ namespace Titan
 
             Logger.Debug("Startup: Loading UI Manager, Victim Tracker, Account Manager and Ban Manager.");
 
+            Instance.JsonSerializer = new JsonSerializer();
+            
             try
             {
                 Instance.UIManager = new UIManager();
@@ -140,7 +145,7 @@ namespace Titan
                         Log.Error("Contact {Marc} on Discord for more information.", "Marc3842h#7312");
                         Log.Error("---------------------------------------");
 
-                        Environment.Exit(-1);
+                        return -1;
                     }
                 }
                 
@@ -165,87 +170,84 @@ namespace Titan
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
             Logger.Debug("Startup: Parsing accounts.json file.");
+
+            Instance.AccountManager.ParseAccountFile(); 
             
-            if(Instance.AccountManager.ParseAccountFile())
+            Logger.Debug("Startup: Initializing Forms...");
+
+            Instance.UIManager.InitializeForms();
+
+            Logger.Debug("Startup: Loading Web API Key");
+
+            Instance.APIKeyResolver = new WebAPIKeyResolver();
+            Instance.APIKeyResolver.ParseKeyFile();
+
+            Logger.Information("Hello and welcome to Titan v1.6.0-EAP.");
+
+            if (Instance.EnableUI || Instance.ParsedObject == null || Instance.DummyMode)
             {
-                Logger.Debug("Initializing Forms...");
-                
-                Instance.UIManager.InitializeForms();
-                
-                
-                Logger.Debug("Startup: Loading Web API Key");
-                
-                // Resolve API Key File
-                Instance.APIKeyResolver = new WebAPIKeyResolver();
-                Instance.APIKeyResolver.ParseKeyFile();
-                
-                Logger.Information("Hello and welcome to Titan v1.5.0-Dev.");
-
-                if(Instance.EnableUI || Instance.ParsedObject == null)
+                Instance.UIManager.ShowForm(UIType.General);
+            }
+            else
+            {
+                if (Instance.ParsedObject.GetType() == typeof(ReportOptions))
                 {
-                    Instance.UIManager.ShowForm(UIType.General);
-                }
-                else
-                {
-                    if (Instance.ParsedObject.GetType() == typeof(ReportOptions))
-                    {
-                        var opt = (ReportOptions) Instance.ParsedObject;
+                    var opt = (ReportOptions) Instance.ParsedObject;
 
-                        var steamID = SteamUtil.Parse(opt.Target);
-                        if (Blacklist.IsBlacklisted(steamID))
-                        {
-                            Instance.UIManager.SendNotification(
-                                "Restriction applied",
-                                "The target you are trying to report is blacklisted from botting " +
-                                "in Titan.",
-                                delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
-                            );
-                        }
-                        else
-                        {
-                            Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
-                                new ReportInfo
-                                {
-                                    SteamID = SteamUtil.Parse(opt.Target),
-                                    MatchID = SharecodeUtil.Parse(opt.Match),
-                                    
-                                    AbusiveText = opt.AbusiveTextChat,
-                                    AbusiveVoice = opt.AbusiveVoiceChat,
-                                    Griefing = opt.Griefing,
-                                    AimHacking = opt.AimHacking,
-                                    WallHacking = opt.WallHacking,
-                                    OtherHacking = opt.OtherHacking
-                                });
-                        }
-                    } 
-                    else if (Instance.ParsedObject.GetType() == typeof(CommendOptions))
+                    var steamID = SteamUtil.Parse(opt.Target);
+                    if (Blacklist.IsBlacklisted(steamID))
                     {
-                        var opt = (CommendOptions) Instance.ParsedObject;
-                        
-                        Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
-                            new CommendInfo
-                            {
-                                SteamID = SteamUtil.Parse(opt.Target),
-                                    
-                                Friendly = opt.Friendly,
-                                Leader = opt.Leader,
-                                Teacher = opt.Teacher
-                            });
-                    }
-                    else if (Instance.ParsedObject.GetType() == typeof(IdleOptions))
-                    {
-                        var opt = (IdleOptions) Instance.ParsedObject;
-                        
-                        // TODO: Parse the idle options as soon as idling is implemented
+                        Instance.UIManager.SendNotification(
+                            "Restriction applied",
+                            "The target you are trying to report is blacklisted from botting " +
+                            "in Titan.",
+                            delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
+                        );
                     }
                     else
                     {
-                        Instance.UIManager.ShowForm(UIType.General);
+                        Instance.AccountManager.StartReporting(Instance.AccountManager.Index,
+                            new ReportInfo
+                            {
+                                SteamID = SteamUtil.Parse(opt.Target),
+                                MatchID = SharecodeUtil.Parse(opt.Match),
+
+                                AbusiveText = opt.AbusiveTextChat,
+                                AbusiveVoice = opt.AbusiveVoiceChat,
+                                Griefing = opt.Griefing,
+                                AimHacking = opt.AimHacking,
+                                WallHacking = opt.WallHacking,
+                                OtherHacking = opt.OtherHacking
+                            });
                     }
                 }
+                else if (Instance.ParsedObject.GetType() == typeof(CommendOptions))
+                {
+                    var opt = (CommendOptions) Instance.ParsedObject;
 
-                Instance.UIManager.StartMainLoop();
+                    Instance.AccountManager.StartCommending(Instance.AccountManager.Index,
+                        new CommendInfo
+                        {
+                            SteamID = SteamUtil.Parse(opt.Target),
+
+                            Friendly = opt.Friendly,
+                            Leader = opt.Leader,
+                            Teacher = opt.Teacher
+                        });
+                }
+                else if (Instance.ParsedObject.GetType() == typeof(IdleOptions))
+                {
+                    var opt = (IdleOptions) Instance.ParsedObject;
+
+                    // TODO: Parse the idle options as soon as idling is implemented
+                }
+                else
+                {
+                    Instance.UIManager.ShowForm(UIType.General);
+                }
             }
+
+            Instance.UIManager.StartMainLoop();
             
             // The Shutdown handler gets only called after the last thread finished.
             // Quartz runs a Watchdog until Scheduler#Shutdown is called, so we're calling it
@@ -265,6 +267,7 @@ namespace Titan
                 Instance.Scheduler.Shutdown();
             }
             
+            Instance.AccountManager.SaveAccountsFile();
             Instance.VictimTracker.SaveVictimsFile();
             Instance.APIKeyResolver.SaveKeyFile();
             Instance.AccountManager.SaveIndexFile();

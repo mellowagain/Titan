@@ -70,7 +70,7 @@ namespace Titan.Logging
             
             using(var reader = File.OpenText(_file.ToString()))
             {
-                var json = (Victims) new JsonSerializer().Deserialize(reader, typeof(Victims));
+                var json = (Victims) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(Victims));
 
                 if(json?.Array != null)
                 {

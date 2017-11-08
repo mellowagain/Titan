@@ -82,9 +82,6 @@
           <e p="About" t="Include">
             <e p="AboutUI.cs" t="Include" />
           </e>
-          <e p="Accounts" t="Include">
-            <e p="AccountUI.cs" t="Include" />
-          </e>
           <e p="GameInfo" t="Include">
             <e p="ExtraGameInfo.cs" t="Include" />
           </e>

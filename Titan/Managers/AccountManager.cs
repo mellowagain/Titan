@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Eto.Forms;
 using Newtonsoft.Json;
 using Serilog.Core;
 using Titan.Account;
@@ -31,6 +30,8 @@ namespace Titan.Managers
         private JsonAccounts _parsedAccounts;
         private JsonIndex _parsedIndex;
 
+        private int _lastIndex;
+
         public AccountManager(FileInfo file)
         {
             _file = file;
@@ -47,25 +48,28 @@ namespace Titan.Managers
                 DateTime.Now.ToShortTimeString(), Math.Round((double) TimeUtil.GetCurrentTicks()));
         }
 
-        public bool ParseAccountFile()
+        public void ParseAccountFile()
         {
             if(!_file.Exists)
             {
-                _log.Error("The accounts file at {0} doesn't exist! It is required and needs to " +
-                           "have atleast one account specified.", _file.ToString());
+                _log.Warning("The accounts file at {0} doesn't exist!", _file.ToString());
+                _log.Warning("Titan will run in dummy mode and allow you to edit the accounts before using it.");
                 
-                Titan.Instance.UIManager.SendNotification(
-                    "Titan - Error", "The " + _file + " file doesn't exist or has not " +
-                                     "specified atleast one bot account. Please create it " +
-                                     "and specify atleast one bot account in it."
-                );
+                var dummy = @"{
+    ""indexes"": [
+        {
+            ""accounts"": []
+        }
+    ]
+}";
                 
-                return false;
+                File.WriteAllText(_file.ToString(), dummy);
+                Titan.Instance.DummyMode = true;
             }
 
             using(var reader = File.OpenText(_file.ToString()))
             {
-                _parsedAccounts = (JsonAccounts) new JsonSerializer().Deserialize(reader, typeof(JsonAccounts));
+                _parsedAccounts = (JsonAccounts) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(JsonAccounts));
             }
 
             foreach(var indexes in _parsedAccounts.Indexes)
@@ -104,7 +108,7 @@ namespace Titan.Managers
                     }
                 }
 
-                if(accounts.Count > 11)
+                if(accounts.Count > 11 && !Titan.Instance.DummyMode)
                 {
                     _log.Warning("You have more than 11 account specified in index {Index}. " +
                                  "It is recommend to specify max. 11 accounts.", Index);
@@ -115,37 +119,64 @@ namespace Titan.Managers
                 Index++;
             }
 
-            if(_allAccounts.Count < 11)
+            if(_allAccounts.Count < 11 && !Titan.Instance.DummyMode && _allAccounts.Count >= 1)
             {
                 _log.Warning("Less than 11 (only {Count}) accounts have been parsed. Atleast 11 accounts " +
                              "are required to get a target into Overwatch.", _allAccounts.Count);
                 
+                /* TODO: This calls UIManager even thought it wasn't created yet - causes crash of application
                 Titan.Instance.UIManager.SendNotification(
                     "Titan - Error", "You have less than 11 accounts specified. " +
                                      "Atleast 11 bot accounts need to specified to get " +
                                      "a target into Overwatch."
-                );
+                );*/
             }
-            else
+
+            var list = new List<object>();
+
+            foreach (var keyPair in Accounts)
             {
-                var list = new List<object>();
-
-                foreach(var keyPair in Accounts)
-                {
-                    list.Add(new { Index = keyPair.Key, keyPair.Value.Count });
-                }
-
-                _log.Information("Account file has been successfully parsed. {Count} accounts " +
-                                 "have been parsed. Details: {@List}", _allAccounts.Count, list);
+                list.Add(new { Index = keyPair.Key, keyPair.Value.Count });
             }
+
+            _log.Information("Account file has been successfully parsed. {Count} accounts " +
+                             "have been parsed. Details: {@List}", _allAccounts.Count, list);
             
             Accounts.Add(-1, _allAccounts);
 
+            _lastIndex = Index;
             Index = 0;
 
+            if (_allAccounts.Count < 1 && !Titan.Instance.DummyMode)
+            {
+                _log.Warning("The {File} file has been created but doesn't have accounts specified.", _file.ToString());
+                _log.Warning("Titan will run in dummy mode and allow you to edit the accounts before using it.");
+                
+                Titan.Instance.DummyMode = true;
+            }
+            
             ParseIndexFile();
+        }
 
-            return true;
+        public void SaveAccountsFile()
+        {
+            var indexes = (from keyPair in Accounts
+                where keyPair.Key != -1
+                select new JsonAccounts.JsonIndex
+                {
+                    Accounts = keyPair.Value.Select(account => account.JsonAccount).ToArray()
+                }).ToList();
+
+            var jsonAccount = new JsonAccounts
+            {
+                Indexes = indexes.ToArray()
+            };
+            
+            using (var writer = File.CreateText(_file.ToString()))
+            {
+                var textToWrite = JsonConvert.SerializeObject(jsonAccount, Formatting.Indented);
+                writer.Write(textToWrite);
+            }
         }
 
         private void ParseIndexFile()
@@ -154,7 +185,7 @@ namespace Titan.Managers
             {
                 using(var reader = File.OpenText(_indexFile.ToString()))
                 {
-                    _parsedIndex = (JsonIndex) new JsonSerializer().Deserialize(reader, typeof(JsonIndex));
+                    _parsedIndex = (JsonIndex) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(JsonIndex));
                     // read it and deserialize it into a Index object
                 }
 
@@ -376,6 +407,96 @@ namespace Titan.Managers
                 _log.Error("Could not export accounts for current index {Index}. " +
                            "Does it exist?", Index);
             }
+        }
+
+        public void AddAccount(TitanAccount account)
+        {
+            if (!Accounts.ContainsKey(_lastIndex))
+            {
+                _lastIndex -= 1;
+            }
+          
+            foreach (var keyPair in Accounts)
+            {
+                if (keyPair.Key == _lastIndex)
+                {
+                    if (keyPair.Value.Count < 11 && account.JsonAccount.Enabled)
+                    {
+                        keyPair.Value.Add(account);
+                    }
+                    else
+                    {
+                        _lastIndex += 1;
+                    }
+                }
+            }
+            
+            if (!Accounts.ContainsKey(_lastIndex) && account.JsonAccount.Enabled)
+            {
+                var list = new List<TitanAccount>();
+                
+                Accounts.Add(_lastIndex, list);
+            }
+
+            if (account.JsonAccount.Enabled)
+            {
+                _allAccounts.Add(account);
+                Accounts[-1] = _allAccounts;
+            }
+            
+            if(!Titan.Instance.Options.Secure)
+            {
+                _log.Debug("Added account in index #{Index}: Username: {Username} / " +
+                           "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
+                    _lastIndex, account.JsonAccount.Username, account.JsonAccount.Password, 
+                    account.JsonAccount.Sentry, account.JsonAccount.Enabled);
+            }
+        }
+
+        public bool TryGetAccount(string username, out TitanAccount output)
+        {
+            foreach (var keyPair in Accounts)
+            {
+                foreach (var account in keyPair.Value)
+                {
+                    if (account.JsonAccount.Username.Equals(username))
+                    {
+                        output = account;
+                        return true;
+                    }
+                }
+            }
+            
+            output = default(TitanAccount);
+            return false;
+        }
+
+        public bool RemoveAccount(TitanAccount target)
+        {
+            _log.Information("Removing account {account}.", target.JsonAccount.Username);
+
+            var success = false;
+
+            foreach (var keyPair in Accounts)
+            {
+                if (keyPair.Value.Contains(target))
+                {
+                    keyPair.Value.Remove(target);
+                    success = true;
+                }
+            }
+
+            if (success)
+            {
+                _allAccounts.Remove(target);
+            }
+            
+            return success;
+        }
+
+        public int Count()
+        {
+            return _allAccounts.Count;
         }
 
     }

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
+using Titan.Account;
+using Titan.Account.Impl;
+using Titan.Json;
 using Titan.Logging;
 using Titan.Meta;
 using Titan.Restrictions;
@@ -21,6 +24,8 @@ namespace Titan.UI.General
         private UIManager _uiManager;
 
         public string CustomGameName;
+        
+        private List<DropDown> _indexDropDowns = new List<DropDown>();
 
         public General(UIManager uiManager)
         {
@@ -37,7 +42,8 @@ namespace Titan.UI.General
                 {
                     GetReportTab(),
                     GetCommendTab(),
-                    //GetIdleTabPage()
+                    GetIdleTabPage(),
+                    GetAccountsTabPage()
                 }
             };
             
@@ -47,30 +53,43 @@ namespace Titan.UI.General
                 
                 switch(tabControl.SelectedIndex)
                 {
-                    case 0:
+                    case 0: // Report
                         size = new Size(640, 450);
                         break;
-                    case 1:
+                    case 1: // Commend
                         size = new Size(640, 385);
                         break;
-                    case 2:
+                    case 2: // Idle
                         size = new Size(640, 450);
                         break;
-                    default:
+                    case 3: // Accounts
                         size = new Size(640, 500);
+                        break;
+                    default:
                         // If this case happens somebody failed to introduce the case here in the switch block.
+                        size = new Size(640, 500);
                         break;
                 }
                 
                 ClientSize = size;
+
+                foreach (var indexDropDown in _indexDropDowns)
+                {
+                    RefreshIndexesDropDown(indexDropDown);
+                }
             };
             
             Content = tabControl;
             
             AddMenuBar();
+
+            if (Titan.Instance.DummyMode)
+            {
+                tabControl.SelectedIndex = 3;
+            }
         }
 
-        public TabPage GetReportTab()
+        private TabPage GetReportTab()
         {
             var txtBoxSteamID = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
             var txtBoxMatchID = new TextBox { PlaceholderText = "CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE" };
@@ -83,14 +102,8 @@ namespace Titan.UI.General
             var cbCheatOther = new CheckBox { Text = "Other Hacking", Checked = true };
 
             var dropIndexes = new DropDown();
-            foreach(var i in Titan.Instance.AccountManager.Accounts)
-            {
-                if(i.Key != -1)
-                {
-                    dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
-                }
-            }
-            dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
+            RefreshIndexesDropDown(dropIndexes);
+            _indexDropDowns.Add(dropIndexes);
             
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
             cbAllIndexes.CheckedChanged += delegate
@@ -191,6 +204,7 @@ namespace Titan.UI.General
             return new TabPage
             {
                 Text = "Report",
+                Enabled = !Titan.Instance.DummyMode,
                 Content = new TableLayout
                 {
                     Spacing = new Size(5, 5),
@@ -278,7 +292,7 @@ namespace Titan.UI.General
             };
         }
 
-        public TabPage GetCommendTab()
+        private TabPage GetCommendTab()
         {
             var txtBoxSteamID = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
 
@@ -287,14 +301,8 @@ namespace Titan.UI.General
             var cbTeacher = new CheckBox { Text = "Teacher", Checked = true };
             
             var dropIndexes = new DropDown();
-            foreach(var i in Titan.Instance.AccountManager.Accounts)
-            {
-                if(i.Key != -1)
-                {
-                    dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
-                }
-            }
-            dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
+            RefreshIndexesDropDown(dropIndexes);
+            _indexDropDowns.Add(dropIndexes);
             
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
             cbAllIndexes.CheckedChanged += delegate
@@ -351,6 +359,7 @@ namespace Titan.UI.General
             return new TabPage
             {
                 Text = "Commend",
+                Enabled = !Titan.Instance.DummyMode,
                 Content = new TableLayout
                 {
                     Spacing = new Size(5, 5),
@@ -432,7 +441,7 @@ namespace Titan.UI.General
             };
         }
 
-        public TabPage GetIdleTabPage()
+        private TabPage GetIdleTabPage()
         {
             var games = new List<int> { 730 };
             
@@ -514,14 +523,8 @@ namespace Titan.UI.General
             };
             
             var dropIndexes = new DropDown();
-            foreach(var i in Titan.Instance.AccountManager.Accounts)
-            {
-                if(i.Key != -1)
-                {
-                    dropIndexes.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
-                }
-            }
-            dropIndexes.SelectedIndex = Titan.Instance.AccountManager.Index;
+            RefreshIndexesDropDown(dropIndexes);
+            _indexDropDowns.Add(dropIndexes);
             
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
             cbAllIndexes.CheckedChanged += delegate
@@ -562,6 +565,8 @@ namespace Titan.UI.General
             return new TabPage
             {
                 Text = "Idle",
+                Enabled = !Titan.Instance.DummyMode,
+                Visible = false,
                 Content = new TableLayout
                 {
                     Spacing = new Size(5, 5),
@@ -667,7 +672,281 @@ namespace Titan.UI.General
             return list;
         }
 
-        public void AddMenuBar()
+        private TabPage GetAccountsTabPage()
+        {
+            var grid = new GridView { AllowMultipleSelection = false };
+            
+            RefreshList(ref grid);
+            
+            grid.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell("Enabled")
+                {
+                    TextAlignment = TextAlignment.Center
+                },
+                HeaderText = "Enabled"
+            });
+            
+            grid.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell("Index")
+                {
+                    TextAlignment = TextAlignment.Center
+                },
+                HeaderText = "Index"
+            });
+            
+            grid.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell("Username"),
+                HeaderText = "Username"
+            });
+            
+            grid.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell("Password"),
+                HeaderText = "Password"
+            });
+            
+            grid.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell("Sentry")
+                {
+                    TextAlignment = TextAlignment.Center
+                },
+                HeaderText = "Steam Guard"
+            });
+
+            grid.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell("Secret"),
+                HeaderText = "Shared Secret"
+            });
+            
+            var txtBoxUsername = new TextBox { PlaceholderText = "Username" };
+            var txtBoxPassword = new TextBox { PlaceholderText = "Password" };
+            var cbSentry = new CheckBox { Text = "Steam Guard", Checked = false };
+            
+            var btnAddUpdate = new Button { Text = "Add / Update" };
+            btnAddUpdate.Click += delegate
+            {
+                if (!string.IsNullOrWhiteSpace(txtBoxUsername.Text) && !string.IsNullOrWhiteSpace(txtBoxPassword.Text))
+                {
+                    if (Titan.Instance.AccountManager.TryGetAccount(txtBoxUsername.Text.Trim(), out var account))
+                    {
+                        account.JsonAccount.Username = txtBoxUsername.Text.Trim();
+                        account.JsonAccount.Password = txtBoxPassword.Text.Trim();
+                        account.JsonAccount.Sentry = cbSentry.Checked != null && (bool) cbSentry.Checked;
+                        
+                        _uiManager.SendNotification("Titan", "Successfully updated account " + account.JsonAccount.Username);
+                    }
+                    else
+                    {
+                        var jsonAccount = new JsonAccounts.JsonAccount
+                        {
+                            Username = txtBoxUsername.Text.Trim(),
+                            Password = txtBoxPassword.Text.Trim(),
+                            Sentry = cbSentry.Checked != null && (bool) cbSentry.Checked,
+                            Enabled = true,
+                            SharedSecret = null
+                        };
+                        
+                        TitanAccount acc;
+                        
+                        if (jsonAccount.Sentry)
+                        {
+                            acc = new ProtectedAccount(jsonAccount);
+                        }
+                        else
+                        {
+                            acc = new UnprotectedAccount(jsonAccount);
+                        }
+                        
+                        Titan.Instance.AccountManager.AddAccount(acc);
+                        
+                        _uiManager.SendNotification("Titan", "Successfully added account " + acc.JsonAccount.Username);
+
+                        var tabControl = (TabControl) Content;
+                        foreach (var page in tabControl.Pages)
+                        {
+                            page.Enabled = true;
+                        }
+
+                        if (Titan.Instance.DummyMode)
+                        {
+                            _log.Information("There are now accounts specified. Turning dummy mode {off}.", "off");
+                            
+                            Titan.Instance.DummyMode = false;
+                        }
+                    }
+                    
+                    RefreshList(ref grid);
+                }
+                else
+                {
+                    _uiManager.SendNotification("Titan - Error", "Please input a username and password.");
+                }
+            };
+            
+            var btnRemove = new Button { Text = "Remove" };
+            btnRemove.Click += delegate
+            {
+                dynamic selected = grid.SelectedItem;
+
+                if (selected != null)
+                {
+                    _log.Information("{Type}: {@Info}", selected.GetType(), selected);
+                    
+                    var username = selected.Username;
+
+                    if (username != null)
+                    {
+                        if (Titan.Instance.AccountManager.TryGetAccount(username, out TitanAccount account))
+                        {
+                            Titan.Instance.AccountManager.RemoveAccount(account);
+                            RefreshList(ref grid);
+                        }
+                        else
+                        {
+                            _uiManager.SendNotification("Titan - Error", "The account doesn't exist.");
+                        }
+                    }
+                    else
+                    {
+                        _uiManager.SendNotification("Titan", "The account could not be found.");
+                    }
+                }
+                else
+                {
+                    _uiManager.SendNotification("Titan - Error", "Please select a account before removing it.");
+                }
+
+                if (Titan.Instance.AccountManager.Count() < 1)
+                {
+                    var tabControl = (TabControl) Content;
+                    foreach (var page in tabControl.Pages)
+                    {
+                        if (!page.Text.Equals("Accounts"))
+                        {
+                            page.Enabled = false;
+                        }
+                    }
+
+                    if (!Titan.Instance.DummyMode)
+                    {
+                        _log.Warning("There are no longer accounts specified. Turning dummy mode back {on}.", "on");
+                        
+                        Titan.Instance.DummyMode = true;
+                    }
+                }
+            };
+            
+            return new TabPage
+            {
+                Text = "Accounts",
+                Content = new TableLayout
+                {
+                    Spacing = new Size(5, 5),
+                    Padding = new Padding(10, 10, 10, 10),
+                    Rows =
+                    {
+                        new TableRow(new TableCell(grid, true)) { ScaleHeight = true },
+                        new GroupBox
+                        {
+                            Text = "Edit",
+                            Content = new TableLayout
+                            {
+                                Spacing = new Size(5, 5),
+                                Padding = new Padding(10, 10, 10, 10),
+                                Rows =
+                                {
+                                    new TableRow(
+                                        new TableCell(txtBoxUsername, true),
+                                        new TableCell(txtBoxPassword, true),
+                                        new TableCell(cbSentry)
+                                    )
+                                }
+                            }
+                        },
+                        new TableLayout
+                        {
+                            Spacing = new Size(5, 5),
+                            Padding = new Padding(10, 10, 10, 10),
+                            Rows =
+                            {
+                                new TableRow(
+                                    new TableCell(new Panel(), true),
+                                    new TableCell(new Panel(), true),
+                                    new TableCell(btnRemove),
+                                    new TableCell(btnAddUpdate)
+                                )
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        private void RefreshList(ref GridView grid)
+        {
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("Enabled", typeof(bool));
+            dataTable.Columns.Add("Index", typeof(int));
+            dataTable.Columns.Add("Username");
+            dataTable.Columns.Add("Password");
+            dataTable.Columns.Add("Sentry", typeof(bool));
+            dataTable.Columns.Add("Shared Secret");
+            
+            foreach (var index in Titan.Instance.AccountManager.Accounts)
+            {
+                if (index.Key != -1)
+                {
+                    foreach (var account in index.Value)
+                    {
+                        dataTable.Rows.Add(
+                            account.JsonAccount.Enabled,
+                            index.Key,
+                            account.JsonAccount.Username,
+                            account.JsonAccount.Password,
+                            account.JsonAccount.Sentry,
+                            string.IsNullOrWhiteSpace(account.JsonAccount.SharedSecret) 
+                                ? "-" : account.JsonAccount.SharedSecret
+                        );
+                    }
+                }
+            }
+            
+            var collection = dataTable.Rows.Cast<DataRow>()
+                .Select(x => new
+                {
+                    Enabled = (bool) x[0] ? "\u2714" : "\u2718", // ✔ : ✘
+                    Index = "#" + x[1],
+                    Username = x[2],
+                    Password = x[3],
+                    Sentry = (bool) x[4] ? "\u2714" : "\u2718", // ✔ : ✘
+                    Secret = x[5]
+                })
+                .ToList();
+
+            grid.DataStore = collection;
+        }
+
+        private void RefreshIndexesDropDown(DropDown drop)
+        {
+            drop.Items.Clear();
+            
+            foreach(var i in Titan.Instance.AccountManager.Accounts)
+            {
+                if(i.Key != -1)
+                {
+                    drop.Items.Add("#" + i.Key + " (" + i.Value.Count + " accounts)");
+                }
+            }
+
+            drop.SelectedIndex = Titan.Instance.AccountManager.Index;
+        }
+
+        private void AddMenuBar()
         {
             Menu = new MenuBar
             {
@@ -712,11 +991,6 @@ namespace Titan.UI.General
                         Text = "&Tools",
                         Items =
                         {
-                            new Command((sender, args) => _uiManager.ShowForm(UIType.Accounts))
-                            {
-                                MenuText = "Account List"
-                            },
-                            new SeparatorMenuItem(),
                             new Command((sender, args) => Process.Start("https://steamid.io"))
                             {
                                 MenuText = "SteamIO"
