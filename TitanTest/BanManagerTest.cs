@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Titan.Bans;
 using Titan.Util;
 using Titan.Web;
@@ -13,6 +14,16 @@ namespace TitanTest
 
         public BanManagerTest()
         {
+            // Workaround for Mono related issue regarding System.Net.Http.
+            // More detail: https://github.com/dotnet/corefx/issues/19914
+
+            var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
+            
+            if (systemNetHttpDll.Exists && !PlatformUtil.IsWindows())
+            {
+                systemNetHttpDll.Delete();
+            }
+            
             WebAPIKeyResolver.APIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
         }
 

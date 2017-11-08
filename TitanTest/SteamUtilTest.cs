@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Titan.Util;
 using Titan.Web;
 using Xunit;
 using static Titan.Util.SteamUtil;
@@ -10,6 +12,16 @@ namespace TitanTest
 
         public SteamUtilTest()
         {
+            // Workaround for Mono related issue regarding System.Net.Http.
+            // More detail: https://github.com/dotnet/corefx/issues/19914
+
+            var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
+            
+            if (systemNetHttpDll.Exists && !PlatformUtil.IsWindows())
+            {
+                systemNetHttpDll.Delete();
+            }
+            
             WebAPIKeyResolver.APIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
         }
 
