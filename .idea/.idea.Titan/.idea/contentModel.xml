@@ -25,10 +25,6 @@
             <e p="ReportOptions.cs" t="Include" />
           </e>
         </e>
-        <e p="Bot" t="Include">
-          <e p="Bot.cs" t="Include" />
-          <e p="BotManager.cs" t="Include" />
-        </e>
         <e p="Json" t="Include">
           <e p="JsonAccounts.cs" t="Include" />
           <e p="JsonIndex.cs" t="Include" />

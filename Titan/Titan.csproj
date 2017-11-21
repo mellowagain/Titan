@@ -125,8 +125,6 @@
     <Compile Include="Bootstrap\Verbs\CommendOptions.cs" />
     <Compile Include="Bootstrap\Verbs\IdleOptions.cs" />
     <Compile Include="Bootstrap\Verbs\ReportOptions.cs" />
-    <Compile Include="Bot\Bot.cs" />
-    <Compile Include="Bot\BotManager.cs" />
     <Compile Include="Restrictions\Blacklist.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
