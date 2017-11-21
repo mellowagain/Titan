@@ -63,7 +63,7 @@ namespace Titan.UI.General
                         size = new Size(640, 450);
                         break;
                     case 3: // Accounts
-                        size = new Size(640, 500);
+                        size = new Size(640, 460);
                         break;
                     default:
                         // If this case happens somebody failed to introduce the case here in the switch block.

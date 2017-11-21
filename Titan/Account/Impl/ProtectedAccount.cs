@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using Eto.Forms;
 using Serilog.Core;
@@ -18,6 +17,7 @@ using Titan.MatchID.Live;
 using Titan.UI;
 using Titan.UI._2FA;
 using Titan.Util;
+using Titan.Web;
 
 namespace Titan.Account.Impl
 {
@@ -28,6 +28,7 @@ namespace Titan.Account.Impl
 
         private int _reconnects;
 
+        private SteamConfiguration _steamConfig;
         private Sentry.Sentry _sentry;
         
         private SteamGuardAccount _sgAccount;
@@ -39,20 +40,30 @@ namespace Titan.Account.Impl
         private SteamFriends _steamFriends;
         private SteamGameCoordinator _gameCoordinator;
         private CallbackManager _callbacks;
+        private TitanHandler _titanHandle;
 
-        public Result Result { get; private set; }
+        public Result Result { get; private set; } = Result.Unknown;
 
         public ProtectedAccount(JsonAccounts.JsonAccount json) : base(json)
         {
             _log = LogCreator.Create("GC - " + json.Username + (!Titan.Instance.Options.Secure ? " (Protected)" : ""));
 
+            _steamConfig = new SteamConfiguration
+            {
+                ConnectionTimeout = TimeSpan.FromMinutes(3),
+                WebAPIKey = WebAPIKeyResolver.APIKey
+            };
+            
             _sentry = new Sentry.Sentry(this);
             
-            _steamClient = new SteamClient();
+            _steamClient = new SteamClient(_steamConfig);
             _callbacks = new CallbackManager(_steamClient);
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
+            
+            _titanHandle = new TitanHandler();
+            _steamClient.AddHandler(_titanHandle);
 
             // Initialize debug network sniffer when debug mode is enabled
             if(Titan.Instance.Options.Debug)
@@ -89,7 +100,7 @@ namespace Titan.Account.Impl
 
         public override Result Start()
         {
-            Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" :"Commend");
+            Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" : "Commend");
 
             _callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             _callbacks.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
@@ -101,9 +112,9 @@ namespace Titan.Account.Impl
             IsRunning = true;
             _steamClient.Connect();
 
-            while(IsRunning)
+            while (IsRunning)
             {
-                _callbacks.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+                _callbacks.RunWaitAllCallbacks(TimeSpan.FromMilliseconds(500));
             }
 
             return Result;
@@ -142,18 +153,29 @@ namespace Titan.Account.Impl
 
         public override void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            _log.Debug("Sentry has been activated for this account. Checking if a sentry file " +
-                       "exists and hashing it...");
+            _log.Debug("Received on connected: {@callback} - Job ID: {id}", callback, callback.JobID.Value);
+            
+            byte[] hash = null;
+            if (_sentry.Exists())
+            {
+                _log.Debug("Found previous Sentry file. Hashing it and sending it to Steam...");
 
-            var hash = _sentry.Hash();
-
+                hash = _sentry.Hash();
+            }
+            else
+            {
+                _log.Debug("No Sentry file found. Titan will ask for a confirmation code...");
+            }
+            
+            _log.Debug("Logging in with Auth Code: {a} / 2FA Code: {b} / Hash: {c}", _authCode, _2FactorCode, 
+                hash != null ? Convert.ToBase64String(hash) : null);
             _steamUser.LogOn(new SteamUser.LogOnDetails
             {
                 Username = JsonAccount.Username,
                 Password = JsonAccount.Password,
                 AuthCode = _authCode,
                 TwoFactorCode = _2FactorCode,
-                SentryFileHash = hash.Length > 0 ? hash : null,
+                SentryFileHash = hash,
                 LoginID = RandomUtil.RandomUInt32()
             });
         }
@@ -162,13 +184,26 @@ namespace Titan.Account.Impl
         {
             _reconnects++;
 
-            if(_reconnects <= 5 && (Result != Result.Success ||
-               Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
+            if(_reconnects <= 5 && !callback.UserInitiated &&  IsRunning)
             {
-                _log.Information("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
+                // TODO: Fix reconnecting, see GH issue
+                _log.Information("Disconnected from Steam. Retrying in 2 seconds... ({Count}/5)", _reconnects);
+                _log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
 
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                Thread.Sleep(TimeSpan.FromSeconds(2));
                 
+                var worker = new BackgroundWorker();
+                worker.DoWork += (sender, args) =>
+                {
+                    _log.Debug("Starting watchdog.");
+                    Thread.Sleep(TimeSpan.FromSeconds(10));
+                    
+                    _log.Debug("Steam Client connected after 10 sec: {bool}", _steamClient.IsConnected);
+                    _log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
+                };
+                worker.RunWorkerAsync();
+                
+                _log.Debug("Reconnecting to Steam. Watchdog: {@worker}", worker);
                 _steamClient.Connect();
             }
             else
@@ -213,16 +248,15 @@ namespace Titan.Account.Impl
                     _gameCoordinator.Send(clientHello, 730);
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    _log.Information("Opening UI form to get the 2FA Steam Guard App Code...");
-
                     if(_sgAccount != null)
                     {
-                        _log.Debug("A shared secret has been provided: automaticly generating it...");
+                        _log.Debug("A shared secret has been provided: automatically generating it...");
                         
                         _2FactorCode = _sgAccount.GenerateSteamGuardCode();
                     }
                     else
                     {
+                        _log.Information("Opening UI form to get the 2FA Steam Guard App Code...");
 
                         Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(
                             UIType.TwoFactorAuthentification,
@@ -230,9 +264,8 @@ namespace Titan.Account.Impl
 
                         while(string.IsNullOrEmpty(_2FactorCode))
                         {
-                            /* Wait until the Form inputted the 2FA code from the Steam Guard App */
+                            /* Wait until we receive the Steam Guard code from the UI */
                         }
-                        
                     }
 
                     _log.Information("Received 2FA Code: {Code}", _2FactorCode);
@@ -245,7 +278,7 @@ namespace Titan.Account.Impl
 
                     while(string.IsNullOrEmpty(_authCode))
                     {
-                        /* Wait until the Form inputted the Auth code from the Email Steam sent */
+                        /* Wait until we receive the Auth Token from the UI */
                     }
 
                     _log.Information("Received Auth Token: {Code}", _authCode);
@@ -288,24 +321,33 @@ namespace Titan.Account.Impl
 
         public void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
         {
-            _log.Debug("Checking if a sentry file exists...");
+            _log.Debug("Updating Steam sentry file...");
 
-            var hash = _sentry.Save(callback.Offset, callback.Data, callback.BytesToWrite, out int size);
-
-            _log.Debug("Successfully opened / created sentry file. Hash: {Hash}", Encoding.UTF8.GetString(hash));
-
-            _steamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
+            if (_sentry.Save(callback.Offset, callback.Data, callback.BytesToWrite, out var hash, out var size))
             {
-                JobID = callback.JobID,
-                FileName = callback.FileName,
-                BytesWritten = callback.BytesToWrite,
-                FileSize = size,
-                Offset = callback.Offset,
-                Result = hash.Length > 0 ? EResult.OK : EResult.Fail,
-                LastError = hash.Length > 0 ? 0 : (int) EResult.Fail,
-                OneTimePassword = callback.OneTimePassword,
-                SentryFileHash = hash.Length > 0 ? hash : null
-            });
+                _steamUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
+                {
+                    JobID = callback.JobID,
+                    FileName = callback.FileName,
+                    
+                    BytesWritten = callback.BytesToWrite,
+                    FileSize = size,
+                    Offset = callback.Offset,
+                    
+                    Result = EResult.OK,
+                    LastError = 0,
+                    
+                    OneTimePassword = callback.OneTimePassword,
+                    
+                    SentryFileHash = hash
+                });
+                
+                _log.Information("Successfully updated Steam sentry file.");
+            }
+            else
+            {
+                _log.Error("Could not save sentry file. Titan will ask again for Steam Guard code on next attempt.");
+            }
         }
 
         public override void OnGCMessage(SteamGameCoordinator.MessageCallback callback)
@@ -318,7 +360,7 @@ namespace Titan.Account.Impl
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
             };
 
-            if(map.TryGetValue(callback.EMsg, out Action<IPacketGCMsg> func))
+            if(map.TryGetValue(callback.EMsg, out var func))
             {
                 func(callback.Message);
             }

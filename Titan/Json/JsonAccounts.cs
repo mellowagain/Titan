@@ -20,10 +20,10 @@ namespace Titan.Json
         public class JsonAccount
         {
 
-            [JsonProperty("username")]
+            [JsonProperty("username", Required = Required.DisallowNull)]
             public string Username { get; set; }
 
-            [JsonProperty("password")]
+            [JsonProperty("password", Required = Required.DisallowNull)]
             public string Password { get; set; }
 
             [JsonProperty("sentry", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]

@@ -11,6 +11,7 @@
           </e>
           <e p="Result.cs" t="Include" />
           <e p="TitanAccount.cs" t="Include" />
+          <e p="TitanHandler.cs" t="Include" />
         </e>
         <e p="Bans" t="Include">
           <e p="BanInfo.cs" t="Include" />
@@ -23,6 +24,10 @@
             <e p="IdleOptions.cs" t="Include" />
             <e p="ReportOptions.cs" t="Include" />
           </e>
+        </e>
+        <e p="Bot" t="Include">
+          <e p="Bot.cs" t="Include" />
+          <e p="BotManager.cs" t="Include" />
         </e>
         <e p="Json" t="Include">
           <e p="JsonAccounts.cs" t="Include" />

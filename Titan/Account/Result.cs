@@ -9,7 +9,8 @@
         TimedOut,
         SentryRequired,
         RateLimit,
-        NoMatches
+        NoMatches,
+        Unknown
 
     }
 }

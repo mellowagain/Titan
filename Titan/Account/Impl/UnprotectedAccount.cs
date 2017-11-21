@@ -16,6 +16,7 @@ using Titan.MatchID.Live;
 using Titan.UI;
 using Titan.UI.General;
 using Titan.Util;
+using Titan.Web;
 
 namespace Titan.Account.Impl
 {
@@ -27,13 +28,16 @@ namespace Titan.Account.Impl
 
         private int _reconnects;
 
+        private SteamConfiguration _steamConfig;
+        
         private SteamClient _steamClient;
         private SteamUser _steamUser;
         private SteamFriends _steamFriends;
         private SteamGameCoordinator _gameCoordinator;
         private CallbackManager _callbacks;
+        private TitanHandler _titanHandle;
 
-        public Result Result { get; private set; }
+        public Result Result { get; private set; } = Result.Unknown;
 
         public IJobDetail Job;
         public ITrigger Trigger;
@@ -42,11 +46,20 @@ namespace Titan.Account.Impl
         {
             _log = LogCreator.Create("GC - " + json.Username + (!Titan.Instance.Options.Secure ? " (Unprotected)" : ""));
 
-            _steamClient = new SteamClient();
+            _steamConfig = new SteamConfiguration
+            {
+                ConnectionTimeout = TimeSpan.FromMinutes(1),
+                WebAPIKey = WebAPIKeyResolver.APIKey
+            };
+            
+            _steamClient = new SteamClient(_steamConfig);
             _callbacks = new CallbackManager(_steamClient);
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
+            
+            _titanHandle = new TitanHandler();
+            _steamClient.AddHandler(_titanHandle);
             
             // Initialize debug network sniffer when debug mode is enabled
             if(Titan.Instance.Options.Debug)
@@ -66,7 +79,7 @@ namespace Titan.Account.Impl
                 .WithIdentity("Idle Job - " + json.Username + " (Unprotected)", "Titan")
                 .Build();
 
-            _log.Debug("Successfully initialized account object for {0}.", json.Username);
+            _log.Debug("Successfully initialized account object for {Username}.", json.Username);
         }
 
         ~UnprotectedAccount()
@@ -79,7 +92,7 @@ namespace Titan.Account.Impl
 
         public override Result Start()
         {
-            Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" :"Commend");
+            Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" : "Commend");
 
             _callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             _callbacks.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
@@ -90,9 +103,9 @@ namespace Titan.Account.Impl
             IsRunning = true;
             _steamClient.Connect();
 
-            while(IsRunning)
+            while (IsRunning)
             {
-                _callbacks.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+                _callbacks.RunWaitCallbacks(TimeSpan.FromMilliseconds(500));
             }
 
             return Result;
@@ -247,12 +260,14 @@ namespace Titan.Account.Impl
                     IsRunning = false;
                     Result = Result.SentryRequired;
                     break;
+                case EResult.InvalidPassword:
+                case EResult.NoConnection:
+                case EResult.Timeout:
+                case EResult.TryAnotherCM:
+                case EResult.TwoFactorCodeMismatch:
                 case EResult.ServiceUnavailable:
-                    _log.Error("Steam is currently offline. Please try again later.");
-
-                    Stop();
-
-                    IsRunning = false;
+                    _log.Error("Unable to connect to Steam: {Reason}. Retrying...", callback.ExtendedResult);
+                    
                     break;
                 case EResult.RateLimitExceeded:
                     _log.Debug("Steam Rate Limit has been reached. Please try it again in a few minutes...");
@@ -262,8 +277,17 @@ namespace Titan.Account.Impl
                     IsRunning = false;
                     Result = Result.RateLimit;
                     break;
+                case EResult.AccountDisabled:
+                    _log.Error("This account has been permanently disabled by the Steam network.");
+                    
+                    Stop();
+
+                    IsRunning = false;
+                    Result = Result.AccountBanned;
+                    break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
+                    
                     Stop();
                     IsRunning = false;
                     break;
