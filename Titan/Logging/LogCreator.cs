@@ -7,7 +7,7 @@ using Serilog.Core;
 
 namespace Titan.Logging
 {
-    public class LogCreator
+    public static class LogCreator
     {
 
         private static DirectoryInfo _logDir = new DirectoryInfo(Environment.CurrentDirectory +
@@ -15,7 +15,7 @@ namespace Titan.Logging
 
         public static Logger Create(string name)
         {
-            if(Titan.Instance != null && Titan.Instance.Options.Debug)
+            if (Titan.Instance != null && Titan.Instance.Options.Debug)
             {
                 return CreateDebugLogger(name);
             }
@@ -26,7 +26,7 @@ namespace Titan.Logging
         public static Logger CreateInfoLogger(string name)
         {
             return new LoggerConfiguration()
-                .WriteTo.LiterateConsole(outputTemplate:
+                .WriteTo.Console(outputTemplate:
                     "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
                 .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
                         name + "-{Date}.log"), outputTemplate:
@@ -42,7 +42,7 @@ namespace Titan.Logging
         public static Logger CreateDebugLogger(string name)
         {
             return new LoggerConfiguration()
-                .WriteTo.LiterateConsole(outputTemplate:
+                .WriteTo.Console(outputTemplate:
                     "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
                 .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
                         name + "-{Date}.log"), outputTemplate:
