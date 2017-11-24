@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Titan.Bans;
 using Titan.Util;
 using Titan.Web;
 using Xunit;
@@ -10,7 +9,10 @@ namespace TitanTest
     public class BanManagerTest
     {
 
-        private BanManager _banManager = new BanManager();
+        private SWAHandle _handle = new SWAHandle();
+        private string EnvironmentKey => Environment.GetEnvironmentVariable(
+            "TITAN_WEB_API_KEY", EnvironmentVariableTarget.User
+        );
 
         public BanManagerTest()
         {
@@ -23,67 +25,67 @@ namespace TitanTest
             {
                 systemNetHttpDll.Delete();
             }
-            
-            WebAPIKeyResolver.APIKey = Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
+
+            if (!string.IsNullOrEmpty(EnvironmentKey))
+            {
+                _handle.SetKey(EnvironmentKey);
+            }
         }
 
-        [Fact]
+        // STEAM_0:0:208017504
+        // https://steamcommunity.com/id/TopKekTux/
+        [SkippableFact]
         public void TestGameBan()
         {
-            if(WebAPIKeyResolver.APIKey != null)
-            {
-                var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:208017504"));
+            Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
 
-                if(banInfo != null && banInfo.GameBanCount > 0)
-                {
-                    Assert.True(true, "topkektux has game bans on record.");
-                }
-                else
-                {
-                    Assert.True(false);
-                }
-                // STEAM_0:0:208017504
-                // https://steamcommunity.com/id/TopKekTux/
+            var banInfo = _handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:208017504"));
+
+            if(banInfo != null && banInfo.GameBanCount > 0)
+            {
+                Assert.True(true, "topkektux has game bans on record.");
+            }
+            else
+            {
+                Assert.True(false);
             }
         }
 
-        [Fact]
+        // STEAM_0:0:19877565
+        // https://steamcommunity.com/id/kqly/
+        [SkippableFact]
         public void TestVacBan()
         {
-            if(WebAPIKeyResolver.APIKey != null)
-            {
-                var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:19877565"));
+            Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
+            
+            var banInfo = _handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:19877565"));
 
-                if(banInfo != null && banInfo.VacBanned)
-                {
-                    Assert.True(true, "KQLY has VAC bans on record.");
-                }
-                else
-                {
-                    Assert.True(false);
-                }
-                // STEAM_0:0:19877565
-                // https://steamcommunity.com/id/kqly/
+            if(banInfo != null && banInfo.VacBanned)
+            {
+                Assert.True(true, "KQLY has VAC bans on record.");
+            }
+            else
+            {
+                Assert.True(false);
             }
         }
 
-        [Fact]
+        // STEAM_0:0:131983088
+        // https://steamcommunity.com/id/Marc3842h/
+        [SkippableFact]
         public void TestCleanHistory()
         {
-            if(WebAPIKeyResolver.APIKey != null)
-            {
-                var banInfo = _banManager.GetBanInfoFor(SteamUtil.FromSteamID("STEAM_0:0:131983088"));
+            Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
+            
+            var banInfo = _handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:131983088"));
 
-                if(banInfo != null && (!banInfo.VacBanned && banInfo.GameBanCount <= 0))
-                {
-                    Assert.True(true, "Marc3842h has no bans on record.");
-                }
-                else
-                {
-                    Assert.True(false);
-                }
-                // STEAM_0:0:131983088
-                // https://steamcommunity.com/id/Marc3842h/
+            if(banInfo != null && !banInfo.VacBanned && banInfo.GameBanCount <= 0)
+            {
+                Assert.True(true, "Marc3842h has no bans on record.");
+            }
+            else
+            {
+                Assert.True(false);
             }
         }
 

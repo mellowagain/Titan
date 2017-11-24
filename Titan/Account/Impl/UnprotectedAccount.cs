@@ -49,7 +49,7 @@ namespace Titan.Account.Impl
             _steamConfig = new SteamConfiguration
             {
                 ConnectionTimeout = TimeSpan.FromMinutes(1),
-                WebAPIKey = WebAPIKeyResolver.APIKey
+                WebAPIKey = Titan.Instance.WebHandle.GetKey() // May be null at this time, but we can accept that for now
             };
             
             _steamClient = new SteamClient(_steamConfig);
@@ -181,7 +181,7 @@ namespace Titan.Account.Impl
                 case EResult.OK:
                     _log.Debug("Successfully logged in. Checking for any VAC or game bans...");
 
-                    var banInfo = Titan.Instance.BanManager.GetBanInfoFor(_steamUser.SteamID.ConvertToUInt64());
+                    var banInfo = Titan.Instance.WebHandle.RequestBanInfo(_steamUser.SteamID.ConvertToUInt64());
                     if(banInfo != null && (banInfo.VacBanned || banInfo.GameBanCount > 0))
                     {
                         _log.Warning("The account has a ban on record. " +

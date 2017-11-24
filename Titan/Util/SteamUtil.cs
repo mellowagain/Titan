@@ -10,8 +10,6 @@ namespace Titan.Util
     public static class SteamUtil
     {
 
-        private static Logger _log = LogCreator.Create();
-
         // Renders from a "STEAM_0:0:131983088" form.
         public static SteamID FromSteamID(string steamID)
         {
@@ -51,28 +49,8 @@ namespace Titan.Util
 
             url = url.Replace("/", "");
 
-            try
-            {
-                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", WebAPIKeyResolver.APIKey))
-                {    
-                    KeyValue pair = steamUser.ResolveVanityURL(vanityurl: url);
-
-                    if(pair["success"].AsInteger() == 1)
-                    {
-                        return FromSteamID64(pair["steamid"].AsUnsignedLong());
-                    }
-                    
-                    _log.Error("Could not resolve custom URL {URL} to SteamID64: {Error}",
-                        url, pair["message"].AsString());
-                }
-            }
-            catch (WebException ex)
-            {
-                _log.Error("Could not resolve custom URL {URL} to SteamID64: {Error}",
-                    url, ex.Message);
-            }
-
-            return null;
+            return Titan.Instance.WebHandle.RequestSteamUserInfo(url, out var steamID64) ? 
+                   FromSteamID64(steamID64) : null;
         }
 
         // Renders from a "http://steamcommunity.com/profiles/76561198224231904" form.
@@ -90,8 +68,7 @@ namespace Titan.Util
             
             url = url.Replace("/", "");
 
-            ulong steamID;
-            return ulong.TryParse(url, out steamID) ? FromSteamID64(steamID) : FromCustomUrl(nativeUrl);
+            return ulong.TryParse(url, out var steamID) ? FromSteamID64(steamID) : FromCustomUrl(nativeUrl);
         }
 
         public static SteamID Parse(string s)
@@ -110,8 +87,7 @@ namespace Titan.Util
 
                         return FromNativeUrl(s);
                     default:
-                        ulong id;
-                        return ulong.TryParse(s, out id) ? FromSteamID64(id) : FromCustomUrl(s);
+                        return ulong.TryParse(s, out var id) ? FromSteamID64(id) : FromCustomUrl(s);
             }
         }
 

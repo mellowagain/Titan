@@ -117,7 +117,6 @@
     <Compile Include="Account\TitanAccount.cs" />
     <Compile Include="Account\TitanHandler.cs" />
     <Compile Include="Bans\BanInfo.cs" />
-    <Compile Include="Bans\BanManager.cs" />
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\Verbs\CommendOptions.cs" />
     <Compile Include="Bootstrap\Verbs\IdleOptions.cs" />
@@ -156,7 +155,8 @@
     <Compile Include="Util\StringUtil.cs" />
     <Compile Include="Util\TimeUtil.cs" />
     <Compile Include="Util\WaitFor.cs" />
-    <Compile Include="Web\WebAPIKeyResolver.cs" />
+    <Compile Include="Web\KeyManager.cs" />
+    <Compile Include="Web\SWAHandle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

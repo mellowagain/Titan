@@ -71,7 +71,7 @@ namespace Titan.UI.APIKey
         {
             if(!string.IsNullOrWhiteSpace(_txtBox.Text))
             {
-                WebAPIKeyResolver.APIKey = _txtBox.Text;
+                Titan.Instance.WebHandle.SetKey(_txtBox.Text);
 
                 _log.Debug("Successfully set Web API key to {WebAPIKey}.", _txtBox.Text);
 

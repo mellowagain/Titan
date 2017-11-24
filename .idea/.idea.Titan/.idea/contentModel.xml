@@ -15,7 +15,6 @@
         </e>
         <e p="Bans" t="Include">
           <e p="BanInfo.cs" t="Include" />
-          <e p="BanManager.cs" t="Include" />
         </e>
         <e p="Bootstrap" t="Include">
           <e p="Options.cs" t="Include" />
@@ -104,7 +103,8 @@
           <e p="WaitFor.cs" t="Include" />
         </e>
         <e p="Web" t="Include">
-          <e p="WebAPIKeyResolver.cs" t="Include" />
+          <e p="KeyManager.cs" t="Include" />
+          <e p="SWAHandle.cs" t="Include" />
         </e>
         <e p="accounts.json" t="Include" />
         <e p="app.config" t="Include" />

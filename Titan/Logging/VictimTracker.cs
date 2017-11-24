@@ -37,7 +37,7 @@ namespace Titan.Logging
             .WithIdentity("Victim Tracker Trigger", "Titan")
             .StartNow()
             .WithSimpleSchedule(x => x
-                .WithIntervalInMinutes(15) // CHange to 15 Minutes
+                .WithIntervalInMinutes(15)
                 .RepeatForever())
             .Build();
 
@@ -93,7 +93,7 @@ namespace Titan.Logging
                     var victims = new Victims
                     {
                         Array = (from victim in _victims
-                            let bans = Titan.Instance.BanManager.GetBanInfoFor(SteamUtil.FromSteamID64(victim.SteamID))
+                            let bans = Titan.Instance.WebHandle.RequestBanInfo(SteamUtil.FromSteamID64(victim.SteamID))
                             where !(bans.GameBanCount > 0 || bans.VacBanned)
                             select victim).ToArray()
                     };
@@ -122,7 +122,7 @@ namespace Titan.Logging
                 foreach(var victim in _victims.ToArray())
                 {
                     var target = SteamUtil.FromSteamID64(victim.SteamID);
-                    var bans = Titan.Instance.BanManager.GetBanInfoFor(target);
+                    var bans = Titan.Instance.WebHandle.RequestBanInfo(target);
                     var time = DateTime.Now.Subtract(new DateTime(victim.Ticks));
                 
                     if(bans.GameBanCount > 0 || bans.VacBanned)

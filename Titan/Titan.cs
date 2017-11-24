@@ -34,11 +34,10 @@ namespace Titan
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
         public VictimTracker VictimTracker;
-        public BanManager BanManager;
         public UIManager UIManager;
 
         public JsonSerializer JsonSerializer;
-        public WebAPIKeyResolver APIKeyResolver;
+        public SWAHandle WebHandle;
 
         public bool DummyMode = false;
         public IScheduler Scheduler;
@@ -163,7 +162,7 @@ namespace Titan
 
             Instance.ThreadManager = new ThreadManager();
 
-            Instance.BanManager = new BanManager();
+            Instance.WebHandle = new SWAHandle();
             
             Logger.Debug("Startup: Registering Shutdown Hook.");
 
@@ -176,11 +175,9 @@ namespace Titan
             Logger.Debug("Startup: Initializing Forms...");
 
             Instance.UIManager.InitializeForms();
-
-            Logger.Debug("Startup: Loading Web API Key");
-
-            Instance.APIKeyResolver = new WebAPIKeyResolver();
-            Instance.APIKeyResolver.ParseKeyFile();
+            
+            // Load after Forms were initialized
+            Instance.WebHandle.Load();
 
             Logger.Information("Hello and welcome to Titan v1.6.0-EAP.");
 
@@ -269,7 +266,7 @@ namespace Titan
             
             Instance.AccountManager.SaveAccountsFile();
             Instance.VictimTracker.SaveVictimsFile();
-            Instance.APIKeyResolver.SaveKeyFile();
+            Instance.WebHandle.Save();
             Instance.AccountManager.SaveIndexFile();
 
             Logger.Information("Thank you and have a nice day.");

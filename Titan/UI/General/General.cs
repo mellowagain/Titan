@@ -149,7 +149,7 @@ namespace Titan.UI.General
                             return;
                         }
                         
-                        var targetBanInfo = Titan.Instance.BanManager.GetBanInfoFor(steamID.ConvertToUInt64());
+                        var targetBanInfo = Titan.Instance.WebHandle.RequestBanInfo(steamID.ConvertToUInt64());
                         if(targetBanInfo != null)
                         {
                             if(targetBanInfo.VacBanned || targetBanInfo.GameBanCount > 0)
