@@ -35,7 +35,7 @@ namespace Titan.Util
         }
         
         // Renders from a "https://steamcommunity.com/id/Marc3842h/" form.
-        public static SteamID FromCustomUrl(string customUrl)
+        public static SteamID FromCustomUrl(string customUrl, SWAHandle handle = null)
         {
             var url = customUrl.StartsWith("http://") ? 
                 customUrl.Replace("http://", "") : 
@@ -49,12 +49,22 @@ namespace Titan.Util
 
             url = url.Replace("/", "");
 
-            return Titan.Instance.WebHandle.RequestSteamUserInfo(url, out var steamID64) ? 
-                   FromSteamID64(steamID64) : null;
+            if (handle == null)
+            {
+                return Titan.Instance.WebHandle.RequestSteamUserInfo(url, out var steamID64)
+                    ? FromSteamID64(steamID64)
+                    : null;
+            }
+            else
+            {
+                return handle.RequestSteamUserInfo(url, out var steamID64)
+                    ? FromSteamID64(steamID64)
+                    : null;
+            }
         }
 
         // Renders from a "http://steamcommunity.com/profiles/76561198224231904" form.
-        public static SteamID FromNativeUrl(string nativeUrl)
+        public static SteamID FromNativeUrl(string nativeUrl, SWAHandle handle = null)
         {
             var url = nativeUrl.StartsWith("http://") ? 
                 nativeUrl.Replace("http://", "") : 
@@ -68,10 +78,10 @@ namespace Titan.Util
             
             url = url.Replace("/", "");
 
-            return ulong.TryParse(url, out var steamID) ? FromSteamID64(steamID) : FromCustomUrl(nativeUrl);
+            return ulong.TryParse(url, out var steamID) ? FromSteamID64(steamID) : FromCustomUrl(nativeUrl, handle);
         }
 
-        public static SteamID Parse(string s)
+        public static SteamID Parse(string s, SWAHandle handle = null)
         {
             switch(s.ElementAt(0))
             {
@@ -82,12 +92,12 @@ namespace Titan.Util
                     case 'h':
                         if(s.Contains("id"))
                         {
-                            return FromCustomUrl(s);
+                            return FromCustomUrl(s, handle);
                         }
 
-                        return FromNativeUrl(s);
+                        return FromNativeUrl(s, handle);
                     default:
-                        return ulong.TryParse(s, out var id) ? FromSteamID64(id) : FromCustomUrl(s);
+                        return ulong.TryParse(s, out var id) ? FromSteamID64(id) : FromCustomUrl(s, handle);
             }
         }
 

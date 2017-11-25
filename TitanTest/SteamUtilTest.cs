@@ -54,7 +54,8 @@ namespace TitanTest
         {
             Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
             
-            Assert.True(FromCustomUrl("https://steamcommunity.com/id/Marc3842h/").ConvertToUInt64() == 76561198224231904);
+            Assert.True(FromCustomUrl("https://steamcommunity.com/id/Marc3842h/", _handle).ConvertToUInt64() == 
+                        76561198224231904);
         }
 
         [SkippableFact]
@@ -62,8 +63,9 @@ namespace TitanTest
         {
             Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
             
-            Assert.True(FromNativeUrl("http://steamcommunity.com/profiles/76561198224231904").ConvertToUInt64() ==
-                        76561198224231904);
+            Assert.True(FromNativeUrl(
+                            "http://steamcommunity.com/profiles/76561198224231904", _handle
+                        ).ConvertToUInt64() == 76561198224231904);
         }
 
         [SkippableTheory]
@@ -77,7 +79,7 @@ namespace TitanTest
             Skip.If(_handle.GetKey() == null && id.StartsWith("h"), 
                     "No valid Steam Web API key has been provided with this test case.");
             
-            Assert.True(Parse(id).ConvertToUInt64() == 76561198224231904);
+            Assert.True(Parse(id, _handle).ConvertToUInt64() == 76561198224231904);
         }
 
     }
