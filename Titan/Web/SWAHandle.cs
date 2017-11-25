@@ -20,7 +20,7 @@ namespace Titan.Web
             _keyManager = new KeyManager(this);
         }
 
-        public BanInfo RequestBanInfo(SteamID steamID)
+        public bool RequestBanInfo(SteamID steamID, out BanInfo banInfo)
         {
             if (steamID != null && !string.IsNullOrEmpty(_keyManager.SWAKey))
             {
@@ -34,7 +34,7 @@ namespace Titan.Web
                         {
                             if (get["SteamId"].AsUnsignedLong() == steamID.ConvertToUInt64())
                             {
-                                return new BanInfo
+                                banInfo = new BanInfo
                                 {
                                     SteamID = get["SteamId"].AsUnsignedLong(),
                                     CommunityBanned = get["CommunityBanned"].AsBoolean(),
@@ -44,6 +44,7 @@ namespace Titan.Web
                                     GameBanCount = get["NumberOfGameBans"].AsInteger(),
                                     EconomyBan = get["EconomyBan"].AsString()
                                 };
+                                return true;
                             }
                         }
                     }
@@ -55,11 +56,15 @@ namespace Titan.Web
                 }
 
                 Log.Warning("Did not receive ban informations for {SteamID}. Skipping...", steamID.ConvertToUInt64());
-                return null;
+                
+                banInfo = null;
+                return false;
             }
 
             Log.Warning("No valid Web API key has been found. Skipping ban checking...");
-            return null;
+            
+            banInfo = null;
+            return false;
         }
 
         public bool RequestSteamUserInfo(string vanityURL, out ulong steamID64)
@@ -100,18 +105,14 @@ namespace Titan.Web
                 {
                     KeyValue pair = steamWebAPIUtil.GetSupportedAPIList0001();
 
-                    if (pair != null)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             catch (Exception ex)
             {
-                // ignored
+                Log.Error(ex.Message);
             }
 
-            Log.Error("Invalid response received.");
             return false;
         }
 

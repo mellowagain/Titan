@@ -45,10 +45,6 @@ namespace Titan.Sentry
                 _log.Debug("Wrote to sentry file with hash: {Hash}", Convert.ToBase64String(hash));
                 return true;
             }
-            
-            hash = null;
-            size = -1;
-            return false;
         }
 
         public byte[] Hash()

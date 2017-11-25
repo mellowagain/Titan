@@ -86,16 +86,25 @@ namespace Titan.Logging
         {
             using(var writer = new StreamWriter(_file.ToString(), false))
             {
-                // TODO: Change this ugly workaround
-
                 if(_victims != null && _victims.Count > 0)
                 {
+                    var victimList = new List<Victims.Victim>();
+
+                    foreach (var victim in _victims)
+                    {
+                        if (Titan.Instance.WebHandle.RequestBanInfo(SteamUtil.FromSteamID64(victim.SteamID),
+                            out var banInfo))
+                        {
+                            if (!(banInfo.GameBanCount > 0 || banInfo.VacBanned))
+                            {
+                                victimList.Add(victim);
+                            }
+                        }
+                    }
+                    
                     var victims = new Victims
                     {
-                        Array = (from victim in _victims
-                            let bans = Titan.Instance.WebHandle.RequestBanInfo(SteamUtil.FromSteamID64(victim.SteamID))
-                            where !(bans.GameBanCount > 0 || bans.VacBanned)
-                            select victim).ToArray()
+                        Array = victimList.ToArray()
                     };
 
                     writer.Write(JsonConvert.SerializeObject(victims, Formatting.Indented));
@@ -122,29 +131,31 @@ namespace Titan.Logging
                 foreach(var victim in _victims.ToArray())
                 {
                     var target = SteamUtil.FromSteamID64(victim.SteamID);
-                    var bans = Titan.Instance.WebHandle.RequestBanInfo(target);
                     var time = DateTime.Now.Subtract(new DateTime(victim.Ticks));
-                
-                    if(bans.GameBanCount > 0 || bans.VacBanned)
+
+                    if (Titan.Instance.WebHandle.RequestBanInfo(target, out var banInfo))
                     {
-                        var count = bans.GameBanCount == 0 ? bans.VacBanCount : bans.GameBanCount;
-                        var id64 = target.ConvertToUInt64();
-
-                        if(_victims.Remove(victim))
+                        if (banInfo.GameBanCount > 0 || banInfo.VacBanned)
                         {
-                            if (!Titan.Instance.Options.Secure)
-                            {
-                                _log.Information("Your recently botted target {Target} received " +
-                                                 "{Count} ban(s) after {Delay}. Thank you for using Titan.",
-                                    id64, count,
-                                    time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
+                            var count = banInfo.GameBanCount == 0 ? banInfo.VacBanCount : banInfo.GameBanCount;
+                            var id64 = target.ConvertToUInt64();
 
-                                Titan.Instance.UIManager.SendNotification(
-                                    "Titan - " + id64 + " banned",
-                                    "Your recently botted target " + id64 + " " +
-                                    "has been banned and has now " + count + " Ban(s) on record.",
-                                    delegate { Process.Start("http://steamcommunity.com/profiles/" + id64); }
-                                );
+                            if (_victims.Remove(victim))
+                            {
+                                if (!Titan.Instance.Options.Secure)
+                                {
+                                    _log.Information("Your recently botted target {Target} received " +
+                                                     "{Count} ban(s) after {Delay}. Thank you for using Titan.",
+                                        id64, count,
+                                        time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
+
+                                    Titan.Instance.UIManager.SendNotification(
+                                        "Titan - " + id64 + " banned",
+                                        "Your recently botted target " + id64 + " " +
+                                        "has been banned and has now " + count + " Ban(s) on record.",
+                                        delegate { Process.Start("http://steamcommunity.com/profiles/" + id64); }
+                                    );
+                                }
                             }
                         }
                     }

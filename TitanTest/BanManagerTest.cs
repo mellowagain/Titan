@@ -10,9 +10,7 @@ namespace TitanTest
     {
 
         private SWAHandle _handle = new SWAHandle();
-        private string EnvironmentKey => Environment.GetEnvironmentVariable(
-            "TITAN_WEB_API_KEY", EnvironmentVariableTarget.User
-        );
+        private string EnvironmentKey => Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
 
         public BanManagerTest()
         {
@@ -39,15 +37,9 @@ namespace TitanTest
         {
             Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
 
-            var banInfo = _handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:208017504"));
-
-            if(banInfo != null && banInfo.GameBanCount > 0)
+            if (_handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:208017504"), out var banInfo))
             {
-                Assert.True(true, "topkektux has game bans on record.");
-            }
-            else
-            {
-                Assert.True(false);
+                Assert.True(banInfo.GameBanCount > 0);
             }
         }
 
@@ -57,16 +49,10 @@ namespace TitanTest
         public void TestVacBan()
         {
             Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
-            
-            var banInfo = _handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:19877565"));
 
-            if(banInfo != null && banInfo.VacBanned)
+            if (_handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:19877565"), out var banInfo))
             {
-                Assert.True(true, "KQLY has VAC bans on record.");
-            }
-            else
-            {
-                Assert.True(false);
+                Assert.True(banInfo.VacBanned);
             }
         }
 
@@ -76,16 +62,10 @@ namespace TitanTest
         public void TestCleanHistory()
         {
             Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
-            
-            var banInfo = _handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:131983088"));
 
-            if(banInfo != null && !banInfo.VacBanned && banInfo.GameBanCount <= 0)
+            if (_handle.RequestBanInfo(SteamUtil.FromSteamID("STEAM_0:0:131983088"), out var banInfo))
             {
-                Assert.True(true, "Marc3842h has no bans on record.");
-            }
-            else
-            {
-                Assert.True(false);
+                Assert.True(!banInfo.VacBanned && banInfo.GameBanCount <= 0);
             }
         }
 

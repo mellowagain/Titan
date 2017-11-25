@@ -18,9 +18,7 @@ namespace Titan.Web
         private FileInfo _file = new FileInfo(Path.Combine(Environment.CurrentDirectory, "steamapi.key"));
         
         public string SWAKey;
-        public string EnvironmentKey => Environment.GetEnvironmentVariable(
-            "TITAN_WEB_API_KEY", EnvironmentVariableTarget.User
-        );
+        public string EnvironmentKey => Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
 
         public KeyManager(SWAHandle handle)
         {
@@ -35,11 +33,15 @@ namespace Titan.Web
                 {
                     SWAKey = reader.ReadLine();
                 }
+                
+                _handle.Log.Debug("Received key from {file} file: {key}", "steamapi.key", SWAKey);
             } 
             
             if (!string.IsNullOrEmpty(EnvironmentKey) && string.IsNullOrEmpty(SWAKey))
             {
                 SWAKey = EnvironmentKey;
+                
+                _handle.Log.Debug("Received key from environment variable: {key}", SWAKey);
             }
 
             if (!string.IsNullOrEmpty(SWAKey))
@@ -47,6 +49,11 @@ namespace Titan.Web
                 if (!_handle.RequestAPIMethods())
                 {
                     _handle.Log.Warning("Received invalid Steam Web API key. Ignoring...");
+                }
+                else
+                {
+                    _handle.Log.Information("Steam Web API is valid and will be used.");
+                    return;
                 }
             }
             
@@ -58,10 +65,9 @@ namespace Titan.Web
         {
             if (!string.IsNullOrEmpty(SWAKey))
             {
-                using (var writer = new StreamWriter(_file.ToString(), false, Encoding.UTF8))
-                {
-                    writer.Write(SWAKey);
-                }
+                File.WriteAllText(_file.ToString(), SWAKey);
+                
+                Environment.SetEnvironmentVariable("TITAN_WEB_API_KEY", SWAKey);
             }
             else
             {

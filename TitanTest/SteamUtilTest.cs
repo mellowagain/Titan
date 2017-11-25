@@ -11,9 +11,7 @@ namespace TitanTest
     {
         
         private SWAHandle _handle = new SWAHandle();
-        private string EnvironmentKey => Environment.GetEnvironmentVariable(
-            "TITAN_WEB_API_KEY", EnvironmentVariableTarget.User
-        );
+        private string EnvironmentKey => Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
 
         public SteamUtilTest()
         {
@@ -36,40 +34,19 @@ namespace TitanTest
         [SkippableFact]
         public void TestSteamIDParser()
         {
-            if(FromSteamID("STEAM_0:0:131983088").ConvertToUInt64() == 76561198224231904)
-            {
-                Assert.True(true, "Output Steam ID is valid");
-            }
-            else
-            {
-                Assert.True(false);
-            }
+            Assert.True(FromSteamID("STEAM_0:0:131983088").ConvertToUInt64() == 76561198224231904);
         }
 
         [SkippableFact]
         public void TestSteamID3Parser()
         {
-            if(FromSteamID3("[U:1:263966176]").ConvertToUInt64() == 76561198224231904)
-            {
-                Assert.True(true, "Output Steam ID is valid");
-            }
-            else
-            {
-                Assert.True(false);
-            }
+            Assert.True(FromSteamID3("[U:1:263966176]").ConvertToUInt64() == 76561198224231904);
         }
 
         [SkippableFact]
         public void TestSteamID64Parser()
         {
-            if(FromSteamID64(76561198224231904).ConvertToUInt64() == 76561198224231904)
-            {
-                Assert.True(true, "Output Steam ID is valid");
-            }
-            else
-            {
-                Assert.True(false);
-            }
+            Assert.True(FromSteamID64(76561198224231904).ConvertToUInt64() == 76561198224231904);
         }
 
         [SkippableFact]
@@ -77,14 +54,7 @@ namespace TitanTest
         {
             Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
             
-            if(FromCustomUrl("https://steamcommunity.com/id/Marc3842h/").ConvertToUInt64() == 76561198224231904)
-            {
-                Assert.True(true, "Output Steam ID is valid");
-            }
-            else
-            {
-                Assert.True(false);
-            }
+            Assert.True(FromCustomUrl("https://steamcommunity.com/id/Marc3842h/").ConvertToUInt64() == 76561198224231904);
         }
 
         [SkippableFact]
@@ -92,15 +62,8 @@ namespace TitanTest
         {
             Skip.If(_handle.GetKey() == null, "No valid Steam Web API key has been provided with this test case.");
             
-            if(FromNativeUrl("http://steamcommunity.com/profiles/76561198224231904").ConvertToUInt64() ==
-               76561198224231904)
-            {
-                Assert.True(true, "Output Steam ID is valid");
-            }
-            else
-            {
-                Assert.True(false);
-            }
+            Assert.True(FromNativeUrl("http://steamcommunity.com/profiles/76561198224231904").ConvertToUInt64() ==
+                        76561198224231904);
         }
 
         [SkippableTheory]
@@ -114,14 +77,7 @@ namespace TitanTest
             Skip.If(_handle.GetKey() == null && id.StartsWith("h"), 
                     "No valid Steam Web API key has been provided with this test case.");
             
-            if(Parse(id).ConvertToUInt64() == 76561198224231904)
-            {
-                Assert.True(true, "Output Steam ID is valid");
-            }
-            else
-            {
-                Assert.True(false);
-            }
+            Assert.True(Parse(id).ConvertToUInt64() == 76561198224231904);
         }
 
     }

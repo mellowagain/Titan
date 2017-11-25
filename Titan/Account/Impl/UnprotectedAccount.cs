@@ -181,13 +181,15 @@ namespace Titan.Account.Impl
                 case EResult.OK:
                     _log.Debug("Successfully logged in. Checking for any VAC or game bans...");
 
-                    var banInfo = Titan.Instance.WebHandle.RequestBanInfo(_steamUser.SteamID.ConvertToUInt64());
-                    if(banInfo != null && (banInfo.VacBanned || banInfo.GameBanCount > 0))
+                    if (Titan.Instance.WebHandle.RequestBanInfo(_steamUser.SteamID.ConvertToUInt64(), out var banInfo))
                     {
-                        _log.Warning("The account has a ban on record. " +
-                                     "If the VAC/Game ban ban is from CS:GO, a {Mode} is not possible. " +
-                                     "Proceeding with caution.", _reportInfo != null ? "report" :"commend");
-                        Result = Result.AccountBanned;
+                        if (banInfo.VacBanned || banInfo.GameBanCount > 0)
+                        {
+                            _log.Warning("The account has a ban on record. " +
+                                         "If the VAC/Game ban ban is from CS:GO, a {Mode} is not possible. " +
+                                         "Proceeding with caution.", _reportInfo != null ? "report" :"commend");
+                            Result = Result.AccountBanned;
+                        }
                     }
 
                     _log.Debug("Registering that we're playing CS:GO...");

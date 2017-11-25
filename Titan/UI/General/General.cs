@@ -148,11 +148,10 @@ namespace Titan.UI.General
                             );
                             return;
                         }
-                        
-                        var targetBanInfo = Titan.Instance.WebHandle.RequestBanInfo(steamID.ConvertToUInt64());
-                        if(targetBanInfo != null)
+
+                        if (Titan.Instance.WebHandle.RequestBanInfo(steamID.ConvertToUInt64(), out var banInfo))
                         {
-                            if(targetBanInfo.VacBanned || targetBanInfo.GameBanCount > 0)
+                            if(banInfo.VacBanned || banInfo.GameBanCount > 0)
                             {
                                 _log.Warning("The target has already been banned. Are you sure you " +
                                              "want to bot this player? Ignore this message if the " +
