@@ -19,7 +19,7 @@ namespace Titan.Sentry
         {
             _log = LogCreator.Create("Sentry - " + account.JsonAccount.Username);
             
-            var dir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "sentries"));
+            var dir = new DirectoryInfo(Path.Combine(Titan.Instance.Directory.ToString(), "sentries"));
             if (!dir.Exists)
             {
                 dir.Create();

@@ -4,14 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Eto.Forms;
 using Newtonsoft.Json;
 using Quartz;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Json;
-using Titan.UI;
-using Titan.UI.General;
 using Titan.Util;
 
 namespace Titan.Logging
@@ -26,8 +23,7 @@ namespace Titan.Logging
         
         private List<Victims.Victim> _victims;
 
-        private FileInfo _file = new FileInfo(
-            Path.Combine(Environment.CurrentDirectory, "victims.json"));
+        private FileInfo _file = new FileInfo(Path.Combine(Titan.Instance.Directory.ToString(), "victims.json"));
         
         public IJobDetail Job = JobBuilder.Create<VictimTracker>()
             .WithIdentity("Victim Tracker Job", "Titan")
@@ -62,17 +58,17 @@ namespace Titan.Logging
 
         public List<Victims.Victim> GetVictimsFromFile()
         {
-            if(!_file.Exists)
+            if (!_file.Exists)
             {
                 _file.Create().Close();
                 SaveVictimsFile();
             }
             
-            using(var reader = File.OpenText(_file.ToString()))
+            using (var reader = File.OpenText(_file.ToString()))
             {
                 var json = (Victims) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(Victims));
 
-                if(json?.Array != null)
+                if (json?.Array != null)
                 {
                     var victims = new List<Victims.Victim>(json.Array);
 
@@ -84,9 +80,9 @@ namespace Titan.Logging
 
         public void SaveVictimsFile()
         {
-            using(var writer = new StreamWriter(_file.ToString(), false))
+            using (var writer = new StreamWriter(_file.ToString(), false))
             {
-                if(_victims != null && _victims.Count > 0)
+                if (_victims != null && _victims.Count > 0)
                 {
                     var victimList = new List<Victims.Victim>();
 
@@ -128,7 +124,7 @@ namespace Titan.Logging
             
                 _log.Information("Victims: {a}", _victims);
             
-                foreach(var victim in _victims.ToArray())
+                foreach (var victim in _victims.ToArray())
                 {
                     var target = SteamUtil.FromSteamID64(victim.SteamID);
                     var time = DateTime.Now.Subtract(new DateTime(victim.Ticks));

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Eto.Drawing;
 
 namespace Titan.UI
@@ -15,7 +14,7 @@ namespace Titan.UI
 
         public SharedResources()
         {
-            var resDir = Path.Combine(Environment.CurrentDirectory, "Resources");
+            var resDir = Path.Combine(Titan.Instance.Directory.ToString(), "Resources");
 
             STEAM_ICON = new Icon(File.Open(Path.Combine(resDir, "Steam.ico"), FileMode.Open));
 

@@ -35,11 +35,11 @@ namespace Titan.Managers
         public AccountManager(FileInfo file)
         {
             _file = file;
-            _indexFile = new FileInfo(Path.Combine(Environment.CurrentDirectory, "index.json"));
+            _indexFile = new FileInfo(Path.Combine(Titan.Instance.Directory.ToString(), "index.json"));
             Index = 0;
 
-            var dirInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "sentries"));
-            if(!dirInfo.Exists)
+            var dirInfo = new DirectoryInfo(Path.Combine(Titan.Instance.Directory.ToString(), "sentries"));
+            if (!dirInfo.Exists)
             {
                 dirInfo.Create();
             }
@@ -50,7 +50,7 @@ namespace Titan.Managers
 
         public void ParseAccountFile()
         {
-            if(!_file.Exists)
+            if (!_file.Exists)
             {
                 _log.Warning("The accounts file at {0} doesn't exist!", _file.ToString());
                 _log.Warning("Titan will run in dummy mode and allow you to edit the accounts before using it.");
@@ -67,16 +67,16 @@ namespace Titan.Managers
                 Titan.Instance.DummyMode = true;
             }
 
-            using(var reader = File.OpenText(_file.ToString()))
+            using (var reader = File.OpenText(_file.ToString()))
             {
                 _parsedAccounts = (JsonAccounts) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(JsonAccounts));
             }
 
-            foreach(var indexes in _parsedAccounts.Indexes)
+            foreach (var indexes in _parsedAccounts.Indexes)
             {
                 var accounts = new List<TitanAccount>();
 
-                foreach(var account in indexes.Accounts)
+                foreach (var account in indexes.Accounts)
                 {
                     TitanAccount acc;
 
@@ -85,7 +85,7 @@ namespace Titan.Managers
                                  !account.SharedSecret.Equals("Shared Secret for SteamGuard",
                                      StringComparison.InvariantCultureIgnoreCase); // Paster proofing
                     
-                    if(sentry)
+                    if (sentry)
                     {
                         acc = new ProtectedAccount(account);
                     }
@@ -94,13 +94,13 @@ namespace Titan.Managers
                         acc = new UnprotectedAccount(account);
                     }
 
-                    if(account.Enabled)
+                    if (account.Enabled)
                     {
                         accounts.Add(acc);
                         _allAccounts.Add(acc);
                     }
 
-                    if(!Titan.Instance.Options.Secure)
+                    if (!Titan.Instance.Options.Secure)
                     {
                         _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
                                    "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
@@ -108,7 +108,7 @@ namespace Titan.Managers
                     }
                 }
 
-                if(accounts.Count > 11 && !Titan.Instance.DummyMode)
+                if (accounts.Count > 11 && !Titan.Instance.DummyMode)
                 {
                     _log.Warning("You have more than 11 account specified in index {Index}. " +
                                  "It is recommend to specify max. 11 accounts.", Index);
@@ -119,7 +119,7 @@ namespace Titan.Managers
                 Index++;
             }
 
-            if(_allAccounts.Count < 11 && !Titan.Instance.DummyMode && _allAccounts.Count >= 1)
+            if (_allAccounts.Count < 11 && !Titan.Instance.DummyMode && _allAccounts.Count >= 1)
             {
                 _log.Warning("Less than 11 (only {Count}) accounts have been parsed. Atleast 11 accounts " +
                              "are required to get a target into Overwatch.", _allAccounts.Count);
@@ -181,9 +181,9 @@ namespace Titan.Managers
 
         private void ParseIndexFile()
         {
-            if(_indexFile.Exists) // check if file exists
+            if (_indexFile.Exists) // check if file exists
             {
-                using(var reader = File.OpenText(_indexFile.ToString()))
+                using (var reader = File.OpenText(_indexFile.ToString()))
                 {
                     _parsedIndex = (JsonIndex) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(JsonIndex));
                     // read it and deserialize it into a Index object
@@ -191,18 +191,20 @@ namespace Titan.Managers
 
                 var lowest = _parsedIndex.AvailableIndex; // find the available index and set it to lowest
 
-                if(lowest == -1) 
+                if (lowest == -1)
+                {
                     lowest++;
-                
-                foreach(var expireEntry in _parsedIndex.Entries)
+                }
+
+                foreach (var expireEntry in _parsedIndex.Entries)
                 {
                     // check if a entry that is marked for expiration is already expired and ready to bot
-                    if(expireEntry.ExpireTimestamp <= TimeUtil.GetCurrentTicks())
+                    if (expireEntry.ExpireTimestamp <= TimeUtil.GetCurrentTicks())
                     {
                         _log.Debug("Index {Index} has expired. It is now available for botting.",
                             expireEntry.TargetedIndex);
 
-                        if(lowest > expireEntry.TargetedIndex) // if thats the case, check if its lower than the available one
+                        if (lowest > expireEntry.TargetedIndex) // if thats the case, check if its lower than the available one
                         {
                             lowest = expireEntry.TargetedIndex;
                         }
@@ -212,7 +214,7 @@ namespace Titan.Managers
                     }
                     else
                     {
-                        if(!_indexEntries.ContainsKey(expireEntry.TargetedIndex))
+                        if (!_indexEntries.ContainsKey(expireEntry.TargetedIndex))
                         {
                             _indexEntries.Add(expireEntry.TargetedIndex, expireEntry.ExpireTimestamp);
                         }
@@ -221,7 +223,7 @@ namespace Titan.Managers
                             expireEntry.TargetedIndex,
                             TimeUtil.TicksToDateTime(expireEntry.ExpireTimestamp).ToShortTimeString());
 
-                        if(expireEntry.TargetedIndex == lowest)
+                        if (expireEntry.TargetedIndex == lowest)
                         {
                             lowest++;
                         }
@@ -237,16 +239,16 @@ namespace Titan.Managers
             }
 
             var valid = false;
-            foreach(var keyVal in Accounts)
+            foreach (var keyVal in Accounts)
             {
-                if(keyVal.Key == Index && Index != -1)
+                if (keyVal.Key == Index && Index != -1)
                 {
                     _log.Debug("Using index #{Index} for botting.", Index);
                     valid = true;
                 }
             }
 
-            if(!valid)
+            if (!valid)
             {
                 _log.Warning("Index #{index} doesn't exist. The Bot will use index " +
                              "#{ForcedIndex}. Please keep in mind that it may already " +
@@ -273,7 +275,7 @@ namespace Titan.Managers
                     .ToArray()
             };
 
-            using(var writer = File.CreateText(_indexFile.ToString()))
+            using (var writer = File.CreateText(_indexFile.ToString()))
             {
                 var str = JsonConvert.SerializeObject(jsonIndex, Formatting.Indented);
                 writer.Write(str);
@@ -286,11 +288,11 @@ namespace Titan.Managers
         {
             _log.Debug("Starting botting using index {Index}.", index);
 
-            if(Accounts.TryGetValue(index, out var accounts))
+            if (Accounts.TryGetValue(index, out var accounts))
             {
                 accounts.Last().IsLast = true;
                 
-                foreach(var acc in accounts)
+                foreach (var acc in accounts)
                 {
                     try
                     {
@@ -312,7 +314,7 @@ namespace Titan.Managers
                 
             Titan.Instance.VictimTracker.AddVictim(info.SteamID);
 
-            if(!_indexEntries.ContainsKey(index) && index != -1)
+            if (!_indexEntries.ContainsKey(index) && index != -1)
             {
                 _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(12)));
                 SaveIndexFile();
@@ -327,11 +329,11 @@ namespace Titan.Managers
         {
             _log.Debug("Starting botting using index {Index}.", index);
 
-            if(Accounts.TryGetValue(index, out var accounts))
+            if (Accounts.TryGetValue(index, out var accounts))
             {
                 accounts.Last().IsLast = true;
                 
-                foreach(var acc in accounts)
+                foreach (var acc in accounts)
                 {
                     try
                     {
@@ -351,7 +353,7 @@ namespace Titan.Managers
                 return;
             }
 
-            if(!_indexEntries.ContainsKey(index))
+            if (!_indexEntries.ContainsKey(index))
             {
                 _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(12)));
                 SaveIndexFile();
@@ -364,7 +366,7 @@ namespace Titan.Managers
         
         public void StartMatchIDResolving(int index, LiveGameInfo info)
         {
-            if(Accounts.TryGetValue(index, out var accounts))
+            if (Accounts.TryGetValue(index, out var accounts))
             {
                 try
                 {
@@ -385,11 +387,11 @@ namespace Titan.Managers
 
         public void StartIdleing(int index, IdleInfo info)
         {
-            if(Accounts.TryGetValue(index, out var accounts))
+            if (Accounts.TryGetValue(index, out var accounts))
             {
                 accounts.Last().IsLast = true;
                 
-                foreach(var acc in accounts)
+                foreach (var acc in accounts)
                 {
                     try
                     {
@@ -444,7 +446,7 @@ namespace Titan.Managers
                 Accounts[-1] = _allAccounts;
             }
             
-            if(!Titan.Instance.Options.Secure)
+            if (!Titan.Instance.Options.Secure)
             {
                 _log.Debug("Added account in index #{Index}: Username: {Username} / " +
                            "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",

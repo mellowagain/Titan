@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using CommandLine;
 using Newtonsoft.Json;
@@ -8,7 +9,6 @@ using Quartz;
 using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
-using Titan.Bans;
 using Titan.Bootstrap;
 using Titan.Bootstrap.Verbs;
 using Titan.Logging;
@@ -42,7 +42,10 @@ namespace Titan
         public bool DummyMode = false;
         public IScheduler Scheduler;
 
-        public DirectoryInfo DebugDirectory = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "debug"));
+        public DirectoryInfo Directory => new DirectoryInfo(
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Environment.CurrentDirectory
+        );
+        public DirectoryInfo DebugDirectory;
 
         [STAThread]
         public static int Main(string[] args)
@@ -56,10 +59,13 @@ namespace Titan
 
             Logger = LogCreator.Create();
             
+            Logger.Debug("Titan was called from: {dir}", Environment.CurrentDirectory);
+            Logger.Debug("Working in directory: {dir}", Instance.Directory.ToString());
+            
             // Workaround for Mono related issue regarding System.Net.Http.
             // More detail: https://github.com/dotnet/corefx/issues/19914
 
-            var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
+            var systemNetHttpDll = new FileInfo(Path.Combine(Instance.Directory.ToString(), "System.Net.Http.dll"));
             
             if (systemNetHttpDll.Exists && !PlatformUtil.IsWindows())
             {
@@ -104,9 +110,11 @@ namespace Titan
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
 
-            if(Instance.Options.Debug)
+            if (Instance.Options.Debug)
             {
-                if(!Instance.DebugDirectory.Exists)
+                Instance.DebugDirectory = new DirectoryInfo(Path.Combine(Instance.Directory.ToString(), "debug"));
+                
+                if (!Instance.DebugDirectory.Exists)
                 {
                     Instance.DebugDirectory.Create();
                 }
@@ -157,7 +165,7 @@ namespace Titan
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             Instance.AccountManager = new AccountManager(new FileInfo(
-                Path.Combine(Environment.CurrentDirectory, Instance.Options.AccountsFile))
+                Path.Combine(Instance.Directory.ToString(), Instance.Options.AccountsFile))
             );
 
             Instance.ThreadManager = new ThreadManager();
@@ -259,7 +267,7 @@ namespace Titan
         public static void OnShutdown(object sender, EventArgs args)
         {
             // Check if Titan got closed via Process Manager or by the TrayIcon
-            if(!Instance.Scheduler.IsShutdown)
+            if (!Instance.Scheduler.IsShutdown)
             {
                 Instance.Scheduler.Shutdown();
             }

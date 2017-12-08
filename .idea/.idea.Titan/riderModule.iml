@@ -2,12 +2,12 @@
 <module type="RIDER_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Python" name="Python facet">
-      <configuration sdkName="Python 3.6.2 (/usr/bin/python3.6)" />
+      <configuration sdkName="Python 3.6.3 (/usr/bin/python3.6)" />
     </facet>
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/../.." />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Python 3.6.2 (/usr/bin/python3.6) interpreter library" level="application" />
+    <orderEntry type="library" name="Python 3.6.3 (/usr/bin/python3.6) interpreter library" level="application" />
   </component>
 </module>

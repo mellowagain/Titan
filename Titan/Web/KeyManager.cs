@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Text;
-using Mono.CSharp;
-using SteamKit2;
 using Titan.UI;
 using Titan.UI.APIKey;
 
@@ -15,7 +10,7 @@ namespace Titan.Web
 
         private SWAHandle _handle;
         
-        private FileInfo _file = new FileInfo(Path.Combine(Environment.CurrentDirectory, "steamapi.key"));
+        private FileInfo _file = new FileInfo(Path.Combine(Titan.Instance.Directory.ToString(), "steamapi.key"));
         
         public string SWAKey;
         public string EnvironmentKey => Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
