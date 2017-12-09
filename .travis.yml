@@ -4,7 +4,8 @@ solution: Titan.sln
 notifications:
   email: false
   webhooks:
-    secure: BZRT65eaMbXm2QuTOKTQSFPu14FTI3PVugQ9qawRYKNMS37fZKfiCpc/7Aw2tjLmbCjqtffqUVkD/+ajQ3pghFn7UMbo3aokojTnecuwv8wzvidF5CIG0hPKTQEImn0nmIgS3t3NWKAWghJxjCSYW8kL82OGTH0HXpVP4ZjFGb9wfs6c/BmrJuWfFtrl36pbtDxAkaYYnDD5V6gcjWt8j8HxGluZEw5GO/OWPbyjYGWntcEydxQzhoRQ+GmHXinfAAEOeg3n/y2KAY1t7tR0IyeKBGdV8oa0jZnjMnenaEp6TlTxQ4ZAr/Lz9f61ivcJ53wuaOpXbSS9MibX1KOTzOh7H4a85L3ppFmYjxIvy614vNxroso/PGB6XJmUsFzzE+hxcwC3Sdn8TD1mI6zNb4zhvhtb84piM2Kfwbdz5cCW26NUiFMOHrLhEO28XtrwqWPN6fhkg9P0O2uXm+oakEdYhLc1z8gFzOmhCPqHfxginyzt4GJrVpvtCx/RCndcbBDAxbl+8ofzWVwoyMbpBEgJ12ZMwMqFFmJY/NlUU/rQ24ruUzFeWGdQGNNiZGI+svQNwwa/QpAi+JnUpU6DS1eNUk2Ltk8WUxdPsB94qMSO4m3ZsT53gvY14OtvjaBlVkNmdE2MfEObyYiL5G/I7OKIGsqzM7nmqDadcpYkRiE=
+    urls:
+      - https://rainly.herokuapp.com/appveyor/370181720797872130/QdWybpGUWOaJkVaJXggJled3VqKdOYoh8471GL7lv9iFzVKHyrO0e-58j9AMvVEmcq-x
     on_success: always
     on_failure: always
 
