@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Serilog;
@@ -9,9 +10,14 @@ namespace Titan.Logging
     public static class LogCreator
     {
 
-        private static DirectoryInfo _logDir = new DirectoryInfo(
-            Path.Combine(Titan.Instance.Directory.ToString(), "logs")
-        );
+        private static DirectoryInfo _logDir;
+
+        static LogCreator()
+        {
+            _logDir = new DirectoryInfo(Path.Combine(
+                Titan.Instance != null ? Titan.Instance.Directory.ToString() : Environment.CurrentDirectory, "logs"
+            ));
+        }
 
         public static Logger Create(string name)
         {

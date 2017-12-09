@@ -9,8 +9,8 @@ namespace Titan.Web
     {
 
         private SWAHandle _handle;
-        
-        private FileInfo _file = new FileInfo(Path.Combine(Titan.Instance.Directory.ToString(), "steamapi.key"));
+
+        private FileInfo _file;
         
         public string SWAKey;
         public string EnvironmentKey => Environment.GetEnvironmentVariable("TITAN_WEB_API_KEY");
@@ -18,6 +18,11 @@ namespace Titan.Web
         public KeyManager(SWAHandle handle)
         {
             _handle = handle;
+
+            _file = new FileInfo(Path.Combine(
+                Titan.Instance != null ? Titan.Instance.Directory.ToString() : Environment.CurrentDirectory, 
+                "steamapi.key"
+            ));
         }
 
         public void Load()
