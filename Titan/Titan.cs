@@ -272,6 +272,7 @@ namespace Titan
                 Instance.Scheduler.Shutdown();
             }
             
+            Instance.ThreadManager.FinishBotting();
             Instance.AccountManager.SaveAccountsFile();
             Instance.VictimTracker.SaveVictimsFile();
             Instance.WebHandle.Save();

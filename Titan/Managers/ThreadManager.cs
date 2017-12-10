@@ -355,6 +355,21 @@ namespace Titan.Managers
             }));
         }
 
+        public void FinishBotting()
+        {
+            foreach (var pair in _taskDic)
+            {
+                if (pair.Key.IsRunning || !pair.Value.IsCompleted)
+                {
+                    pair.Key.Stop();
+                    
+                    _log.Warning("Forcefully finished botting of account {account}.", pair.Key.JsonAccount.Username);
+                }
+
+                _taskDic.Remove(pair.Key);
+            }
+        }
+
         public void FinishBotting(TitanAccount acc)
         {
             if(acc.IsRunning)
