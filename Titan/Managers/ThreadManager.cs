@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Quartz.Util;
 using Serilog.Core;
@@ -44,8 +45,9 @@ namespace Titan.Managers
                     account.StartTick = DateTime.Now.Ticks;
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
-                    var result = WaitFor<Result>.Run(account.JsonAccount.Sentry ?
-                        TimeSpan.FromMinutes(3) : TimeSpan.FromSeconds(60), account.Start);
+                    var result = ((Func<Result>) account.Start).RunUntil(account.JsonAccount.Sentry 
+                        ? TimeSpan.FromMinutes(3)
+                        : TimeSpan.FromSeconds(60));
 
                     switch(result)
                     {
@@ -135,8 +137,9 @@ namespace Titan.Managers
                     account.StartTick = DateTime.Now.Ticks;
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
-                    var result = WaitFor<Result>.Run(account.JsonAccount.Sentry ?
-                        TimeSpan.FromMinutes(3) : TimeSpan.FromSeconds(60), account.Start);
+                    var result = ((Func<Result>) account.Start).RunUntil(account.JsonAccount.Sentry 
+                        ? TimeSpan.FromMinutes(3)
+                        : TimeSpan.FromSeconds(60));
 
                     switch(result)
                     {
@@ -220,8 +223,9 @@ namespace Titan.Managers
                     account.StartTick = DateTime.Now.Ticks;
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
-                    var result = WaitFor<Result>.Run(account.JsonAccount.Sentry ?
-                        TimeSpan.FromMinutes(3) : TimeSpan.FromSeconds(60), account.Start);
+                    var result = ((Func<Result>) account.Start).RunUntil(account.JsonAccount.Sentry 
+                        ? TimeSpan.FromMinutes(3)
+                        : TimeSpan.FromSeconds(60));
 
                     switch(result)
                     {
@@ -291,7 +295,7 @@ namespace Titan.Managers
                 {
                     account.StartTick = DateTime.Now.Ticks;
 
-                    var result = WaitFor<Result>.Run(TimeSpan.FromMinutes(info.Minutes + 2), account.Start);
+                    var result = ((Func<Result>) account.Start).RunUntil(TimeSpan.FromMinutes(info.Minutes + 2));
 
                     switch(result)
                     {

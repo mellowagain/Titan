@@ -15,13 +15,15 @@ namespace TitanTest
             {
                 try
                 {
-                    WaitFor<bool>.Run(TimeSpan.FromSeconds(3), () =>
+                    Func<bool> task = () =>
                     {
-                        for(;;)
+                        for (;;)
                         {
                             // Let the thread run for a infinite timespan so it can time out.
                         }
-                    });
+                    };
+
+                    task.RunUntil(TimeSpan.FromSeconds(3));
                 }
                 catch (TimeoutException ex)
                 {

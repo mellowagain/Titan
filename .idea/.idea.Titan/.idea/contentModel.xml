@@ -99,8 +99,8 @@
           <e p="SharecodeUtil.cs" t="Include" />
           <e p="SteamUtil.cs" t="Include" />
           <e p="StringUtil.cs" t="Include" />
+          <e p="ThreadTimeout.cs" t="Include" />
           <e p="TimeUtil.cs" t="Include" />
-          <e p="WaitFor.cs" t="Include" />
         </e>
         <e p="Web" t="Include">
           <e p="KeyManager.cs" t="Include" />
