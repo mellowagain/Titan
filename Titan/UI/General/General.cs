@@ -733,6 +733,22 @@ namespace Titan.UI.General
                 {
                     if (Titan.Instance.AccountManager.TryGetAccount(txtBoxUsername.Text.Trim(), out var account))
                     {
+                        if (account.JsonAccount.Sentry != (cbSentry.Checked != null && (bool) cbSentry.Checked))
+                        {
+                            var clone = account.JsonAccount.Clone();
+                            
+                            Titan.Instance.AccountManager.RemoveAccount(account);
+                            if (cbSentry.Checked != null && (bool) cbSentry.Checked)
+                            {
+                                account = new ProtectedAccount(clone);
+                            }
+                            else
+                            {
+                                account = new UnprotectedAccount(clone);
+                            }
+                            Titan.Instance.AccountManager.AddAccount(account);
+                        }
+                        
                         account.JsonAccount.Username = txtBoxUsername.Text.Trim();
                         account.JsonAccount.Password = txtBoxPassword.Text.Trim();
                         account.JsonAccount.Sentry = cbSentry.Checked != null && (bool) cbSentry.Checked;
@@ -794,8 +810,6 @@ namespace Titan.UI.General
 
                 if (selected != null)
                 {
-                    _log.Information("{Type}: {@Info}", selected.GetType(), selected);
-                    
                     var username = selected.Username;
 
                     if (username != null)
