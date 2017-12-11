@@ -168,6 +168,10 @@ Please use the [issue tracker](https://github.com/Marc3842h/Titan/issues) to rep
 Pull Requests are welcome. I suggest using Rider as IDE for this project, but you're free to choose whatever
 you want.
 
+#### Donations
+
+Donations are appreciated. Feel free to become a Patreon on my [Patreon](https://www.patreon.com/marc3842h).  
+  
 ## License
 
 Titan is licensed under the [MIT License](https://github.com/Marc3842h/Titan/blob/master/LICENSE.txt).
