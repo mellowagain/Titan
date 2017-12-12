@@ -74,8 +74,10 @@ namespace Titan
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
-            // Common Logging <-> Serilog bridge
-            Log.Logger = LogCreator.Create("Quartz.NET Scheduler");
+            // The bridge between Common Logging and Serilog uses the global Logger (Log.Logger).
+            // As Quartz.NET is the only programing using Common Logging (and because of the bridge the global logger)
+            // we're creating the global logger as Quartz logger (which hides annoying debug messages).
+            Log.Logger = LogCreator.CreateQuartzLogger();
             
             Logger.Debug("Startup: Loading Quartz.NET.");
             

@@ -32,11 +32,13 @@ namespace Titan.Logging
         public static Logger CreateInfoLogger(string name)
         {
             return new LoggerConfiguration()
-                .WriteTo.Console(outputTemplate:
-                    "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
-                .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
-                        name + "-{Date}.log"), outputTemplate:
-                    "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
+                .WriteTo.Console(
+                    outputTemplate: "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}"
+                )
+                .WriteTo.Async(c => c.RollingFile(
+                    Path.Combine(_logDir.ToString(), name + "-{Date}.log"), 
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u}] {Name} {ThreadId} - {Message}{NewLine}{Exception}"
+                ))
                 .MinimumLevel.Information()
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
@@ -48,16 +50,39 @@ namespace Titan.Logging
         public static Logger CreateDebugLogger(string name)
         {
             return new LoggerConfiguration()
-                .WriteTo.Console(outputTemplate:
-                    "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}")
-                .WriteTo.Async(c => c.RollingFile(Path.Combine(_logDir.ToString(),
-                        name + "-{Date}.log"), outputTemplate:
-                    "[{Timestamp:HH:mm:ss} {Level:u}] {Name} @ {ThreadId} - {Message}{NewLine}{Exception}"))
+                .WriteTo.Console(
+                    outputTemplate: "Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}"
+                )
+                .WriteTo.Async(c => c.RollingFile(
+                    Path.Combine(_logDir.ToString(), name + "-{Date}.log"), 
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u}] {Name} {ThreadId} - {Message}{NewLine}{Exception}"
+                ))
                 .MinimumLevel.Debug()
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
                 .Enrich.WithThreadId()
+                .CreateLogger();
+        }
+
+        public static Logger CreateQuartzLogger()
+        {
+            return new LoggerConfiguration()
+                .WriteTo.Console(
+                    outputTemplate: "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}"
+                )
+                .WriteTo.Async(c => c.RollingFile(
+                    Path.Combine(_logDir.ToString(), "Quartz.Net-Scheduler-{Date}.log"),
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u}] {Name} {ThreadId} - {Message}{NewLine}{Exception}"
+                ))
+                .MinimumLevel.Debug()
+                .Enrich.WithProperty("Name", "Quartz.NET Scheduler")
+                .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
+                .Enrich.FromLogContext()
+                .Enrich.WithThreadId()
+                .Filter.ByExcluding(logEvent => 
+                    logEvent.RenderMessage().Contains("Batch acquisition") && 
+                    logEvent.RenderMessage().Contains("triggers"))
                 .CreateLogger();
         }
  
