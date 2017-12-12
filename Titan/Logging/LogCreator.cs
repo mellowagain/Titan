@@ -51,7 +51,7 @@ namespace Titan.Logging
         {
             return new LoggerConfiguration()
                 .WriteTo.Console(
-                    outputTemplate: "Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}"
+                    outputTemplate: "{Timestamp:HH:mm:ss} [{Thread}] {Level:u} {Name} - {Message}{NewLine}{Exception}"
                 )
                 .WriteTo.Async(c => c.RollingFile(
                     Path.Combine(_logDir.ToString(), name + "-{Date}.log"), 

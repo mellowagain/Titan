@@ -75,7 +75,7 @@ namespace Titan
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
             // The bridge between Common Logging and Serilog uses the global Logger (Log.Logger).
-            // As Quartz.NET is the only programing using Common Logging (and because of the bridge the global logger)
+            // As Quartz.NET is the only dependency using Common Logging (and because of our bridge the global logger)
             // we're creating the global logger as Quartz logger (which hides annoying debug messages).
             Log.Logger = LogCreator.CreateQuartzLogger();
             
@@ -150,7 +150,10 @@ namespace Titan
                         {
                             Log.Error("Please read the README.md file and install all required dependencies.");
                         }
-                        Log.Error("Either {0} or {1} Titan. Titan will now shutdown.", "redownload", "rebuild");
+                        else
+                        {
+                            Log.Error("Either {0} or {1} Titan. Titan will now shutdown.", "redownload", "rebuild");
+                        }
                         Log.Error("Contact {Marc} on Discord for more information.", "Marc3842h#7312");
                         Log.Error("---------------------------------------");
 
