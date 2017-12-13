@@ -31,7 +31,7 @@ namespace Titan.UI
         public void InitializeForms()
         {
             _forms.Add(UIType.General, new General.General(this));
-            _forms.Add(UIType.APIKeyInput, new APIKeyForm(this));
+            _forms.Add(UIType.APIKeyInput, new SWAKeyForm(this));
             _forms.Add(UIType.About, new AboutUI(this));
             _forms.Add(UIType.ExtraGameInfo, new ExtraGameInfo(this));
             

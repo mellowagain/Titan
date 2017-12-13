@@ -58,7 +58,7 @@ namespace Titan.Web
             }
             
             Titan.Instance.UIManager.ShowForm(UIType.APIKeyInput);
-            Titan.Instance.UIManager.GetForm<APIKeyForm>(UIType.APIKeyInput).Focus();
+            Titan.Instance.UIManager.GetForm<SWAKeyForm>(UIType.APIKeyInput).Focus();
         }
         
         public void Save()

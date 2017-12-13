@@ -66,10 +66,10 @@ namespace Titan.Account.Impl
             _steamClient.AddHandler(_titanHandle);
 
             // Initialize debug network sniffer when debug mode is enabled
-            if(Titan.Instance.Options.Debug)
+            if (Titan.Instance.Options.Debug)
             {
                 var dir = new DirectoryInfo(Path.Combine(Titan.Instance.DebugDirectory.ToString(), json.Username));
-                if(!dir.Exists)
+                if (!dir.Exists)
                 {
                     dir.Create();
                 }
@@ -79,7 +79,7 @@ namespace Titan.Account.Impl
                 );
             }
 
-            if(json.SharedSecret != null)
+            if (json.SharedSecret != null)
             {
                 _sgAccount = new SteamGuardAccount
                 {
@@ -92,7 +92,7 @@ namespace Titan.Account.Impl
 
         ~ProtectedAccount()
         {
-            if(IsRunning)
+            if (IsRunning)
             {
                 Stop();
             }
@@ -127,17 +127,17 @@ namespace Titan.Account.Impl
             _liveGameInfo = null;
             _idleInfo = null;
             
-            if(_steamFriends.GetPersonaState() == EPersonaState.Online)
+            if (_steamFriends.GetPersonaState() == EPersonaState.Online)
             {
                 _steamFriends.SetPersonaState(EPersonaState.Offline);
             }
 
-            if(_steamUser.SteamID != null)
+            if (_steamUser.SteamID != null)
             {
                 _steamUser.LogOff();
             }
 
-            if(_steamClient.IsConnected)
+            if (_steamClient.IsConnected)
             {
                 _steamClient.Disconnect();
             }
@@ -184,7 +184,7 @@ namespace Titan.Account.Impl
         {
             _reconnects++;
 
-            if(_reconnects <= 5 && !callback.UserInitiated &&  IsRunning)
+            if (_reconnects <= 5 && !callback.UserInitiated &&  IsRunning)
             {
                 // TODO: Fix reconnecting, see GH issue
                 _log.Information("Disconnected from Steam. Retrying in 2 seconds... ({Count}/5)", _reconnects);
@@ -215,7 +215,7 @@ namespace Titan.Account.Impl
 
         public override void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
-            switch(callback.Result)
+            switch (callback.Result)
             {
                 case EResult.OK:
                     _log.Debug("Successfully logged in. Checking for any VAC or game bans...");
@@ -250,7 +250,7 @@ namespace Titan.Account.Impl
                     _gameCoordinator.Send(clientHello, 730);
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    if(_sgAccount != null)
+                    if (_sgAccount != null)
                     {
                         _log.Debug("A shared secret has been provided: automatically generating it...");
                         
@@ -261,10 +261,10 @@ namespace Titan.Account.Impl
                         _log.Information("Opening UI form to get the 2FA Steam Guard App Code...");
 
                         Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(
-                            UIType.TwoFactorAuthentification,
-                            new TwoFactorAuthForm(Titan.Instance.UIManager, this, null)));
+                            UIType.TwoFactorAuthentification, new _2FAForm(this)
+                        ));
 
-                        while(string.IsNullOrEmpty(_2FactorCode))
+                        while (string.IsNullOrEmpty(_2FactorCode))
                         {
                             /* Wait until we receive the Steam Guard code from the UI */
                         }
@@ -275,10 +275,11 @@ namespace Titan.Account.Impl
                 case EResult.AccountLogonDenied:
                     _log.Information("Opening UI form to get the Auth Token from EMail...");
 
-                    Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(UIType.TwoFactorAuthentification,
-                        new TwoFactorAuthForm(Titan.Instance.UIManager, this, callback.EmailDomain)));
+                    Application.Instance.Invoke(() => Titan.Instance.UIManager.ShowForm(
+                        UIType.TwoFactorAuthentification, new _2FAForm(this, callback.EmailDomain)
+                    ));
 
-                    while(string.IsNullOrEmpty(_authCode))
+                    while (string.IsNullOrEmpty(_authCode))
                     {
                         /* Wait until we receive the Auth Token from the UI */
                     }
@@ -312,13 +313,19 @@ namespace Titan.Account.Impl
 
         public override void OnLoggedOff(SteamUser.LoggedOffCallback callback)
         {
-            if(callback.Result == EResult.LoggedInElsewhere || callback.Result == EResult.AlreadyLoggedInElsewhere)
+            if (callback.Result == EResult.LoggedInElsewhere || callback.Result == EResult.AlreadyLoggedInElsewhere)
+            {
                 Result = Result.AlreadyLoggedInSomewhereElse;
+            }
 
-            if(Result == Result.AlreadyLoggedInSomewhereElse)
+            if (Result == Result.AlreadyLoggedInSomewhereElse)
+            {
                 _log.Warning("Account is already logged on somewhere else. Skipping...");
+            }
             else
+            {
                 _log.Debug("Successfully logged off from Steam: {Result}", callback.Result);
+            }
         }
 
         public void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
@@ -362,7 +369,7 @@ namespace Titan.Account.Impl
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
             };
 
-            if(map.TryGetValue(callback.EMsg, out var func))
+            if (map.TryGetValue(callback.EMsg, out var func))
             {
                 func(callback.Message);
             }
@@ -374,11 +381,11 @@ namespace Titan.Account.Impl
                 _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend"));
 
             
-            if(_liveGameInfo != null)
+            if (_liveGameInfo != null)
             {
                 _gameCoordinator.Send(GetLiveGamePayload(), 730);
             }
-            else if(_reportInfo != null)
+            else if (_reportInfo != null)
             {
                 _gameCoordinator.Send(GetReportPayload(), 730);
             }
@@ -392,7 +399,7 @@ namespace Titan.Account.Impl
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            if(_reportInfo != null)
+            if (_reportInfo != null)
             {
                 _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
             }
@@ -421,7 +428,7 @@ namespace Titan.Account.Impl
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchList>(msg);
 
-            if(response.Body.matches.Count >= 1)
+            if (response.Body.matches.Count >= 1)
             {
                 var matchInfos = response.Body.matches.Select(match => new MatchInfo
                     {

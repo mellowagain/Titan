@@ -139,9 +139,9 @@
     <Compile Include="Sentry\Sentry.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\2FA\TwoFactorAuthForm.cs" />
+    <Compile Include="UI\2FA\2FAForm.cs" />
     <Compile Include="UI\About\AboutUI.cs" />
-    <Compile Include="UI\APIKey\APIKeyForm.cs" />
+    <Compile Include="UI\APIKey\SWAKeyForm.cs" />
     <Compile Include="UI\GameInfo\ExtraGameInfo.cs" />
     <Compile Include="UI\General\General.cs" />
     <Compile Include="UI\SharedResources.cs" />
