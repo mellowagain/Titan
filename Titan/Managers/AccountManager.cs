@@ -69,54 +69,76 @@ namespace Titan.Managers
 
             using (var reader = File.OpenText(_file.ToString()))
             {
-                _parsedAccounts = (JsonAccounts) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(JsonAccounts));
+                try
+                {
+                    _parsedAccounts = (JsonAccounts) Titan.Instance.JsonSerializer.Deserialize(
+                        reader, typeof(JsonAccounts)
+                    );
+                }
+                catch (JsonReaderException ex)
+                {
+                    _log.Error("Could not parse {accounts} file.", "accounts.json");
+                    _log.Error("The provided JSON contains errors: {err}", ex.Message);
+                    _log.Error("Please run it thought a JSON validator and try again.");
+                    Environment.Exit(-1);
+                }
             }
 
-            foreach (var indexes in _parsedAccounts.Indexes)
+            if (_parsedAccounts != null)
             {
-                var accounts = new List<TitanAccount>();
-
-                foreach (var account in indexes.Accounts)
+                foreach (var indexes in _parsedAccounts.Indexes)
                 {
-                    TitanAccount acc;
+                    var accounts = new List<TitanAccount>();
 
-                    var sentry = account.Sentry ||
-                                 account.SharedSecret != null &&
-                                 !account.SharedSecret.Equals("Shared Secret for SteamGuard",
-                                     StringComparison.InvariantCultureIgnoreCase); // Paster proofing
-                    
-                    if (sentry)
+                    foreach (var account in indexes.Accounts)
                     {
-                        acc = new ProtectedAccount(account);
-                    }
-                    else
-                    {
-                        acc = new UnprotectedAccount(account);
+                        TitanAccount acc;
+
+                        var sentry = account.Sentry ||
+                                     account.SharedSecret != null &&
+                                     !account.SharedSecret.Equals("Shared Secret for SteamGuard",
+                                         StringComparison.InvariantCultureIgnoreCase); // Paster proofing
+
+                        if (sentry)
+                        {
+                            acc = new ProtectedAccount(account);
+                        }
+                        else
+                        {
+                            acc = new UnprotectedAccount(account);
+                        }
+
+                        if (account.Enabled)
+                        {
+                            accounts.Add(acc);
+                            _allAccounts.Add(acc);
+                        }
+
+                        if (!Titan.Instance.Options.Secure)
+                        {
+                            _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
+                                       "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
+                                Index, account.Username, account.Password, account.Sentry, account.Enabled);
+                        }
                     }
 
-                    if (account.Enabled)
+                    if (accounts.Count > 11 && !Titan.Instance.DummyMode)
                     {
-                        accounts.Add(acc);
-                        _allAccounts.Add(acc);
+                        _log.Warning("You have more than 11 account specified in index {Index}. " +
+                                     "It is recommend to specify max. 11 accounts.", Index);
                     }
 
-                    if (!Titan.Instance.Options.Secure)
-                    {
-                        _log.Debug("Found account (specified in index #{Index}): Username: {Username} / " +
-                                   "Password: {Password} / Sentry: {sentry} / Enabled: {Enabled}",
-                            Index, account.Username, account.Password, account.Sentry, account.Enabled);
-                    }
+                    Accounts.Add(Index, accounts);
+
+                    Index++;
                 }
-
-                if (accounts.Count > 11 && !Titan.Instance.DummyMode)
-                {
-                    _log.Warning("You have more than 11 account specified in index {Index}. " +
-                                 "It is recommend to specify max. 11 accounts.", Index);
-                }
-
-                Accounts.Add(Index, accounts);
-
-                Index++;
+            }
+            else
+            {
+                _log.Warning("The accounts.json could not be parsed. Enabling Dummy mode.");
+                _file.MoveTo(Path.Combine(_file.DirectoryName, "accounts.broken.json"));
+                ParseAccountFile(); // Recursion is a meme
+                return;
             }
 
             if (_allAccounts.Count < 11 && !Titan.Instance.DummyMode && _allAccounts.Count >= 1)
