@@ -277,6 +277,7 @@ namespace Titan
                 Instance.Scheduler.Shutdown();
             }
             
+            Instance.UIManager.Destroy();
             Instance.ThreadManager.FinishBotting();
             Instance.AccountManager.SaveAccountsFile();
             Instance.VictimTracker.SaveVictimsFile();

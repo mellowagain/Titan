@@ -76,6 +76,22 @@ namespace Titan.UI
             };
         }
 
+        public void Destroy()
+        {
+            foreach (var pair in _forms)
+            {
+                if (pair.Value.Visible)
+                {
+                    pair.Value.Close();
+                }
+            }
+
+            if (TrayIcon.Visible)
+            {
+                TrayIcon.Hide();
+            }
+        }
+
         public void ShowForm(UIType ui)
         {
             if(_forms.TryGetValue(ui, out var form))

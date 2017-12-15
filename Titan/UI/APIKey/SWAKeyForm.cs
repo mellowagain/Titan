@@ -17,7 +17,6 @@ namespace Titan.UI.APIKey
         public SWAKeyForm(UIManager uiManager)
         {
             Title = "Titan - Steam Web API action required";
-            ClientSize = new Size(500, 125);
             Resizable = false;
             Topmost = true;
             Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON;

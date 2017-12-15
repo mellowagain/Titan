@@ -14,7 +14,6 @@ namespace Titan.UI._2FA
         public _2FAForm(ProtectedAccount account, string eMail = null)
         {
             Title = "Titan - 2FA Action required - " + account.JsonAccount.Username;
-            ClientSize = new Size(500, 125);
             Resizable = false;
             Topmost = true;
             Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
