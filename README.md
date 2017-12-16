@@ -1,5 +1,7 @@
-<p align="center"><img width=15% src="https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Logo.png"></p>
-<p align="center"><img width=40% src="https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Text.png"></p>
+<div align="center">
+    <img width=15% src="https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Logo.png">
+    <h1>Titan</h1>
+</div>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [![Version](https://img.shields.io/github/release/Marc3842h/Titan/all.svg?label=version)](https://github.com/Marc3842h/Titan/releases)
@@ -36,7 +38,7 @@ Every version of Titan is provided as binary archive. An installation process is
 
 **Windows**: [.NET Framework ≥4.6.1](https://www.microsoft.com/en-us/download/details.aspx?id=53344) (and for building [Visual Studio 2017](https://www.visualstudio.com/downloads/)).  
 **Linux**: [Mono ≥5.4](http://www.mono-project.com), [Gtk 3](https://www.gtk.org/), [Gtk# 3](http://www.mono-project.com/docs/gui/gtksharp/),
-[libNotify](https://launchpad.net/ubuntu/+source/libnotify) and [libAppindicator 3](https://packages.ubuntu.com/trusty/libappindicator3-dev) (and for building [MsBuild](https://github.com/Microsoft/msbuild)).
+[libNotify](https://launchpad.net/ubuntu/+source/libnotify) and [libAppindicator 3](https://packages.ubuntu.com/trusty/libappindicator3-dev) (and for building [MsBuild ≥15.0](https://github.com/Microsoft/msbuild)).
 
 #### Option 1: Binary
 
@@ -52,7 +54,7 @@ $ cd Titan
 # Run this in a PowerShell terminal on Windows
 PS> .\build.ps1
 
-# Run this in a bash terminal on Linux
+# Run this in a terminal on Linux
 $ chmod +x build.sh && ./build.sh
 ```
 
@@ -60,7 +62,7 @@ $ chmod +x build.sh && ./build.sh
 
 #### Accounts file
 
-Create a ```accounts.json``` in main directory with data:
+Create a `accounts.json` in main directory with data:
 ```json
 {
     // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
@@ -123,6 +125,9 @@ If one of your recently botted players got banned, you'll also receive a notific
 
 ![Notification](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Notification.png)
 
+Please note that Titan is running as service by default. To close Titan
+completely, please click `File > Exit` in the menu bar.
+
 <sup>All screenshots have been taken on <b>Arch Linux</b> using <b>Gnome</b> with the <b>Ark-Dark</b> theme.</sup>
 
 #### Converting existing accounts file
@@ -165,8 +170,9 @@ Please use the [issue tracker](https://github.com/Marc3842h/Titan/issues) to rep
 
 #### Developing
 
-Pull Requests are welcome. I suggest using Rider as IDE for this project, but you're free to choose whatever
-you want.
+Pull Requests are welcome. Before being able to load the `.sln` project
+using your favorite IDE, please restore the NuGet packages (`nuget restore`)
+as they are required for loading the project.
 
 #### Donations
 
