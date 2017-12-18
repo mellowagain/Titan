@@ -1,0 +1,115 @@
+Titan(1) - Advanced CS:GO report and commend bot
+================================================
+
+## SYNOPSIS
+
+`titan` [<args>...] <br>
+`titan` `report` `-t` <target> `m` <match id>... <br>
+`titan` `commend` <br>
+
+## DESCRIPTION
+
+**Titan** is an advanced Counter-Strike Global Offensive report and commendation bot. 
+Its goal is to maintain a clean Matchmaking system by sending a target forcefully 
+(by 11 reports) into Overwatch. It provides a advanced set of features and high 
+effiency when compared against other report and commendation bots.
+
+In its default mode, `Titan` opens up a user-friendly clickable
+UI that can be used for reporting and commending aswell as adding
+multiple new bot accounts to Titans internal list.
+
+## OPTIONS
+
+These options control whether **Titan** should start using the UI or directly
+begin reporting / commending.
+
+  * `report`:
+    Instructs **Titan** to automatically start reporting the provided target
+    in a match provided by the Match ID.
+  
+  * `command`:
+    Instructs **Titan** to automatically start commending the provided target.
+
+Verb arguments control what should happen and only work when with a provided
+verb (`report` and `commend`).
+
+  * `-t`, `--target`:
+    Required. Provides the target that should be reported or commended
+    by **Titan**. Works for both `report` and `commend`.
+  
+  * `-m`, `--match`:
+    Optional. Provides the Match ID in which a target should be reported
+    in by **Titan**. Only works with `report` verb.
+  
+  * `-i`, `--index`:
+    Optional. Provides the `accounts.json` index which instructs what
+    accounts should be used for reporting / commending by **Titan**.
+    Works for both `report` and `commend`.
+
+These options control the reporting options. These only work with
+the `report` verb.
+
+  * `--abusivetext`:
+    Optional. If passed, the target will be reported for Abuse Text Chat.
+  
+  * `--abusivevoice`:
+    Optional. If passed, the target will be reported for Abuse Voice Chat.
+  
+  * `--griefing`:
+    Optional. If passed, the target will be reported for Griefing.
+  
+  * `--aimhacking`:
+    Optional. If passed, the target will be reported for Aim Hacking.
+  
+  * `--wallhacking`:
+    Optional. If passed, the target will be reported for Wall Hacking.
+  
+  * `--otherhacking`:
+    Optional. If passed, the target will be reported for Other Hacking.
+  
+These options control the commending options. These only work with
+the `commend` verb.
+
+  * `--leader`:
+    Optional. If passed, the target will be commended for being a leader.
+  
+  * `--friendly`:
+    Optional. If passed, the target will be commended for being friendly.
+    
+  * `--teacher`:
+    Optional. If passed, the target will be commended for being a teacher.
+  
+These option control the behaviour of **Titan**.
+
+  * `-f`, `--file`:
+    Optional. Provides path to `accounts.json` in which the bot accounts
+    that are used by **Titan** for reporting and commending are listed.
+    
+  * `-s`, `--secure`:
+    Optional. If passed, console output will be secured so that no
+    account information or other serious information will be printed.
+    This can be used for taking screenshots or recording videos.
+  
+  * `-b`, `--noblacklist`:
+    Optional. Disables the internal **Titan** blacklist that prevents
+    people botting the owner and friends of this report and commend bot.
+  
+## ENVIRONMENT
+
+  * `TITAN_WEB_API_KEY`:
+    If exists, **Titan** will prefer to use the Steam Web API key provided
+    with that environment variable. If it is not set and the user
+    inputted a Steam Web API key within **Titan**, it will be saved to 
+    this environment variable.
+
+## BUGS
+
+Bugs within **Titan** can be reported on GitHub: https://github.com/Marc3842h/Titan
+
+## COPYRIGHT
+
+**Titan** is licensed under the MIT license. Copyright (C) 2017 Marc3842h
+
+## SEE ALSO
+
+steam(6), mono(1)
