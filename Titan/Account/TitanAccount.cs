@@ -83,13 +83,6 @@ namespace Titan.Account
             _liveGameInfo = info;
         }
 
-        public IdleInfo _idleInfo;
-
-        public void FeedIdleInfo(IdleInfo info)
-        {
-            _idleInfo = info;
-        }
-
         ////////////////////////////////////////////////////
         // PAYLOADS
         ////////////////////////////////////////////////////

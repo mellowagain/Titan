@@ -407,32 +407,6 @@ namespace Titan.Managers
             }
         }
 
-        public void StartIdleing(int index, IdleInfo info)
-        {
-            if (Accounts.TryGetValue(index, out var accounts))
-            {
-                accounts.Last().IsLast = true;
-                
-                foreach (var acc in accounts)
-                {
-                    try
-                    {
-                        Titan.Instance.ThreadManager.StartIdling(acc, info);
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
-                            acc.JsonAccount.Username, ex.Message);
-                    }
-                }
-            }
-            else
-            {
-                _log.Error("Could not export accounts for current index {Index}. " +
-                           "Does it exist?", Index);
-            }
-        }
-
         public void AddAccount(TitanAccount account)
         {
             if (!Accounts.ContainsKey(_lastIndex))

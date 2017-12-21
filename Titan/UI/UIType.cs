@@ -8,8 +8,7 @@
         TwoFactorAuthentification,
         Settings,
         History,
-        About,
-        ExtraGameInfo
+        About
 
     }
 }

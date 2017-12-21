@@ -87,18 +87,13 @@ namespace Titan
 
             Logger.Debug("Startup: Parsing Command Line Arguments.");
 
-            Parser.Default.ParseArguments<Options, ReportOptions, CommendOptions, IdleOptions>(args)
+            Parser.Default.ParseArguments<Options, ReportOptions, CommendOptions>(args)
                 .WithParsed<ReportOptions>(options =>
                 {
                     Instance.EnableUI = false;
                     Instance.ParsedObject = options;
                 })
                 .WithParsed<CommendOptions>(options =>
-                {
-                    Instance.EnableUI = false;
-                    Instance.ParsedObject = options;
-                })
-                .WithParsed<IdleOptions>(options =>
                 {
                     Instance.EnableUI = false;
                     Instance.ParsedObject = options;
@@ -244,12 +239,6 @@ namespace Titan
                             Leader = opt.Leader,
                             Teacher = opt.Teacher
                         });
-                }
-                else if (Instance.ParsedObject.GetType() == typeof(IdleOptions))
-                {
-                    var opt = (IdleOptions) Instance.ParsedObject;
-
-                    // TODO: Parse the idle options as soon as idling is implemented
                 }
                 else
                 {

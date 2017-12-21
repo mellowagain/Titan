@@ -116,11 +116,10 @@
     <Compile Include="Account\Result.cs" />
     <Compile Include="Account\TitanAccount.cs" />
     <Compile Include="Account\TitanHandler.cs" />
-    <Compile Include="Bans\BanInfo.cs" />
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\Verbs\CommendOptions.cs" />
-    <Compile Include="Bootstrap\Verbs\IdleOptions.cs" />
     <Compile Include="Bootstrap\Verbs\ReportOptions.cs" />
+    <Compile Include="Meta\BanInfo.cs" />
     <Compile Include="Restrictions\Blacklist.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
@@ -132,7 +131,6 @@
     <Compile Include="MatchID\Sharecode\ShareCode.cs" />
     <Compile Include="MatchID\Sharecode\ShareCodeInfo.cs" />
     <Compile Include="Meta\CommendInfo.cs" />
-    <Compile Include="Meta\IdleInfo.cs" />
     <Compile Include="Meta\LiveGameInfo.cs" />
     <Compile Include="Meta\ReportInfo.cs" />
     <Compile Include="Managers\ThreadManager.cs" />
@@ -142,7 +140,6 @@
     <Compile Include="UI\2FA\2FAForm.cs" />
     <Compile Include="UI\About\AboutUI.cs" />
     <Compile Include="UI\APIKey\SWAKeyForm.cs" />
-    <Compile Include="UI\GameInfo\ExtraGameInfo.cs" />
     <Compile Include="UI\General\General.cs" />
     <Compile Include="UI\SharedResources.cs" />
     <Compile Include="UI\UIManager.cs" />

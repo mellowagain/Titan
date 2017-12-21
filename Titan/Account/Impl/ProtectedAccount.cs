@@ -17,7 +17,6 @@ using Titan.MatchID.Live;
 using Titan.UI;
 using Titan.UI._2FA;
 using Titan.Util;
-using Titan.Web;
 
 namespace Titan.Account.Impl
 {
@@ -125,7 +124,6 @@ namespace Titan.Account.Impl
             _reportInfo = null;
             _commendInfo = null;
             _liveGameInfo = null;
-            _idleInfo = null;
             
             if (_steamFriends.GetPersonaState() == EPersonaState.Online)
             {

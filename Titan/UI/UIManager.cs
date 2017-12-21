@@ -5,7 +5,6 @@ using Serilog.Core;
 using Titan.Logging;
 using Titan.UI.About;
 using Titan.UI.APIKey;
-using Titan.UI.GameInfo;
 
 namespace Titan.UI
 {
@@ -33,7 +32,6 @@ namespace Titan.UI
             _forms.Add(UIType.General, new General.General(this));
             _forms.Add(UIType.APIKeyInput, new SWAKeyForm(this));
             _forms.Add(UIType.About, new AboutUI(this));
-            _forms.Add(UIType.ExtraGameInfo, new ExtraGameInfo(this));
             
             _etoApp.MainForm = GetForm<General.General>(UIType.General);
             

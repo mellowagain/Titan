@@ -3,9 +3,9 @@ Titan(1) - Advanced CS:GO report and commend bot
 
 ## SYNOPSIS
 
-`titan` [<args>...] <br>
-`titan` `report` `-t` <target> `m` <match id>... <br>
-`titan` `commend` <br>
+`titan` [<verb>] [<args> ...] <br>
+`titan` `report` `-t` <target> [`-m` <matchid> ...] <br>
+`titan` `commend` `-t` <target> [...] <br>
 
 ## DESCRIPTION
 
@@ -27,7 +27,7 @@ begin reporting / commending.
     Instructs **Titan** to automatically start reporting the provided target
     in a match provided by the Match ID.
   
-  * `command`:
+  * `commend`:
     Instructs **Titan** to automatically start commending the provided target.
 
 Verb arguments control what should happen and only work when with a provided
