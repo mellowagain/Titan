@@ -19,6 +19,12 @@ using Titan.UI;
 using Titan.Util;
 using Titan.Web;
 
+#if __UNIX__
+    using Mono.Unix.Native;
+#else
+    using System.Security.Principal;
+#endif 
+
 namespace Titan
 {
     public sealed class Titan
@@ -28,6 +34,7 @@ namespace Titan
         public static Titan Instance;
 
         public Options Options;
+        public bool IsAdmin;
         public bool EnableUI = true;
         public object ParsedObject;
 
@@ -59,6 +66,27 @@ namespace Titan
 
             Logger = LogCreator.Create();
             
+            #if __UNIX__
+                Instance.IsAdmin = Syscall.getuid() == 0; // UID of root is always 0
+            #else
+                Instance.IsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
+                                   .IsInRole(WindowsBuiltInRole.Administrator);
+            #endif
+            
+            if (Instance.IsAdmin)
+            {
+                Logger.Error("Titan is running as administrator or root.");
+                Logger.Error("This is not supported. Titan will refuse to start until you start it as normal user.");
+                
+                #if __UNIX__
+                #else
+                    Console.Write("Press any key to exit Titan...");
+                    Console.Read();
+                #endif
+                
+                return -1;
+            }
+            
             Logger.Debug("Titan was called from: {dir}", Environment.CurrentDirectory);
             Logger.Debug("Working in directory: {dir}", Instance.Directory.ToString());
             
@@ -71,6 +99,20 @@ namespace Titan
             {
                 systemNetHttpDll.Delete();
             }
+
+            // Windows users run the program by double clicking Titan.exe (and then it opens a console window)
+            // and in case of exception occurence, this window gets immediatly closed which is bad because
+            // they don't give me the stacktrace then :( - Use this exception handler
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                Logger.Error((Exception)eventArgs.ExceptionObject, "Lol error");
+                
+                #if __UNIX__
+                #else
+                    Console.Write("Press any key to continue...");
+                    Console.Read();
+                #endif
+            };
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
@@ -130,33 +172,43 @@ namespace Titan
             {
                 Instance.UIManager = new UIManager();
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                if (ex.GetType() == typeof(InvalidOperationException))
+                if (!string.IsNullOrEmpty(ex.Message) && ex.Message.ToLower().Contains("could not detect platform"))
                 {
-                    var osEx = (InvalidOperationException) ex;
-
-                    if (osEx.Message.ToLower().Contains("could not detect platform"))
+                    Logger.Error("---------------------------------------");
+                    Logger.Error("A fatal error has been detected!");
+                    Logger.Error("Eto.Forms could not detect your current operating system.");
+                    if (Type.GetType("Mono.Runtime") != null)
                     {
-                        Log.Error("---------------------------------------");
-                        Log.Error("A fatal error has been detected!");
-                        Log.Error("You are missing a Eto.Forms platform assembly.");
-                        if (Type.GetType("Mono.Runtime") != null)
-                        {
-                            Log.Error("Please read the README.md file and install all required dependencies.");
-                        }
-                        else
-                        {
-                            Log.Error("Either {0} or {1} Titan. Titan will now shutdown.", "redownload", "rebuild");
-                        }
-                        Log.Error("Contact {Marc} on Discord for more information.", "Marc3842h#7312");
-                        Log.Error("---------------------------------------");
-
-                        return -1;
+                        Logger.Error("Please install {0}, {1}, {2}, {3} and {4} before submitting a bug report.",
+                                     "Mono (\u22655.4)", 
+                                     "Gtk 3",
+                                     "Gtk# 3 (GTK Sharp)",
+                                     "libNotify",
+                                     "libAppindicator3");
                     }
+                    else
+                    {
+                        Logger.Error("Please install {0} before submitting a bug report.", 
+                                     ".NET Framework (\u22654.6.1)");
+                    }
+                    Logger.Error("Contact {Marc} on Discord if the issue still persists after installing " +
+                                 "the dependencies listed above.", "Marc3842h#7312");
+                    Logger.Error("---------------------------------------");
+                    Logger.Debug(ex, "Include the error below if you\'re contacting Marc on Discord.");
+
+                    #if __UNIX__
+                    #else
+                        Console.Write("Press any key to exit Titan...");
+                        Console.Read();
+                    #endif
+                    
+                    Instance.Scheduler.Shutdown();
+                    return -1;
                 }
                 
-                Log.Error(ex, "A error occured while loading UI.");
+                Logger.Error(ex, "A error occured while loading UI.");
                 throw;
             }
 
