@@ -101,13 +101,16 @@ namespace Titan
 
             // Windows users run the program by double clicking Titan.exe (and then it opens a console window)
             // and in case of exception occurence, this window gets immediatly closed which is bad because
-            // they don't give me the stacktrace then :( - Use this exception handler
+            // they're unable to attach the stacktrace then. Prevent it by waiting until the user presses a key.
             AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
             {
-                #if !__UNIX__
-                    Console.Write("Press any key to continue...");
-                    Console.Read();
-                #endif
+                if (eventArgs.IsTerminating)
+                {
+                    #if !__UNIX__
+                        Console.Write("Press any key to exit Titan...");
+                        Console.Read();
+                    #endif
+                }
             };
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
