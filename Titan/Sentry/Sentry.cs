@@ -49,7 +49,7 @@ namespace Titan.Sentry
 
         public byte[] Hash()
         {
-            if (!_file.Exists)
+            if (_file.Exists)
             {
                 var fileBytes = File.ReadAllBytes(_file.ToString());
 
