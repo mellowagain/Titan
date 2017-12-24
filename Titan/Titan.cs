@@ -128,7 +128,15 @@ namespace Titan
 
             Logger.Debug("Startup: Parsing Command Line Arguments.");
 
-            Parser.Default.ParseArguments<Options, ReportOptions, CommendOptions>(args)
+            // Default
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(options =>
+                {
+                    Instance.Options = options;
+                });
+            
+            // Verbs
+            Parser.Default.ParseArguments<ReportOptions, CommendOptions>(args)
                 .WithParsed<ReportOptions>(options =>
                 {
                     Instance.EnableUI = false;
@@ -158,6 +166,11 @@ namespace Titan
                 }
             }
 
+            if (Instance.Options.Secure)
+            {
+                Logger.Debug("Secure mode has been enabled. Titan will output no sensitive data.");
+            }
+            
             if (Instance.Options.DisableBlacklist)
             {
                 Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");

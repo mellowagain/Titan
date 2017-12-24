@@ -10,43 +10,43 @@ namespace Titan.Bootstrap.Verbs
 
         [Option('t', "target", Required = true,
             HelpText = "SteamID of the target that should be reported")]
-        public string Target { get; }
+        public string Target { get; set; }
 
         [Option('m', "match", Required = false, Default = "8",
             HelpText = "Match Sharelink with that the target should be sent into Overwatch")]
         [DefaultValue("8")]
-        public string Match { get; } = "8";
+        public string Match { get; set; } = "8";
 
         [Option('i', "index", Required = false, Default = -2,
             HelpText = "Index which should be used for botting: -1 for all accounts, -2 for available index")]
         [DefaultValue(-2)]
-        public int Index { get; } = -2;
+        public int Index { get; set; } = -2;
         
         // -------------------------------------
         
         [Option("abusivetext", Default = true, Required = false)]
         [DefaultValue(true)]
-        public bool AbusiveTextChat { get; } = true;
+        public bool AbusiveTextChat { get; set; } = true;
         
         [Option("abusivevoice", Default = true, Required = false)]
         [DefaultValue(true)]
-        public bool AbusiveVoiceChat { get; } = true;
+        public bool AbusiveVoiceChat { get; set; } = true;
         
         [Option("griefing", Default = true, Required = false)]
         [DefaultValue(true)]
-        public bool Griefing { get; } = true;
+        public bool Griefing { get; set; } = true;
         
         [Option("aimhacking", Default = true, Required = false)]
         [DefaultValue(true)]
-        public bool AimHacking { get; } = true;
+        public bool AimHacking { get; set; } = true;
         
         [Option("wallhacking", Default = true, Required = false)]
         [DefaultValue(true)]
-        public bool WallHacking { get; } = true;
+        public bool WallHacking { get; set; } = true;
         
         [Option("otherhacking", Default = true, Required = false)]
         [DefaultValue(true)]
-        public bool OtherHacking { get; } = true;
+        public bool OtherHacking { get; set; } = true;
         
     }
     

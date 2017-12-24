@@ -33,15 +33,21 @@ namespace Titan.Web
                 {
                     SWAKey = reader.ReadLine();
                 }
-                
-                _handle.Log.Debug("Received key from {file} file: {key}", "steamapi.key", SWAKey);
+
+                if (!Titan.Instance.Options.Secure)
+                {
+                    _handle.Log.Debug("Received key from {file} file: {key}", "steamapi.key", SWAKey);
+                }
             } 
             
             if (!string.IsNullOrEmpty(EnvironmentKey) && string.IsNullOrEmpty(SWAKey))
             {
                 SWAKey = EnvironmentKey;
-                
-                _handle.Log.Debug("Received key from environment variable: {key}", SWAKey);
+
+                if (!Titan.Instance.Options.Secure)
+                {
+                    _handle.Log.Debug("Received key from environment variable: {key}", SWAKey);
+                }
             }
 
             if (!string.IsNullOrEmpty(SWAKey))

@@ -469,7 +469,8 @@ namespace Titan.UI.General
             grid.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell("Password"),
-                HeaderText = "Password"
+                HeaderText = "Password",
+                Visible = !Titan.Instance.Options.Secure
             });
             
             grid.Columns.Add(new GridColumn
@@ -478,17 +479,29 @@ namespace Titan.UI.General
                 {
                     TextAlignment = TextAlignment.Center
                 },
-                HeaderText = "Steam Guard"
+                HeaderText = "Steam Guard",
+                Visible = !Titan.Instance.Options.Secure
             });
 
             grid.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell("Secret"),
-                HeaderText = "Shared Secret"
+                HeaderText = "Shared Secret",
+                Visible = !Titan.Instance.Options.Secure
             });
             
             var txtBoxUsername = new TextBox { PlaceholderText = "Username" };
-            var txtBoxPassword = new TextBox { PlaceholderText = "Password" };
+
+            TextControl txtBoxPassword;
+            if (Titan.Instance.Options.Secure)
+            {
+                txtBoxPassword = new PasswordBox { PasswordChar = '\u2022' };
+            }
+            else
+            {
+                txtBoxPassword = new TextBox { PlaceholderText = "Password" };
+            }
+            
             var cbSentry = new CheckBox { Text = "Steam Guard", Checked = false };
             
             var btnAddUpdate = new Button { Text = "Add / Update" };

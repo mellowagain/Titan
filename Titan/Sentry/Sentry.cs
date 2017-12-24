@@ -41,8 +41,11 @@ namespace Titan.Sentry
                 {
                     hash = sha.ComputeHash(stream);
                 }
-                
-                _log.Debug("Wrote to sentry file with hash: {Hash}", Convert.ToBase64String(hash));
+
+                if (!Titan.Instance.Options.Secure)
+                {
+                    _log.Debug("Wrote to sentry file with hash: {Hash}", Convert.ToBase64String(hash));
+                }
                 return true;
             }
         }
@@ -59,7 +62,10 @@ namespace Titan.Sentry
 
                     if (hash != null && hash.Length > 0)
                     {
-                        _log.Debug("Hash for sentry file found: {Hash}", Convert.ToBase64String(hash));
+                        if (!Titan.Instance.Options.Secure)
+                        {
+                            _log.Debug("Hash for sentry file found: {Hash}", Convert.ToBase64String(hash));
+                        }
 
                         return hash;
                     }

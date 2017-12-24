@@ -19,8 +19,16 @@ namespace Titan.UI._2FA
             Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
 
             _log = LogCreator.Create("2FA Form - " + account.JsonAccount.Username + " (Protected)");
-            
-            var txtBoxCode = new TextBox { PlaceholderText = "GHC9Y" };
+
+            TextControl txtBoxCode;
+            if (Titan.Instance.Options.Secure)
+            {
+                txtBoxCode = new PasswordBox { PasswordChar = '\u2022' };
+            }
+            else
+            {
+                txtBoxCode = new TextBox { PlaceholderText = "GHC9Y" };
+            }
             
             var btnSubmit = new Button { Text = "Submit" };
             btnSubmit.Click += delegate

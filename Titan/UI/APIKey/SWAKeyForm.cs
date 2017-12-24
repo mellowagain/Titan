@@ -22,8 +22,16 @@ namespace Titan.UI.APIKey
             Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
 
             _uiManager = uiManager;
-            
-            var txtBoxKey = new TextBox { PlaceholderText = "F23C62A2B9263314FGE2FDA2F9CC683Z" };
+
+            TextControl txtBoxKey;
+            if (Titan.Instance.Options.Secure)
+            {
+                txtBoxKey = new PasswordBox { PasswordChar = '\u2022' };
+            }
+            else
+            {
+                txtBoxKey = new TextBox { PlaceholderText = "F23C62A2B9263314FGE2FDA2F9CC683Z" };
+            }
             
             var btnSite = new Button { Text = "Steam API Key Website" };
             btnSite.Click += (sender, args) => Process.Start("https://steamcommunity.com/dev/apikey");

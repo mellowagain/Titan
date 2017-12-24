@@ -9,23 +9,23 @@ namespace Titan.Bootstrap
         [Option('f', "file", Default = "accounts.json", Required = false,
             HelpText = "The file containg a list of Steam accounts owning CS:GO that should be used")]
         [DefaultValue("accounts.json")]
-        public string AccountsFile { get; } = "accounts.json";
+        public string AccountsFile { get; set; } = "accounts.json";
 
         [Option('s', "secure", Default = false, Required = false,
             HelpText = "If Secure Mode is enabled, all logs in the console like account passwords and Web API key" +
                        "will be hidden. Use this if you're recording a video or taking a screenshot of Titan.")]
         [DefaultValue(false)]
-        public bool Secure { get; } = false;
+        public bool Secure { get; set; } = false;
         
         [Option('b', "noblacklist", Default = false, Required = false,
             HelpText = "Disables the Blacklist that is preventing botting of the authors and friend's own bots")]
         [DefaultValue(false)]
-        public bool DisableBlacklist { get; } = false;
+        public bool DisableBlacklist { get; set; } = false;
 
         [Option('d', "debug", Default = true, Required = false, Hidden = true,
             HelpText = "Should the Titan Debug Mode be enabled?")]
         [DefaultValue(true)]
-        public bool Debug { get; } = true; 
+        public bool Debug { get; set; } = true; 
         
     }
 }

@@ -151,7 +151,7 @@ namespace Titan.Account.Impl
 
         public override void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            _log.Debug("Received on connected: {@callback} - Job ID: {id}", callback, callback.JobID.Value);
+            //_log.Debug("Received on connected: {@callback} - Job ID: {id}", callback, callback.JobID.Value);
             
             byte[] hash = null;
             if (_sentry.Exists())
@@ -164,9 +164,12 @@ namespace Titan.Account.Impl
             {
                 _log.Debug("No Sentry file found. Titan will ask for a confirmation code...");
             }
-            
-            _log.Debug("Logging in with Auth Code: {a} / 2FA Code: {b} / Hash: {c}", _authCode, _2FactorCode, 
-                hash != null ? Convert.ToBase64String(hash) : null);
+
+            if (!Titan.Instance.Options.Secure)
+            {
+                _log.Debug("Logging in with Auth Code: {a} / 2FA Code: {b} / Hash: {c}", _authCode, _2FactorCode,
+                    hash != null ? Convert.ToBase64String(hash) : null);
+            }
             _steamUser.LogOn(new SteamUser.LogOnDetails
             {
                 Username = JsonAccount.Username,
@@ -268,7 +271,10 @@ namespace Titan.Account.Impl
                         }
                     }
 
-                    _log.Information("Received 2FA Code: {Code}", _2FactorCode);
+                    if (!Titan.Instance.Options.Secure)
+                    {
+                        _log.Information("Received 2FA Code: {Code}", _2FactorCode);
+                    }
                     break;
                 case EResult.AccountLogonDenied:
                     _log.Information("Opening UI form to get the Auth Token from EMail...");
@@ -282,7 +288,10 @@ namespace Titan.Account.Impl
                         /* Wait until we receive the Auth Token from the UI */
                     }
 
-                    _log.Information("Received Auth Token: {Code}", _authCode);
+                    if (!Titan.Instance.Options.Secure)
+                    {
+                        _log.Information("Received Auth Token: {Code}", _authCode);
+                    }
                     break;
                 case EResult.ServiceUnavailable:
                     _log.Error("Steam is currently offline. Please try again later.");
