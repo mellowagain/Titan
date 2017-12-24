@@ -43,11 +43,11 @@ namespace Titan.Account.Impl
         {
             _log = LogCreator.Create("GC - " + json.Username + (!Titan.Instance.Options.Secure ? " (Unprotected)" : ""));
 
-            _steamConfig = new SteamConfiguration
+            _steamConfig = SteamConfiguration.Create(builder =>
             {
-                ConnectionTimeout = TimeSpan.FromMinutes(1),
-                WebAPIKey = Titan.Instance.WebHandle.GetKey() // May be null at this time, but we can accept that for now
-            };
+                builder.WithConnectionTimeout(TimeSpan.FromMinutes(1));
+                //builder.WithWebAPIKey(Titan.Instance.WebHandle.GetKey()); Is null at time of this creation - needs fix
+            });
             
             _steamClient = new SteamClient(_steamConfig);
             _callbacks = new CallbackManager(_steamClient);

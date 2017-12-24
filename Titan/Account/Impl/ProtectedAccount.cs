@@ -47,11 +47,11 @@ namespace Titan.Account.Impl
         {
             _log = LogCreator.Create("GC - " + json.Username + (!Titan.Instance.Options.Secure ? " (Protected)" : ""));
 
-            _steamConfig = new SteamConfiguration
+            _steamConfig = SteamConfiguration.Create(builder =>
             {
-                ConnectionTimeout = TimeSpan.FromMinutes(3),
-                WebAPIKey = Titan.Instance.WebHandle.GetKey() // May be null at this time, but we can accept that for now
-            };
+                builder.WithConnectionTimeout(TimeSpan.FromMinutes(1));
+                //builder.WithWebAPIKey(Titan.Instance.WebHandle.GetKey()); Is null at time of this creation - needs fix
+            });
             
             _sentry = new Sentry.Sentry(this);
             

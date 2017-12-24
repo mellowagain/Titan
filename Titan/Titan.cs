@@ -78,8 +78,7 @@ namespace Titan
                 Logger.Error("Titan is running as administrator or root.");
                 Logger.Error("This is not supported. Titan will refuse to start until you start it as normal user.");
                 
-                #if __UNIX__
-                #else
+                #if !__UNIX__
                     Console.Write("Press any key to exit Titan...");
                     Console.Read();
                 #endif
@@ -105,10 +104,7 @@ namespace Titan
             // they don't give me the stacktrace then :( - Use this exception handler
             AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
             {
-                Logger.Error((Exception)eventArgs.ExceptionObject, "Lol error");
-                
-                #if __UNIX__
-                #else
+                #if !__UNIX__
                     Console.Write("Press any key to continue...");
                     Console.Read();
                 #endif
@@ -198,8 +194,7 @@ namespace Titan
                     Logger.Error("---------------------------------------");
                     Logger.Debug(ex, "Include the error below if you\'re contacting Marc on Discord.");
 
-                    #if __UNIX__
-                    #else
+                    #if !__UNIX__
                         Console.Write("Press any key to exit Titan...");
                         Console.Read();
                     #endif
