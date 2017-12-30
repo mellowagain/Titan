@@ -189,22 +189,22 @@ namespace Titan.Account.Impl
             {
                 // TODO: Fix reconnecting, see GH issue
                 _log.Information("Disconnected from Steam. Retrying in 2 seconds... ({Count}/5)", _reconnects);
-                _log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
+                //_log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
 
                 Thread.Sleep(TimeSpan.FromSeconds(2));
                 
                 var worker = new BackgroundWorker();
                 worker.DoWork += (sender, args) =>
                 {
-                    _log.Debug("Starting watchdog.");
+                    //_log.Debug("Starting watchdog.");
                     Thread.Sleep(TimeSpan.FromSeconds(10));
                     
-                    _log.Debug("Steam Client connected after 10 sec: {bool}", _steamClient.IsConnected);
-                    _log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
+                    //_log.Debug("Steam Client connected after 10 sec: {bool}", _steamClient.IsConnected);
+                    //_log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
                 };
                 worker.RunWorkerAsync();
                 
-                _log.Debug("Reconnecting to Steam. Watchdog: {@worker}", worker);
+                _log.Debug("Reconnecting to Steam.", worker);
                 _steamClient.Connect();
             }
             else
@@ -301,7 +301,7 @@ namespace Titan.Account.Impl
                     IsRunning = false;
                     break;
                 case EResult.RateLimitExceeded:
-                    _log.Debug("Steam Rate Limit has been reached. Please try it again in a few minutes...");
+                    _log.Error("Steam Rate Limit has been reached. Please try it again in a few minutes...");
 
                     Stop();
 

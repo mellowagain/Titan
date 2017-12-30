@@ -573,6 +573,7 @@ namespace Titan.UI.General
                         }
                     }
                     
+                    Titan.Instance.AccountManager.SaveAccountsFile();
                     RefreshList(ref grid);
                 }
                 else
@@ -595,6 +596,7 @@ namespace Titan.UI.General
                         if (Titan.Instance.AccountManager.TryGetAccount(username, out TitanAccount account))
                         {
                             Titan.Instance.AccountManager.RemoveAccount(account);
+                            Titan.Instance.AccountManager.SaveAccountsFile();
                             RefreshList(ref grid);
                         }
                         else
@@ -683,10 +685,10 @@ namespace Titan.UI.General
             var dataTable = new DataTable();
             dataTable.Columns.Add("Enabled", typeof(bool));
             dataTable.Columns.Add("Index", typeof(int));
-            dataTable.Columns.Add("Username");
-            dataTable.Columns.Add("Password");
+            dataTable.Columns.Add("Username", typeof(string));
+            dataTable.Columns.Add("Password", typeof(string));
             dataTable.Columns.Add("Sentry", typeof(bool));
-            dataTable.Columns.Add("Shared Secret");
+            dataTable.Columns.Add("Shared Secret", typeof(string));
             
             foreach (var index in Titan.Instance.AccountManager.Accounts)
             {
