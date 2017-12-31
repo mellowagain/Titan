@@ -31,7 +31,6 @@ namespace Titan.UI
         {
             _forms.Add(UIType.General, new General.General(this));
             _forms.Add(UIType.APIKeyInput, new SWAKeyForm(this));
-            _forms.Add(UIType.About, new AboutUI(this));
             
             _etoApp.MainForm = GetForm<General.General>(UIType.General);
             

@@ -52,6 +52,7 @@
           <e p="AssemblyInfo.cs" t="Include" />
         </e>
         <e p="Resources" t="Include">
+          <e p="About.png" t="Include" />
           <e p="CREDIT.txt" t="Include" />
           <e p="Form.png" t="Include" />
           <e p="Logo.ico" t="Include" />

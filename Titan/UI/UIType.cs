@@ -5,10 +5,7 @@
 
         General,
         APIKeyInput,
-        TwoFactorAuthentification,
-        Settings,
-        History,
-        About
+        TwoFactorAuthentification
 
     }
 }

@@ -128,6 +128,8 @@ If one of your recently botted players got banned, you'll also receive a notific
 Please note that Titan is running as service by default. To close Titan
 completely, please click `File > Exit` in the menu bar.
 
+![About](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/About.png)
+
 <sup>All screenshots have been taken on <b>Arch Linux</b> using <b>Gnome</b> with the <b>Ark-Dark</b> theme.</sup>
 
 #### Converting existing accounts file

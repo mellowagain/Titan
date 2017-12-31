@@ -12,6 +12,7 @@ using Titan.Json;
 using Titan.Logging;
 using Titan.Meta;
 using Titan.Restrictions;
+using Titan.UI.About;
 using Titan.Util;
 
 namespace Titan.UI.General
@@ -136,7 +137,7 @@ namespace Titan.UI.General
 
                         if (Blacklist.IsBlacklisted(steamID))
                         {
-                            Titan.Instance.UIManager.SendNotification(
+                            _uiManager.SendNotification(
                                 "Restriction applied", 
                                 "The target you are trying to report is blacklisted from botting " +
                                 "in Titan.", 
@@ -181,7 +182,7 @@ namespace Titan.UI.General
                     }
                     else
                     {
-                        Titan.Instance.UIManager.SendNotification(
+                        _uiManager.SendNotification(
                             "Titan - Error", "Could not parse Steam ID " +
                                      txtBoxSteamID.Text + " to Steam ID. Please provide a valid " +
                                      "SteamID, SteamID3 or SteamID64."
@@ -190,7 +191,7 @@ namespace Titan.UI.General
                 }
                 else
                 {
-                    Titan.Instance.UIManager.SendNotification(
+                    _uiManager.SendNotification(
                         "Titan - Error", "Please provide a valid target."
                     );
                 }
@@ -336,7 +337,7 @@ namespace Titan.UI.General
                     }
                     else
                     {
-                        Titan.Instance.UIManager.SendNotification(
+                        _uiManager.SendNotification(
                             "Titan - Error", "Could not parse Steam ID "
                                              + txtBoxSteamID.Text + " to Steam ID. Please provide a valid " +
                                              "SteamID, SteamID3 or SteamID64."
@@ -345,7 +346,7 @@ namespace Titan.UI.General
                 }
                 else
                 {
-                    Titan.Instance.UIManager.SendNotification(
+                    _uiManager.SendNotification(
                         "Titan - Error", "Please provide a valid target."
                     );
                 }
@@ -750,7 +751,7 @@ namespace Titan.UI.General
                         Text = "&File",
                         Items =
                         {
-                            new Command((s, a) => { Titan.Instance.UIManager.SendNotification("Titan", "Not implemented yet."); })
+                            new Command((s, a) => { _uiManager.SendNotification("Titan", "Not implemented yet."); })
                             {
                                 MenuText = "Settings"
                             }
@@ -808,11 +809,11 @@ namespace Titan.UI.General
                                 MenuText = "Discord"
                             },
                             new SeparatorMenuItem(),
-                            new Command((s, a) => { Titan.Instance.UIManager.SendNotification("Titan", "Not implemented yet."); })
+                            new Command((s, a) => { _uiManager.SendNotification("Titan", "Not implemented yet."); })
                             {
                                 MenuText = "System Informations"
                             },
-                            new Command((s, a) => { Titan.Instance.UIManager.SendNotification("Titan", "Not implemented yet."); })
+                            new Command((s, a) => { _uiManager.SendNotification("Titan", "Not implemented yet."); })
                             {
                                 MenuText = "Check for Updates"
                             }
@@ -820,7 +821,7 @@ namespace Titan.UI.General
                     }
                 },
                 
-                AboutItem = new Command((sender, args) => _uiManager.ShowForm(UIType.About))
+                AboutItem = new Command((sender, args) => new AboutUI().ShowDialog(this))
                 {
                     MenuText = "About"
                 },
