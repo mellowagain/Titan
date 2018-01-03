@@ -80,7 +80,14 @@
             <e p="AboutUI.cs" t="Include" />
           </e>
           <e p="General" t="Include">
-            <e p="General.cs" t="Include" />
+            <e p="GeneralUI.cs" t="Include" />
+            <e p="Tab.cs" t="Include" />
+            <e p="Tabs" t="Include">
+              <e p="AccountsTab.cs" t="Include" />
+              <e p="CommendTab.cs" t="Include" />
+              <e p="ReportTab.cs" t="Include" />
+              <e p="ValveStatusTab.cs" t="Include" />
+            </e>
           </e>
           <e p="SharedResources.cs" t="Include" />
           <e p="UIManager.cs" t="Include" />

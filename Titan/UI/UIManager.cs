@@ -29,10 +29,10 @@ namespace Titan.UI
 
         public void InitializeForms()
         {
-            _forms.Add(UIType.General, new General.General(this));
+            _forms.Add(UIType.General, new General.GeneralUI(this));
             _forms.Add(UIType.APIKeyInput, new SWAKeyForm(this));
             
-            _etoApp.MainForm = GetForm<General.General>(UIType.General);
+            _etoApp.MainForm = GetForm<General.GeneralUI>(UIType.General);
             
             InitializeTrayIcon();
         }
@@ -61,7 +61,7 @@ namespace Titan.UI
                 }
             });
 
-            GetForm<General.General>(UIType.General).Closing += (sender, args) =>
+            GetForm<General.GeneralUI>(UIType.General).Closing += (sender, args) =>
             {
                 HideForm(UIType.General);
                 

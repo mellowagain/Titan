@@ -107,14 +107,14 @@ namespace Titan.UI.APIKey
         {
             base.OnShown(e);
 
-            _uiManager.GetForm<General.General>(UIType.General).Enabled = false;
+            _uiManager.GetForm<General.GeneralUI>(UIType.General).Enabled = false;
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             
-            _uiManager.GetForm<General.General>(UIType.General).Enabled = true;
+            _uiManager.GetForm<General.GeneralUI>(UIType.General).Enabled = true;
         }
         
     }
