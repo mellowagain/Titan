@@ -130,15 +130,22 @@ namespace Titan
 
             Logger.Debug("Startup: Parsing Command Line Arguments.");
 
+            var parser = new Parser(config =>
+            {
+                config.IgnoreUnknownArguments = true;
+                config.EnableDashDash = true;
+                config.HelpWriter = TextWriter.Null;
+            });
+            
             // Default
-            Parser.Default.ParseArguments<Options>(args)
+            parser.ParseArguments<Options>(args)
                 .WithParsed(options =>
                 {
                     Instance.Options = options;
                 });
             
             // Verbs
-            Parser.Default.ParseArguments<ReportOptions, CommendOptions>(args)
+            parser.ParseArguments<ReportOptions, CommendOptions>(args)
                 .WithParsed<ReportOptions>(options =>
                 {
                     Instance.EnableUI = false;
