@@ -108,7 +108,7 @@ Bugs within **Titan** can be reported on GitHub: https://github.com/Marc3842h/Ti
 
 ## COPYRIGHT
 
-**Titan** is licensed under the MIT license. Copyright (C) 2017 Marc3842h
+**Titan** is licensed under the MIT license. Copyright (C) 2017-2018 Marc3842h
 
 ## SEE ALSO
 
