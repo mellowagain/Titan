@@ -9,6 +9,7 @@ using Quartz;
 using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
+using SteamKit2;
 using Titan.Bootstrap;
 using Titan.Bootstrap.Verbs;
 using Titan.Logging;
@@ -164,6 +165,9 @@ namespace Titan
                 {
                     Instance.DebugDirectory.Create();
                 }
+
+                DebugLog.AddListener(new TitanListener());
+                DebugLog.Enabled = true;
             }
 
             if (Instance.Options.Secure)

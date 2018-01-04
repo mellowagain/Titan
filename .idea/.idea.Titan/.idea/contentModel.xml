@@ -27,6 +27,7 @@
         </e>
         <e p="Logging" t="Include">
           <e p="LogCreator.cs" t="Include" />
+          <e p="TitanListener.cs" t="Include" />
           <e p="VictimTracker.cs" t="Include" />
         </e>
         <e p="Managers" t="Include">

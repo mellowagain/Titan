@@ -131,6 +131,7 @@
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\Verbs\CommendOptions.cs" />
     <Compile Include="Bootstrap\Verbs\ReportOptions.cs" />
+    <Compile Include="Logging\TitanListener.cs" />
     <Compile Include="Restrictions\Blacklist.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
