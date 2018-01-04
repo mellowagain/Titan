@@ -151,8 +151,11 @@ namespace Titan
                 })
                 .WithNotParsed(error =>
                 {
-                    Instance.EnableUI = true;
-                    Logger.Information("No valid verb has been provided while parsing. Opening UI...");
+                    if (Instance.ParsedObject == null)
+                    {
+                        Instance.EnableUI = true;
+                        Logger.Information("No valid verb has been provided while parsing. Opening UI...");
+                    }
                 });
             
             // Reinitialize logger with new parsed debug option
@@ -257,7 +260,7 @@ namespace Titan
 
             Logger.Information("Hello and welcome to Titan v1.6.0-EAP.");
 
-            if (Instance.EnableUI || Instance.ParsedObject == null || Instance.DummyMode)
+            if (Instance.EnableUI && Instance.ParsedObject == null || Instance.DummyMode)
             {
                 Instance.UIManager.ShowForm(UIType.General);
             }

@@ -64,6 +64,11 @@ namespace Titan.Managers
                                 );
                                 
                                 account.IsLast = false;
+
+                                if (Titan.Instance.ParsedObject != null)
+                                {
+                                    Environment.Exit(0);
+                                }
                             }
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
@@ -156,6 +161,11 @@ namespace Titan.Managers
                                 );
                                 
                                 account.IsLast = false;
+                                
+                                if (Titan.Instance.ParsedObject != null)
+                                {
+                                    Environment.Exit(0);
+                                }
                             }
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
