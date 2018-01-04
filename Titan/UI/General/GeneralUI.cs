@@ -27,7 +27,6 @@ namespace Titan.UI.General
             _tabs.Add(new ReportTab(uiManager));
             _tabs.Add(new CommendTab(uiManager));
             _tabs.Add(new AccountsTab(uiManager, this));
-            //_tabs.Add(new ValveStatusTab(uiManager));
             
             var tabControl = new TabControl();
             foreach (var tab in _tabs)

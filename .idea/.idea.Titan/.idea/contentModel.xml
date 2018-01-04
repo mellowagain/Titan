@@ -88,7 +88,6 @@
               <e p="AccountsTab.cs" t="Include" />
               <e p="CommendTab.cs" t="Include" />
               <e p="ReportTab.cs" t="Include" />
-              <e p="ValveStatusTab.cs" t="Include" />
             </e>
           </e>
           <e p="SharedResources.cs" t="Include" />

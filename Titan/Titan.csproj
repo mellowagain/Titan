@@ -159,7 +159,6 @@
     <Compile Include="UI\General\Tabs\AccountsTab.cs" />
     <Compile Include="UI\General\Tabs\CommendTab.cs" />
     <Compile Include="UI\General\Tabs\ReportTab.cs" />
-    <Compile Include="UI\General\Tabs\ValveStatusTab.cs" />
     <Compile Include="UI\SharedResources.cs" />
     <Compile Include="UI\UIManager.cs" />
     <Compile Include="UI\UIType.cs" />
