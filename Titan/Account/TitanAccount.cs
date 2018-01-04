@@ -1,4 +1,6 @@
-﻿using SteamKit2;
+﻿using System;
+using System.Collections.Generic;
+using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using Titan.Json;
@@ -50,7 +52,21 @@ namespace Titan.Account
         // GAME COORDINATOR
         ////////////////////////////////////////////////////
 
-        public abstract void OnGCMessage(SteamGameCoordinator.MessageCallback callback);
+        public void OnGCMessage(SteamGameCoordinator.MessageCallback callback)
+        {
+            var map = new Dictionary<uint, Action<IPacketGCMsg>>
+            {
+                { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse },
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
+            };
+
+            if (map.TryGetValue(callback.EMsg, out var func))
+            {
+                func(callback.Message);
+            }
+        }
 
         public abstract void OnClientWelcome(IPacketGCMsg msg);
         public abstract void OnReportResponse(IPacketGCMsg msg);

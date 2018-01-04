@@ -252,22 +252,6 @@ namespace Titan.Account.Impl
                 _log.Debug("Successfully logged off from Steam: {Result}", callback.Result);
         }
 
-        public override void OnGCMessage(SteamGameCoordinator.MessageCallback callback)
-        {
-            var map = new Dictionary<uint, Action<IPacketGCMsg>>
-            {
-                { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
-                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
-                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse },
-                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
-            };
-
-            if(map.TryGetValue(callback.EMsg, out var func))
-            {
-                func(callback.Message);
-            }
-        }
-
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
             _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...",
