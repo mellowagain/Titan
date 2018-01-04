@@ -239,7 +239,7 @@ namespace Titan.Account.Impl
                     var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
                     playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
                     {
-                        game_id = 730
+                        game_id = GetAppID()
                     });
                     _steamClient.Send(playGames);
 
@@ -248,7 +248,7 @@ namespace Titan.Account.Impl
                     _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
 
                     var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>((uint) EGCBaseClientMsg.k_EMsgGCClientHello);
-                    _gameCoordinator.Send(clientHello, 730);
+                    _gameCoordinator.Send(clientHello, GetAppID());
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                     if (_sgAccount != null)
@@ -374,15 +374,15 @@ namespace Titan.Account.Impl
             
             if (_liveGameInfo != null)
             {
-                _gameCoordinator.Send(GetLiveGamePayload(), 730);
+                _gameCoordinator.Send(GetLiveGamePayload(), GetAppID());
             }
             else if (_reportInfo != null)
             {
-                _gameCoordinator.Send(GetReportPayload(), 730);
+                _gameCoordinator.Send(GetReportPayload(), GetAppID());
             }
             else
             {
-                _gameCoordinator.Send(GetCommendPayload(), 730);
+                _gameCoordinator.Send(GetCommendPayload(), GetAppID());
             }
         }
 

@@ -10,6 +10,7 @@ using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
 using SteamKit2;
+using Titan.Account;
 using Titan.Bootstrap;
 using Titan.Bootstrap.Verbs;
 using Titan.Logging;
@@ -283,6 +284,7 @@ namespace Titan
                             {
                                 SteamID = SteamUtil.Parse(opt.Target),
                                 MatchID = SharecodeUtil.Parse(opt.Match),
+                                AppID = TitanAccount.CSGO_APPID,
 
                                 AbusiveText = opt.AbusiveTextChat,
                                 AbusiveVoice = opt.AbusiveVoiceChat,
@@ -301,6 +303,7 @@ namespace Titan
                         new CommendInfo
                         {
                             SteamID = SteamUtil.Parse(opt.Target),
+                            AppID = TitanAccount.CSGO_APPID,
 
                             Friendly = opt.Friendly,
                             Leader = opt.Leader,

@@ -1,6 +1,7 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
+using Titan.Account;
 using Titan.Logging;
 using Titan.Meta;
 using Titan.Util;
@@ -58,6 +59,7 @@ namespace Titan.UI.General.Tabs
                             cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex, 
                             new CommendInfo {
                                 SteamID = steamID,
+                                AppID = TitanAccount.CSGO_APPID,
                             
                                 Leader = cbLeader.Checked != null && (bool) cbLeader.Checked,
                                 Friendly = cbFriendly.Checked != null && (bool) cbFriendly.Checked,

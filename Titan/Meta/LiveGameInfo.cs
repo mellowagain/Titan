@@ -1,11 +1,9 @@
-﻿using SteamKit2;
-
-namespace Titan.Meta
+﻿namespace Titan.Meta
 {
-    public class LiveGameInfo
+    public class LiveGameInfo : TitanPayloadInfo
     {
         
-        public SteamID SteamID { get; set; }
+        // Uhh, yea - we're useless now I guess? :(
         
     }
 }

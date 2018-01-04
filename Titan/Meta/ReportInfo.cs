@@ -1,11 +1,8 @@
-using SteamKit2;
-
 namespace Titan.Meta
 {
-    public class ReportInfo
+    public class ReportInfo : TitanPayloadInfo
     {
 
-        public SteamID SteamID { get; set; }
         public ulong MatchID { get; set; }
 
         public bool AbusiveText { get; set; }

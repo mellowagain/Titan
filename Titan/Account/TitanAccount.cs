@@ -14,6 +14,8 @@ namespace Titan.Account
     public abstract class TitanAccount
     {
 
+        public const uint CSGO_APPID = 730;
+
         ////////////////////////////////////////////////////
         // JSON SPECIFICATIONS
         ////////////////////////////////////////////////////
@@ -97,6 +99,26 @@ namespace Titan.Account
         public void FeedLiveGameInfo(LiveGameInfo info)
         {
             _liveGameInfo = info;
+        }
+
+        public uint GetAppID()
+        {
+            if (_reportInfo != null)
+            {
+                return _reportInfo.AppID;
+            } 
+            
+            if (_commendInfo != null)
+            {
+                return _commendInfo.AppID;
+            } 
+            
+            if (_liveGameInfo != null)
+            {
+                return _liveGameInfo.AppID;
+            }
+
+            return 0;
         }
 
         ////////////////////////////////////////////////////

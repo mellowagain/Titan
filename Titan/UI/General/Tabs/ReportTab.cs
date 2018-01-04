@@ -2,6 +2,7 @@
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
+using Titan.Account;
 using Titan.Logging;
 using Titan.Meta;
 using Titan.Restrictions;
@@ -65,7 +66,11 @@ namespace Titan.UI.General.Tabs
                         
                             Titan.Instance.AccountManager.StartMatchIDResolving(
                                 cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex,
-                                new LiveGameInfo { SteamID = steamID } );
+                                new LiveGameInfo
+                                {
+                                    SteamID = steamID,
+                                    AppID = TitanAccount.CSGO_APPID
+                                });
                         }
 
                         if (Blacklist.IsBlacklisted(steamID))
@@ -103,6 +108,7 @@ namespace Titan.UI.General.Tabs
                                 new ReportInfo {
                                     SteamID = steamID,
                                     MatchID = matchID,
+                                    AppID = TitanAccount.CSGO_APPID,
                                 
                                     AbusiveText = cbAbusiveText.Checked != null && (bool) cbAbusiveText.Checked,
                                     AbusiveVoice = cbAbusiveVoice.Checked != null && (bool) cbAbusiveVoice.Checked,
