@@ -93,27 +93,28 @@ namespace Titan
             
             // Workaround for Mono related issue regarding System.Net.Http.
             // More detail: https://github.com/dotnet/corefx/issues/19914
-
-            var systemNetHttpDll = new FileInfo(Path.Combine(Instance.Directory.ToString(), "System.Net.Http.dll"));
-            
-            if (systemNetHttpDll.Exists && !PlatformUtil.IsWindows())
-            {
-                systemNetHttpDll.Delete();
-            }
+            #if __UNIX__
+                var systemNetHttpDll = new FileInfo(Path.Combine(Instance.Directory.ToString(), "System.Net.Http.dll"));
+                
+                if (systemNetHttpDll.Exists)
+                {
+                    systemNetHttpDll.Delete();
+                }
+            #endif
 
             // Windows users run the program by double clicking Titan.exe (and then it opens a console window)
             // and in case of exception occurence, this window gets immediatly closed which is bad because
             // they're unable to attach the stacktrace then. Prevent it by waiting until the user presses a key.
-            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
-            {
-                if (eventArgs.IsTerminating)
+            #if !__UNIX__
+                AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
                 {
-                    #if !__UNIX__
+                    if (eventArgs.IsTerminating)
+                    {
                         Console.Write("Press any key to exit Titan...");
                         Console.Read();
-                    #endif
-                }
-            };
+                    }
+                };
+            #endif
             
             Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
             
