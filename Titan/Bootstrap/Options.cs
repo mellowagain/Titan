@@ -16,6 +16,12 @@ namespace Titan.Bootstrap
                        "will be hidden. Use this if you're recording a video or taking a screenshot of Titan.")]
         [DefaultValue(false)]
         public bool Secure { get; set; } = false;
+
+        [Option('a', "admin", Default = false, Required = false,
+            HelpText = "Allow administrators to execute this program. This is NOT recommended as it may " +
+                       "cause security issues. (Steam also doesn't allow to be run as root)")]
+        [DefaultValue(false)]
+        public bool AllowAdmin { get; set; } = false;
         
         [Option('b', "noblacklist", Default = false, Required = false,
             HelpText = "Disables the Blacklist that is preventing botting of the authors and friend's own bots")]

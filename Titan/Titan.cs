@@ -68,26 +68,6 @@ namespace Titan
 
             Logger = LogCreator.Create();
             
-            #if __UNIX__
-                Instance.IsAdmin = Syscall.getuid() == 0; // UID of root is always 0
-            #else
-                Instance.IsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
-                                   .IsInRole(WindowsBuiltInRole.Administrator);
-            #endif
-            
-            if (Instance.IsAdmin)
-            {
-                Logger.Error("Titan is running as administrator or root.");
-                Logger.Error("This is not supported. Titan will refuse to start until you start it as normal user.");
-                
-                #if !__UNIX__
-                    Console.Write("Press any key to exit Titan...");
-                    Console.Read();
-                #endif
-                
-                return -1;
-            }
-            
             Logger.Debug("Titan was called from: {dir}", Environment.CurrentDirectory);
             Logger.Debug("Working in directory: {dir}", Instance.Directory.ToString());
             
@@ -168,6 +148,35 @@ namespace Titan
             
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
+            
+            #if __UNIX__
+                Instance.IsAdmin = Syscall.getuid() == 0; // UID of root is always 0
+            #else
+                Instance.IsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
+                                   .IsInRole(WindowsBuiltInRole.Administrator);
+            #endif
+            
+            if (Instance.IsAdmin)
+            {
+                if (!Instance.Options.AllowAdmin)
+                {
+                    Logger.Error("Titan is running as administrator or root.");
+                    Logger.Error("This is not supported. Titan will refuse to start until you start it as normal " +
+                                 "user. If you are unable to do this for any reason, start Titan with the --admin " +
+                                 "option to force the usage of administrator rights.");
+
+                    #if !__UNIX__
+                        Console.Write("Press any key to exit Titan...");
+                        Console.Read();
+                    #endif
+
+                    return -1;
+                }
+
+                Logger.Warning("Titan has been started as Administrator but will continue to run as the " +
+                               "--admin option has been passed. Please note that Steam also doesn't allow to be " +
+                               "run from root and that it may be insecure.");
+            }
 
             if (Instance.Options.Debug)
             {
