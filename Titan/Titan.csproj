@@ -49,17 +49,14 @@
     <Reference Include="Common.Logging.Serilog, Version=4.3.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Common.Logging.Serilog.4.3.0\lib\net45\Common.Logging.Serilog.dll</HintPath>
     </Reference>
-    <Reference Include="Eto, Version=2.3.6507.33209, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Forms.2.4.0-build1159\lib\net45\Eto.dll</HintPath>
+    <Reference Include="Eto, Version=2.3.6582.38695, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Forms.2.4.0-build1201\lib\net45\Eto.dll</HintPath>
     </Reference>
-    <Reference Include="Eto, Version=2.3.6507.33209, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Forms.2.4.0-build1159\lib\net45\Eto.dll</HintPath>
+    <Reference Include="Eto.Gtk3, Version=2.3.6582.38703, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Gtk3.2.4.0-build1201\lib\net45\Eto.Gtk3.dll</HintPath>
     </Reference>
-    <Reference Include="Eto.Gtk3, Version=2.3.6507.33222, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Gtk3.2.4.0-build1159\lib\net45\Eto.Gtk3.dll</HintPath>
-    </Reference>
-    <Reference Include="Eto.Wpf, Version=2.3.6507.33222, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Wpf.2.4.0-build1159\lib\net45\Eto.Wpf.dll</HintPath>
+    <Reference Include="Eto.Wpf, Version=2.3.6582.38703, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Wpf.2.4.0-build1201\lib\net45\Eto.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Win32.Registry, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
