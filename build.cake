@@ -1,5 +1,5 @@
 #tool "nuget:?package=xunit.runner.console"
-#addin "Cake.FileHelpers"
+#addin "nuget:?package=Cake.FileHelpers&version=2.0.0"
 
 var config = Argument("configuration", "Release");
 var gitHash = Argument("githash", "Unknown Git Hash");
