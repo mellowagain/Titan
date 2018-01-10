@@ -1,7 +1,8 @@
 #tool "nuget:?package=xunit.runner.console"
+#addin "Cake.FileHelpers"
 
 var config = Argument("configuration", "Release");
-
+var gitHash = Argument("githash", "Unknown Git Hash");
 var buildDir = Directory("./Titan/bin/") + Directory(config);
 
 Task("Clean")
@@ -14,7 +15,7 @@ Task("Restore-NuGet-Packages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    if(!NuGetHasSource("https://www.myget.org/F/eto/api/v3/index.json")) {
+    if (!NuGetHasSource("https://www.myget.org/F/eto/api/v3/index.json")) {
         // First add MyGet Eto source
         NuGetAddSource(
             name: "MyGet.org Eto",
@@ -25,11 +26,25 @@ Task("Restore-NuGet-Packages")
     NuGetRestore("./Titan.sln");
 });
 
-Task("Build")
+Task("Set-Version-To-Current-Git-Hash")
     .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
 {
-    if(IsRunningOnWindows())
+    Information("Building for Git Hash: " + gitHash);
+    
+    ReplaceRegexInFiles("./Titan/Properties/AssemblyInfo.cs", 
+                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
+                        "1.6.0-" + gitHash);
+    ReplaceRegexInFiles("./TitanTest/Properties/AssemblyInfo.cs", 
+                            "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
+                            "1.6.0-" + gitHash);
+});
+
+Task("Build")
+    .IsDependentOn("Set-Version-To-Current-Git-Hash")
+    .Does(() =>
+{
+    if (IsRunningOnWindows())
     {
       // Use MSBuild
       MSBuild("./Titan.sln", settings => settings.SetConfiguration(config));
@@ -55,5 +70,4 @@ Task("Run-Unit-Tests")
     });
 });
 
-Task("Default").IsDependentOn("Run-Unit-Tests");
-RunTarget("Default");
+RunTarget("Run-Unit-Tests");

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Titan Test")]
@@ -19,5 +19,6 @@ using System.Runtime.InteropServices;
 // TitanTest uses SemVer (Microsoft doesn't prefer that and displays a warning), thats why we disable the compiler warnings.
 [assembly: AssemblyVersion("1.6.0")]
 [assembly: AssemblyFileVersion("1.6.0")]
+[assembly: AssemblyInformationalVersion("1.6.0-Unknown Git Hash")] // Will be edited by Cake Build Script
 
 #pragma warning restore 7035
