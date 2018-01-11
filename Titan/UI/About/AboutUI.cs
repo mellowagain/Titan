@@ -11,14 +11,20 @@ namespace Titan.UI.About
         
         public AboutUI() : base(Assembly.GetExecutingAssembly())
         {
+            var assembly = Assembly.GetExecutingAssembly();
+            
             Copyright = "Copyright \u00A9 2017-" + DateTime.Now.Year + " Marc3842h";
             Developers = new [] { "Marc3842h", "raspbianlike", "ra1N1336", "bananasss00" };
-            Documenters = new[] { "Marc3842h", "BoberMod" };
+            Documenters = new[] { "Marc3842h", "ikfe", "BoberMod" };
             Logo = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
             License = _license;
-            Version = Assembly.GetExecutingAssembly().GetName().Version.Major + "." +
-                      Assembly.GetExecutingAssembly().GetName().Version.Minor + "." +
-                      Assembly.GetExecutingAssembly().GetName().Version.Build;
+            
+            var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>(); 
+            Version = attribute != null ? attribute.InformationalVersion : 
+                assembly.GetName().Version.Major + "." +
+                assembly.GetName().Version.Minor + "." +
+                assembly.GetName().Version.Build;
+            
             Website = new Uri("https://github.com/Marc3842h/Titan");
             WebsiteLabel = "GitHub";
         }

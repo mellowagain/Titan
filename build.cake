@@ -36,8 +36,8 @@ Task("Set-Version-To-Current-Git-Hash")
                         "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
                         "1.6.0-" + gitHash);
     ReplaceRegexInFiles("./TitanTest/Properties/AssemblyInfo.cs", 
-                            "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
-                            "1.6.0-" + gitHash);
+                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
+                        "1.6.0-" + gitHash);
 });
 
 Task("Build")
@@ -70,4 +70,16 @@ Task("Run-Unit-Tests")
     });
 });
 
-RunTarget("Run-Unit-Tests");
+Task("Cleanup")
+    .IsDependentOn("Run-Unit-Tests")
+    .Does(() =>
+{
+    ReplaceRegexInFiles("./Titan/Properties/AssemblyInfo.cs", 
+                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
+                        "1.6.0-Unknown Git Hash");
+    ReplaceRegexInFiles("./TitanTest/Properties/AssemblyInfo.cs", 
+                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
+                        "1.6.0-Unknown Git Hash");
+});
+
+RunTarget("Cleanup");

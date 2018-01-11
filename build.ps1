@@ -227,7 +227,7 @@ if ($Experimental) { $cakeArguments += "-experimental" }
 if ($Mono) { $cakeArguments += "-mono" }
 
 # Put current Git Hash as argument
-$GitShortHash = "git rev-parse --short HEAD" | Out-String
+$GitShortHash = git rev-parse --short HEAD | Out-String
 
 if ($LASTEXITCODE -ne 0) {
     Throw "An error occured while trying to get Git commit hash. Do you have Git installed?"
