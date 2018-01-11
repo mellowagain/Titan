@@ -233,6 +233,8 @@ if ($LASTEXITCODE -ne 0) {
     Throw "An error occured while trying to get Git commit hash. Do you have Git installed?"
 }
 
+$GitShortHash = $GitShortHash.replace("`n",", ").replace("`r",", ")
+
 $cakeArguments += "-githash=$GitShortHash"
 
 $cakeArguments += $ScriptArgs
