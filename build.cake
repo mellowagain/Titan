@@ -1,5 +1,4 @@
 #tool "nuget:?package=xunit.runner.console"
-#addin "nuget:?package=Cake.FileHelpers&version=1.0.4.16"
 
 var config = Argument("configuration", "Release");
 var gitHash = Argument("githash", "Unknown Git Hash");
@@ -32,12 +31,16 @@ Task("Set-Version-To-Current-Git-Hash")
 {
     Information("Building for Git Hash: " + gitHash);
     
-    ReplaceRegexInFiles("./Titan/Properties/AssemblyInfo.cs", 
-                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
-                        "1.6.0-" + gitHash);
-    ReplaceRegexInFiles("./TitanTest/Properties/AssemblyInfo.cs", 
-                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
-                        "1.6.0-" + gitHash);
+    CopyFile("./Titan/Properties/AssemblyInfo.cs", "./Titan/Properties/AssemblyInfo.cs.old");
+    CopyFile("./TitanTest/Properties/AssemblyInfo.cs", "./TitanTest/Properties/AssemblyInfo.cs.old");
+    
+    TransformTextFile("./Titan/Properties/AssemblyInfo.cs")
+        .WithToken("GitHash", gitHash)
+        .Save("./Titan/Properties/AssemblyInfo.cs");
+    
+    TransformTextFile("./TitanTest/Properties/AssemblyInfo.cs")
+        .WithToken("GitHash", gitHash)
+        .Save("./TitanTest/Properties/AssemblyInfo.cs");
 });
 
 Task("Build")
@@ -74,12 +77,11 @@ Task("Cleanup")
     .IsDependentOn("Run-Unit-Tests")
     .Does(() =>
 {
-    ReplaceRegexInFiles("./Titan/Properties/AssemblyInfo.cs", 
-                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
-                        "1.6.0-Unknown Git Hash");
-    ReplaceRegexInFiles("./TitanTest/Properties/AssemblyInfo.cs", 
-                        "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))",
-                        "1.6.0-Unknown Git Hash");
+    DeleteFile("./Titan/Properties/AssemblyInfo.cs");
+    DeleteFile("./TitanTest/Properties/AssemblyInfo.cs");
+    
+    MoveFile("./Titan/Properties/AssemblyInfo.cs.old", "./Titan/Properties/AssemblyInfo.cs");
+    MoveFile("./TitanTest/Properties/AssemblyInfo.cs.old", "./TitanTest/Properties/AssemblyInfo.cs");
 });
 
 RunTarget("Cleanup");
