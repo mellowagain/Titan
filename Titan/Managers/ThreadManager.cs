@@ -45,11 +45,12 @@ namespace Titan.Managers
                     account.StartTick = DateTime.Now.Ticks;
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
-                    var result = ((Func<Result>) account.Start).RunUntil(account.JsonAccount.Sentry 
-                        ? TimeSpan.FromMinutes(3)
-                        : TimeSpan.FromSeconds(60));
+                    var origin = Task.Run(() => account.Start());
+                    var result = origin.RunUntil(account.JsonAccount.Sentry ? 
+                        TimeSpan.FromMinutes(3) :
+                        TimeSpan.FromSeconds(60));
 
-                    switch(result)
+                    switch (result.Result)
                     {
                         case Result.Success:
                             _count++;
@@ -107,7 +108,7 @@ namespace Titan.Managers
                 }
                 finally
                 {
-                    if(timedOut)
+                    if (timedOut)
                     {
                         account.Stop();
                     }
@@ -142,11 +143,12 @@ namespace Titan.Managers
                     account.StartTick = DateTime.Now.Ticks;
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
-                    var result = ((Func<Result>) account.Start).RunUntil(account.JsonAccount.Sentry 
-                        ? TimeSpan.FromMinutes(3)
-                        : TimeSpan.FromSeconds(60));
+                    var origin = Task.Run(() => account.Start());
+                    var result = origin.RunUntil(account.JsonAccount.Sentry ? 
+                        TimeSpan.FromMinutes(3) :
+                        TimeSpan.FromSeconds(60));
 
-                    switch(result)
+                    switch (result.Result)
                     {
                         case Result.Success:
                             _count++;
@@ -200,7 +202,7 @@ namespace Titan.Managers
                 }
                 finally
                 {
-                    if(timedOut)
+                    if (timedOut)
                     {
                         account.Stop();
                     }
@@ -233,11 +235,12 @@ namespace Titan.Managers
                     account.StartTick = DateTime.Now.Ticks;
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
-                    var result = ((Func<Result>) account.Start).RunUntil(account.JsonAccount.Sentry 
-                        ? TimeSpan.FromMinutes(3)
-                        : TimeSpan.FromSeconds(60));
+                    var origin = Task.Run(() => account.Start());
+                    var result = origin.RunUntil(account.JsonAccount.Sentry ? 
+                        TimeSpan.FromMinutes(3) :
+                        TimeSpan.FromSeconds(60));
 
-                    switch(result)
+                    switch (result.Result)
                     {
                         case Result.Success:
                             _count++;
@@ -269,7 +272,7 @@ namespace Titan.Managers
                 }
                 finally
                 {
-                    if(timedOut)
+                    if (timedOut)
                     {
                         account.Stop();
                     }
@@ -281,31 +284,33 @@ namespace Titan.Managers
             _count = 0;
         }
 
-        public void FinishBotting()
+        public void FinishBotting(TitanAccount acc = null)
         {
-            foreach (var pair in _taskDic)
+            if (acc != null)
             {
-                if (pair.Key.IsRunning || !pair.Value.IsCompleted)
+                if (acc.IsRunning)
                 {
-                    pair.Key.Stop();
-                    
-                    _log.Warning("Forcefully finished botting of account {account}.", pair.Key.JsonAccount.Username);
+                    acc.Stop();
                 }
 
-                _taskDic.Remove(pair.Key);
+                if (_taskDic.ContainsKey(acc))
+                {
+                    _taskDic.Remove(acc);
+                }
             }
-        }
+            else
+            {
+                foreach (var pair in _taskDic)
+                {
+                    if (pair.Key.IsRunning || !pair.Value.IsCompleted)
+                    {
+                        pair.Key.Stop();
+                    
+                        _log.Warning("Forcefully finished botting of account {account}.", pair.Key.JsonAccount.Username);
+                    }
 
-        public void FinishBotting(TitanAccount acc)
-        {
-            if(acc.IsRunning)
-            {
-                acc.Stop();
-            }
-            
-            if(_taskDic.ContainsKey(acc))
-            {
-                _taskDic.Remove(acc);
+                    _taskDic.Remove(pair.Key);
+                }
             }
         }
 

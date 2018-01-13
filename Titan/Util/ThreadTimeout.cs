@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Titan.Util
@@ -6,25 +7,20 @@ namespace Titan.Util
     public static class ThreadTimeout
     {
         
-        public static T RunUntil<T>(this Func<T> function, TimeSpan timeout)
+        // Source: https://stackoverflow.com/a/22078975/7360990
+        public static async Task<TResult> RunUntil<TResult>(this Task<TResult> origin, TimeSpan timeout)
         {
-            var result = default(T);
-            void Action() => result = function();
-
-            try
+            using (var token = new CancellationTokenSource())
             {
-                var task = Task.Factory.StartNew(Action, Task.Factory.CancellationToken);
+                var task = await Task.WhenAny(origin, Task.Delay(timeout, token.Token));
 
-                if (task.Wait(timeout))
+                if (task == origin)
                 {
-                    return result;
+                    token.Cancel();
+                    return await origin;
                 }
                 
-                throw new AggregateException();
-            }
-            catch (AggregateException ex)
-            {
-                throw new TimeoutException("Thread timed out.", ex);
+                throw new TimeoutException("The Thread timed out.");
             }
         }
         

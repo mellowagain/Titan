@@ -15,15 +15,18 @@ namespace TitanTest
             {
                 try
                 {
-                    Func<bool> task = () =>
+                    var origin = Task.Run(() =>
                     {
                         for (;;)
                         {
                             // Let the thread run for a infinite timespan so it can time out.
                         }
-                    };
 
-                    task.RunUntil(TimeSpan.FromSeconds(3));
+                        return 0; // Code is unreachable but we still need it here or else it won't get the result as int
+                    });
+                    var result = origin.RunUntil(TimeSpan.FromSeconds(3));
+                    
+                    Assert.True(false, "The thread didn't timeout and we received our result: " + result.Result);
                 }
                 catch (TimeoutException ex)
                 {
