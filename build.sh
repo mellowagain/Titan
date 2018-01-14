@@ -113,6 +113,14 @@ if [ ! -f "$CAKE_EXE" ]; then
     exit 1
 fi
 
+# Make sure the user actually cloned the repository
+if [ ! -d ".git" ]; then
+    echo "Titan has detected that you downloaded Titan-master.zip off the GitHub website."
+    echo "This is the **WRONG** way to download Titan."
+    echo "Please download it using the following command: git clone https://github.com/Marc3842h/Titan.git"
+    exit 1
+fi
+
 git_short_hash=$(git rev-parse --short HEAD)
 if [ $? -ne 0 ]; then
     echo "An error occured while trying to get Git commit hash. Do you have Git installed?"
