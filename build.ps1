@@ -226,9 +226,9 @@ if ($DryRun) { $cakeArguments += "-dryrun" }
 if ($Experimental) { $cakeArguments += "-experimental" }
 if ($Mono) { $cakeArguments += "-mono" }
 
-$gitDirExists = Test-Path ".git"
+$gitDirPath = Join-Path $PSScriptRoot ".git"
 
-if ($gitDirExists -eq "False") {
+if (!(Test-Path $gitDirPath)) {
     Write-Host "Titan has detected that you downloaded Titan-master.zip off the GitHub website."
     Write-Host "This is the **WRONG** way to download Titan."
     Write-Host "Please download it using the following command: git clone https://github.com/Marc3842h/Titan.git"
