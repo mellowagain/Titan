@@ -28,6 +28,11 @@ namespace Titan.Bootstrap
         [DefaultValue(false)]
         public bool DisableBlacklist { get; set; } = false;
 
+        [Option('k', "steamkitdebug", Default = false, Required = false,
+            HelpText = "Should SteamKit debug messages be printed?")]
+        [DefaultValue(false)]
+        public bool SteamKitDebug { get; set; } = false;
+        
         [Option('d', "debug", Default = true, Required = false, Hidden = true,
             HelpText = "Should the Titan Debug Mode be enabled?")]
         [DefaultValue(true)]

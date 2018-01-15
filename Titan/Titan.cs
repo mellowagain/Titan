@@ -187,8 +187,11 @@ namespace Titan
                     Instance.DebugDirectory.Create();
                 }
 
-                DebugLog.AddListener(new TitanListener());
-                DebugLog.Enabled = true;
+                if (Instance.Options.SteamKitDebug)
+                {
+                    DebugLog.AddListener(new TitanListener());
+                    DebugLog.Enabled = true;
+                }
             }
 
             if (Instance.Options.Secure)
