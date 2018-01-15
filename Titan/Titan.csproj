@@ -75,7 +75,7 @@
       <HintPath>..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4">
-      <HintPath>..\packages\Quartz.3.0.0-beta1\lib\net452\Quartz.dll</HintPath>
+      <HintPath>..\packages\Quartz.3.0.0\lib\net452\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
       <HintPath>..\packages\Serilog.2.6.0-dev-00902\lib\net46\Serilog.dll</HintPath>
