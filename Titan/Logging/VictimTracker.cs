@@ -47,7 +47,7 @@ namespace Titan.Logging
             _victims.Add(new Victims.Victim
             {
                 SteamID = steamID.ConvertToUInt64(),
-                Ticks = DateTime.Now.Ticks
+                Timestamp = DateTime.Now.ToEpochTime()
             });
         }
 
@@ -127,7 +127,7 @@ namespace Titan.Logging
                 foreach (var victim in _victims.ToArray())
                 {
                     var target = SteamUtil.FromSteamID64(victim.SteamID);
-                    var time = DateTime.Now.Subtract(new DateTime(victim.Ticks));
+                    var time = DateTime.Now.Subtract(victim.Timestamp.ToDateTime());
 
                     if (Titan.Instance.WebHandle.RequestBanInfo(target, out var banInfo))
                     {

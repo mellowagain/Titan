@@ -45,7 +45,7 @@ namespace Titan.Managers
             }
 
             _log.Debug("Titan Account Manager initialized on {TimeString}. ({UnixTimestamp})",
-                DateTime.Now.ToShortTimeString(), Math.Round((double) TimeUtil.GetCurrentTicks()));
+                       DateTime.Now.ToShortTimeString(), DateTime.Now.ToEpochTime());
         }
 
         public void ParseAccountFile()
@@ -136,7 +136,7 @@ namespace Titan.Managers
             else
             {
                 _log.Warning("The accounts.json could not be parsed. Enabling Dummy mode.");
-                _file.MoveTo(Path.Combine(_file.DirectoryName, "accounts.broken.json"));
+                _file.MoveTo(Path.Combine(Titan.Instance.Directory.ToString(), "accounts.broken.json"));
                 ParseAccountFile(); // Recursion is a meme
                 return;
             }
@@ -221,7 +221,7 @@ namespace Titan.Managers
                 foreach (var expireEntry in _parsedIndex.Entries)
                 {
                     // check if a entry that is marked for expiration is already expired and ready to bot
-                    if (expireEntry.ExpireTimestamp <= TimeUtil.GetCurrentTicks())
+                    if (expireEntry.ExpireTimestamp <= DateTime.Now.ToEpochTime())
                     {
                         _log.Debug("Index {Index} has expired. It is now available for botting.",
                             expireEntry.TargetedIndex);
@@ -243,7 +243,7 @@ namespace Titan.Managers
 
                         _log.Debug("Index #{Index} hasn't expired yet. It will expire on {Time}.",
                             expireEntry.TargetedIndex,
-                            TimeUtil.TicksToDateTime(expireEntry.ExpireTimestamp).ToShortTimeString());
+                            expireEntry.ExpireTimestamp.ToDateTime().ToShortTimeString());
 
                         if (expireEntry.TargetedIndex == lowest)
                         {
@@ -338,7 +338,7 @@ namespace Titan.Managers
 
             if (!_indexEntries.ContainsKey(index) && index != -1)
             {
-                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(12)));
+                _indexEntries.Add(index, DateTime.Now.AddHours(12).ToEpochTime()); // TODO
                 SaveIndexFile();
             }
 
@@ -377,7 +377,7 @@ namespace Titan.Managers
 
             if (!_indexEntries.ContainsKey(index))
             {
-                _indexEntries.Add(index, TimeUtil.DateTimeToTicks(DateTime.Now.AddHours(12)));
+                _indexEntries.Add(index, DateTime.Now.AddHours(12).ToEpochTime());
                 SaveIndexFile();
             }
 

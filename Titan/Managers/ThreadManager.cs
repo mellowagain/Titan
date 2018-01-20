@@ -42,7 +42,7 @@ namespace Titan.Managers
 
                 try
                 {
-                    account.StartTick = DateTime.Now.Ticks;
+                    account.StartEpoch = DateTime.Now.ToEpochTime();
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
                     var origin = Task.Run(() => account.Start());
@@ -100,8 +100,8 @@ namespace Titan.Managers
                 }
                 catch (TimeoutException)
                 {
-                    var timeSpent = new DateTime(DateTime.Now.Ticks).Subtract(new DateTime(account.StartTick));
-
+                    var timeSpent = DateTime.Now.Subtract(account.StartEpoch.ToDateTime());
+                    
                     _log.Error("Connection to account {Account} timed out. It was not possible to " +
                                "report the target after {Timespan} seconds.", account.JsonAccount.Username, timeSpent.Seconds);
                     timedOut = true;
@@ -140,7 +140,7 @@ namespace Titan.Managers
 
                 try
                 {
-                    account.StartTick = DateTime.Now.Ticks;
+                    account.StartEpoch = DateTime.Now.ToEpochTime();
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
                     var origin = Task.Run(() => account.Start());
@@ -194,7 +194,7 @@ namespace Titan.Managers
                 }
                 catch (TimeoutException)
                 {
-                    var timeSpent = new DateTime(DateTime.Now.Ticks).Subtract(new DateTime(account.StartTick));
+                    var timeSpent = DateTime.Now.Subtract(account.StartEpoch.ToDateTime());
 
                     _log.Error("Connection to account {Account} timed out. It was not possible to " +
                                "commend the target after {Timespan} seconds.", account.JsonAccount.Username, timeSpent.Seconds);
@@ -232,7 +232,7 @@ namespace Titan.Managers
 
                 try
                 {
-                    account.StartTick = DateTime.Now.Ticks;
+                    account.StartEpoch = DateTime.Now.ToEpochTime();
 
                     // Timeout on Sentry Account: 3min (so the user has enough time to input the 2FA code), else 60sec.
                     var origin = Task.Run(() => account.Start());
@@ -264,7 +264,7 @@ namespace Titan.Managers
                 }
                 catch (TimeoutException)
                 {
-                    var timeSpent = new DateTime(DateTime.Now.Ticks).Subtract(new DateTime(account.StartTick));
+                    var timeSpent = DateTime.Now.Subtract(account.StartEpoch.ToDateTime());
 
                     _log.Error("Connection to account {Account} timed out. It was not possible to resolve the Match " +
                                "ID for the target after {Timespan} seconds.", account.JsonAccount.Username, timeSpent.Seconds);

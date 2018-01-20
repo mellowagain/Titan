@@ -1,8 +1,8 @@
 ﻿using System;
 using Serilog.Core;
 using SteamKit2;
-using SteamKit2.GC.CSGO.Internal;
 using Titan.Logging;
+using Titan.Util;
 
 namespace Titan.Account
 {
@@ -17,7 +17,7 @@ namespace Titan.Account
         {
             if (packetMsg != null)
             {
-                _lastReceivedPacket = DateTime.Now.Ticks;
+                _lastReceivedPacket = DateTime.Now.ToEpochTime();
                 
                 // TODO: Implement handler
             }

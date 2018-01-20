@@ -167,7 +167,7 @@
     <Compile Include="Util\SteamUtil.cs" />
     <Compile Include="Util\StringUtil.cs" />
     <Compile Include="Util\ThreadTimeout.cs" />
-    <Compile Include="Util\TimeUtil.cs" />
+    <Compile Include="Util\UnixEpoch.cs" />
     <Compile Include="Web\KeyManager.cs" />
     <Compile Include="Web\SWAHandle.cs" />
   </ItemGroup>

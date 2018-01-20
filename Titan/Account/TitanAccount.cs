@@ -30,10 +30,10 @@ namespace Titan.Account
         public bool IsLast = false;
 
         ////////////////////////////////////////////////////
-        // TICKS
+        // TIME
         ////////////////////////////////////////////////////
 
-        public long StartTick { get; set; }
+        public long StartEpoch { get; set; }
         
         public bool IsRunning { get; set; }
 
