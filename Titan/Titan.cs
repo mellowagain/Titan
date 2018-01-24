@@ -16,6 +16,7 @@ using Titan.Bootstrap.Verbs;
 using Titan.Logging;
 using Titan.Managers;
 using Titan.Meta;
+using Titan.Proof;
 using Titan.Restrictions;
 using Titan.UI;
 using Titan.Util;
@@ -47,6 +48,7 @@ namespace Titan
 
         public JsonSerializer JsonSerializer;
         public SWAHandle WebHandle;
+        public ProfileScreenshotter Screenshotter;
 
         public bool DummyMode = false;
         public IScheduler Scheduler;
@@ -207,6 +209,7 @@ namespace Titan
             Logger.Debug("Startup: Loading UI Manager, Victim Tracker, Account Manager and Ban Manager.");
 
             Instance.JsonSerializer = new JsonSerializer();
+            Instance.Screenshotter = new ProfileScreenshotter();
             
             try
             {
