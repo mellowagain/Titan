@@ -92,7 +92,7 @@ namespace Titan.UI.General.Tabs
             var cbSentry = new CheckBox { Text = "Steam Guard", Checked = false };
             
             var btnAddUpdate = new Button { Text = "Add / Update" };
-            btnAddUpdate.Click += delegate
+            btnAddUpdate.Click += (sender, args) =>
             {
                 if (!string.IsNullOrWhiteSpace(txtBoxUsername.Text) && !string.IsNullOrWhiteSpace(txtBoxPassword.Text))
                 {

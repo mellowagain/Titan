@@ -34,7 +34,7 @@ namespace Titan.UI.General
                 tabControl.Pages.Add(tab.GetTabPage());
             }
             
-            tabControl.SelectedIndexChanged += delegate
+            tabControl.SelectedIndexChanged += (sender, args) =>
             {
                 //ClientSize = _tabs[tabControl.SelectedIndex].TabSize;
 

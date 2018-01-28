@@ -44,7 +44,7 @@ namespace Titan.UI.General.Tabs
             };
 
             var btnCommend = new Button { Text = "Commend" };
-            btnCommend.Click += delegate
+            btnCommend.Click += (sender, args) =>
             {
                 if(!string.IsNullOrWhiteSpace(txtBoxSteamID.Text))
                 {

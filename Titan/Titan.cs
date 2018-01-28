@@ -88,9 +88,9 @@ namespace Titan
             // and in case of exception occurence, this window gets immediatly closed which is bad because
             // they're unable to attach the stacktrace then. Prevent it by waiting until the user presses a key.
             #if !__UNIX__
-                AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+                AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
                 {
-                    if (eventArgs.IsTerminating)
+                    if (args.IsTerminating)
                     {
                         Console.Write("Press any key to exit Titan...");
                         Console.Read();
@@ -222,20 +222,19 @@ namespace Titan
                     Logger.Error("---------------------------------------");
                     Logger.Error("A fatal error has been detected!");
                     Logger.Error("Eto.Forms could not detect your current operating system.");
-                    if (Type.GetType("Mono.Runtime") != null)
-                    {
+                    
+                    #if __UNIX__
                         Logger.Error("Please install {0}, {1}, {2}, {3} and {4} before submitting a bug report.",
                                      "Mono (\u22655.4)", 
                                      "Gtk 3",
                                      "Gtk# 3 (GTK Sharp)",
                                      "libNotify",
                                      "libAppindicator3");
-                    }
-                    else
-                    {
+                    #else
                         Logger.Error("Please install {0} before submitting a bug report.", 
                                      ".NET Framework (\u22654.6.1)");
-                    }
+                    #endif
+                    
                     Logger.Error("Contact {Marc} on Discord if the issue still persists after installing " +
                                  "the dependencies listed above.", "Marc3842h#7312");
                     Logger.Error("---------------------------------------");
@@ -300,7 +299,7 @@ namespace Titan
                             "Restriction applied",
                             "The target you are trying to report is blacklisted from botting " +
                             "in Titan.",
-                            delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
+                            () => Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist")
                         );
                     }
                     else

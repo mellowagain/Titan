@@ -149,7 +149,7 @@ namespace Titan.Logging
                                         "Titan - " + id64 + " banned",
                                         "Your recently botted target " + id64 + " " +
                                         "has been banned and has now " + count + " Ban(s) on record.",
-                                        delegate { Process.Start("http://steamcommunity.com/profiles/" + id64); }
+                                        () => Process.Start("http://steamcommunity.com/profiles/" + id64)
                                     );
                                 }
                             }

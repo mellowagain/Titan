@@ -31,7 +31,7 @@ namespace Titan.UI._2FA
             }
             
             var btnSubmit = new Button { Text = "Submit" };
-            btnSubmit.Click += delegate
+            btnSubmit.Click += (sender, args) =>
             {
                 if (!string.IsNullOrWhiteSpace(txtBoxCode.Text))
                 {

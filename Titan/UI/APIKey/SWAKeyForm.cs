@@ -36,7 +36,7 @@ namespace Titan.UI.APIKey
             var btnSite = new Button { Text = "Steam API Key Website" };
             btnSite.Click += (sender, args) => Process.Start("https://steamcommunity.com/dev/apikey");
             var btnContinue = new Button { Text = "Continue" };
-            btnContinue.Click += delegate
+            btnContinue.Click += (sender, args) =>
             {
                 if (!string.IsNullOrWhiteSpace(txtBoxKey.Text))
                 {

@@ -170,10 +170,7 @@ namespace Titan.UI
 
             if(a != null)
             {
-                notification.Activated += delegate
-                {
-                    a();
-                };
+                notification.Activated += (sender, args) => a();
             }
 
             Application.Instance.Invoke(() =>

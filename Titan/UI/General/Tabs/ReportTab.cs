@@ -50,7 +50,7 @@ namespace Titan.UI.General.Tabs
             };
 
             var btnReport = new Button { Text = "Report" };
-            btnReport.Click += delegate
+            btnReport.Click += (sender, args) =>
             {
                 if(!string.IsNullOrWhiteSpace(txtBoxSteamID.Text))
                 {
@@ -79,7 +79,7 @@ namespace Titan.UI.General.Tabs
                                 "Restriction applied", 
                                 "The target you are trying to report is blacklisted from botting " +
                                 "in Titan.", 
-                                delegate { Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist"); }
+                                () => Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist")
                             );
                             return;
                         }
