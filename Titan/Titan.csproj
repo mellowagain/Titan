@@ -49,14 +49,20 @@
     <Reference Include="Common.Logging.Serilog, Version=4.3.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Common.Logging.Serilog.4.3.0\lib\net45\Common.Logging.Serilog.dll</HintPath>
     </Reference>
-    <Reference Include="Eto, Version=2.3.6582.38695, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Forms.2.4.0-build1201\lib\net45\Eto.dll</HintPath>
+    <Reference Include="Eto, Version=2.3.6601.37975, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Forms.2.4.0-build1247\lib\netstandard1.0\Eto.dll</HintPath>
     </Reference>
-    <Reference Include="Eto.Gtk3, Version=2.3.6582.38703, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Gtk3.2.4.0-build1201\lib\net45\Eto.Gtk3.dll</HintPath>
+    <Reference Include="Eto.Gtk3, Version=2.3.6601.37981, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Gtk3.2.4.0-build1247\lib\net45\Eto.Gtk3.dll</HintPath>
     </Reference>
-    <Reference Include="Eto.Wpf, Version=2.3.6582.38703, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Wpf.2.4.0-build1201\lib\net45\Eto.Wpf.dll</HintPath>
+    <Reference Include="Eto.Mac, Version=2.3.6601.37978, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Mac.2.4.0-build1247\lib\net45\Eto.Mac.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto.Mac64, Version=2.3.6601.37984, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Mac64.2.4.0-build1247\lib\net45\Eto.Mac64.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto.Wpf, Version=2.3.6601.37980, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Wpf.2.4.0-build1247\lib\net45\Eto.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Win32.Registry, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -67,6 +73,9 @@
     </Reference>
     <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Mac64.2.4.0-build1247\lib\net45\MonoMac.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -106,6 +115,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
       <HintPath>..\packages\System.Drawing.Common.4.5.0-preview1-25914-04\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.UnmanagedMemoryStream, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.IO.UnmanagedMemoryStream.4.3.0\lib\net46\System.IO.UnmanagedMemoryStream.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
@@ -200,6 +215,9 @@
   <Import Project="..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets" />
   <Import Project="..\packages\NETStandard.Library.NETFramework.2.0.0-preview2-25405-01\build\net461\NETStandard.Library.NETFramework.targets" />
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.19.1\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.19.1\build\Selenium.Firefox.WebDriver.targets')" />
+  <Import Project="..\packages\Eto.Forms.2.4.0-build1247\build\Eto.Forms.targets" Condition="Exists('..\packages\Eto.Forms.2.4.0-build1247\build\Eto.Forms.targets')" />
+  <Import Project="..\packages\Eto.Platform.Mac.2.4.0-build1247\build\Eto.Platform.Mac.targets" Condition="Exists('..\packages\Eto.Platform.Mac.2.4.0-build1247\build\Eto.Platform.Mac.targets')" />
+  <Import Project="..\packages\Eto.Platform.Mac64.2.4.0-build1247\build\Eto.Platform.Mac64.targets" Condition="Exists('..\packages\Eto.Platform.Mac64.2.4.0-build1247\build\Eto.Platform.Mac64.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
