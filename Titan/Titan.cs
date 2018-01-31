@@ -88,9 +88,9 @@ namespace Titan
             // and in case of exception occurence, this window gets immediatly closed which is bad because
             // they're unable to attach the stacktrace then. Prevent it by waiting until the user presses a key.
             #if !__UNIX__
-                AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+                AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
                 {
-                    if (args.IsTerminating)
+                    if (eventArgs.IsTerminating)
                     {
                         Console.Write("Press any key to exit Titan...");
                         Console.Read();
