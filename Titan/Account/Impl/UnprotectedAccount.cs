@@ -196,6 +196,11 @@ namespace Titan.Account.Impl
                     _steamClient.Send(playGames);
 
                     Thread.Sleep(5000);
+                    
+                    _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
+
+                    var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>((uint) EGCBaseClientMsg.k_EMsgGCClientHello);
+                    _gameCoordinator.Send(clientHello, GetAppID());
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                 case EResult.AccountLogonDenied:
