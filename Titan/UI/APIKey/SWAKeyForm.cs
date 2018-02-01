@@ -13,6 +13,7 @@ namespace Titan.UI.APIKey
         private Logger _log = LogCreator.Create();
 
         private UIManager _uiManager;
+        private static bool _seen; // Workaround for a bug with Gtk that calls the close callback when opened
 
         public SWAKeyForm(UIManager uiManager)
         {
@@ -47,7 +48,17 @@ namespace Titan.UI.APIKey
                         _log.Debug("Successfully set Steam Web API Key to {key}.", txtBoxKey.Text);
                     }
 
-                    Close();
+                    // SetKey will set the key to null if the key is invalid. Check for that.
+                    if (!string.IsNullOrEmpty(Titan.Instance.WebHandle.GetKey()))
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        _uiManager.SendNotification("Titan - Error", "The provided Web API key was invalid. " + 
+                                                                     "Please check your Web API key.");
+                        txtBoxKey.Text = "";
+                    }
                 }
                 else
                 {
@@ -108,13 +119,21 @@ namespace Titan.UI.APIKey
             base.OnShown(e);
 
             _uiManager.GetForm<General.GeneralUI>(UIType.General).Enabled = false;
+            _seen = true;
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            
-            _uiManager.GetForm<General.GeneralUI>(UIType.General).Enabled = true;
+
+            if (!string.IsNullOrEmpty(Titan.Instance.WebHandle.GetKey()))
+            {
+                _uiManager.GetForm<General.GeneralUI>(UIType.General).Enabled = true;
+            }
+            else if (_seen)
+            {
+                Environment.Exit(-1);
+            }
         }
         
     }

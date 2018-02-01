@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Serilog.Core;
 using SteamKit2;
@@ -71,11 +72,11 @@ namespace Titan.Web
         {
             try
             {
-                using(dynamic steamUser = WebAPI.GetInterface("ISteamUser", _keyManager.SWAKey))
+                using (dynamic steamUser = WebAPI.GetInterface("ISteamUser", _keyManager.SWAKey))
                 {    
                     KeyValue pair = steamUser.ResolveVanityURL(vanityurl: vanityURL);
 
-                    if(pair["success"].AsInteger() == 1)
+                    if (pair["success"].AsInteger() == 1)
                     {
                         steamID64 = pair["steamid"].AsUnsignedLong();
                         
@@ -97,20 +98,23 @@ namespace Titan.Web
         }
 
         // Used for checking if Steam Web API key is valid
-        public bool RequestAPIMethods()
+        public bool TestAPIKey()
         {
             try
             {
-                using (dynamic steamWebAPIUtil = WebAPI.GetInterface("ISteamWebAPIUtil", _keyManager.SWAKey))
+                using (dynamic steamUser = WebAPI.GetInterface("ISteamUser", _keyManager.SWAKey))
                 {
-                    KeyValue pair = steamWebAPIUtil.GetSupportedAPIList0001();
-
-                    return true;
+                    KeyValue pair = steamUser.GetPlayerSummaries(steamids: "76561198224231904");
+                    
+                    return pair != null;
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex.Message);
+                if (ex.Message.Contains("403") && ex.Message.Contains("Forbidden"))
+                {
+                    Log.Error("Steam returned {error}. This Steam Web API key is invalid!", ex.Message);
+                }
             }
 
             return false;
@@ -132,10 +136,14 @@ namespace Titan.Web
             {
                 _keyManager.SWAKey = key;
 
-                if (!RequestAPIMethods())
+                if (!TestAPIKey())
                 {
                     _keyManager.SWAKey = null;
                     Log.Warning("Received invalid Steam Web API key. Ignoring...");
+                }
+                else
+                {
+                    Log.Information("Steam Web API key was valid. Enjoy using Titan!");
                 }
             }
         }

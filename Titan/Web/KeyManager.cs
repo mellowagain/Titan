@@ -52,7 +52,7 @@ namespace Titan.Web
 
             if (!string.IsNullOrEmpty(SWAKey))
             {
-                if (!_handle.RequestAPIMethods())
+                if (!_handle.TestAPIKey())
                 {
                     _handle.Log.Warning("Received invalid Steam Web API key. Ignoring...");
                 }

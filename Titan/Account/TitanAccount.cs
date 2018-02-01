@@ -14,6 +14,7 @@ namespace Titan.Account
     public abstract class TitanAccount
     {
 
+        public const uint TF2_APPID = 440;
         public const uint CSGO_APPID = 730;
 
         ////////////////////////////////////////////////////
