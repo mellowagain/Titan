@@ -58,6 +58,10 @@ PS> .\build.ps1
 $ chmod +x build.sh && ./build.sh
 ```
 
+#### Option 3: Distro-provided packages
+
+Arch Linux: [`titan-bot-git`](https://aur.archlinux.org/packages/titan-bot-git/)
+
 ## Usage
 
 #### Accounts file
