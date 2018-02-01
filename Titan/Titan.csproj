@@ -200,7 +200,9 @@
     <Content Include="Resources\About.png" />
     <Content Include="Resources\CREDIT.txt" />
     <Content Include="Resources\Form.png" />
-    <Content Include="Resources\Logo.png" />
+    <EmbeddedResource Include="Resources\Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Steam.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
