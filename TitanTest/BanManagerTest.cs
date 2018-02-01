@@ -16,13 +16,14 @@ namespace TitanTest
         {
             // Workaround for Mono related issue regarding System.Net.Http.
             // More detail: https://github.com/dotnet/corefx/issues/19914
+            #if __UNIX__
+                var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
 
-            var systemNetHttpDll = new FileInfo(Path.Combine(Environment.CurrentDirectory, "System.Net.Http.dll"));
-            
-            if (systemNetHttpDll.Exists && !PlatformUtil.IsWindows())
-            {
-                systemNetHttpDll.Delete();
-            }
+                if (systemNetHttpDll.Exists)
+                {
+                    systemNetHttpDll.Delete();
+                }
+            #endif
 
             if (!string.IsNullOrEmpty(EnvironmentKey))
             {

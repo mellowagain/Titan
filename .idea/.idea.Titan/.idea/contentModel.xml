@@ -100,7 +100,6 @@
         <e p="Util" t="Include">
           <e p="ArrayUtil.cs" t="Include" />
           <e p="ObjectCloner.cs" t="Include" />
-          <e p="PlatformUtil.cs" t="Include" />
           <e p="RandomUtil.cs" t="Include" />
           <e p="SharecodeUtil.cs" t="Include" />
           <e p="SteamUtil.cs" t="Include" />
