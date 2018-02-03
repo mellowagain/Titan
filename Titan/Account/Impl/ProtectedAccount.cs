@@ -308,6 +308,16 @@ namespace Titan.Account.Impl
                     IsRunning = false;
                     Result = Result.RateLimit;
                     break;
+                case EResult.TwoFactorCodeMismatch:
+                case EResult.TwoFactorActivationCodeMismatch:
+                case EResult.Invalid:
+                    _log.Error("A invalid SteamGuard authentificator code has been provided. Aborting!");
+                    
+                    Stop();
+
+                    IsRunning = false;
+                    Result = Result.Code2FAWrong;
+                    break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
 

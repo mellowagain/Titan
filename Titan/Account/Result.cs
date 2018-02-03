@@ -10,6 +10,7 @@
         SentryRequired,
         RateLimit,
         NoMatches,
+        Code2FAWrong,
         Unknown
 
     }

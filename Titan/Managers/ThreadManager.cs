@@ -96,6 +96,9 @@ namespace Titan.Managers
                             _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
                                        "few minutes.");
                             break;
+                        case Result.Code2FAWrong:
+                            _log.Error("The provided SteamGuard code was wrong. Please retry.");
+                            break;
                     }
                 }
                 catch (TimeoutException)
@@ -190,6 +193,9 @@ namespace Titan.Managers
                             _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
                                        "few minutes.");
                             break;
+                        case Result.Code2FAWrong:
+                            _log.Error("The provided SteamGuard code was wrong. Please retry.");
+                            break;
                     }
                 }
                 catch (TimeoutException)
@@ -259,6 +265,9 @@ namespace Titan.Managers
                         case Result.RateLimit:
                             _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
                                        "few minutes.");
+                            break;
+                        case Result.Code2FAWrong:
+                            _log.Error("The provided SteamGuard code was wrong. Please retry.");
                             break;
                     }
                 }
