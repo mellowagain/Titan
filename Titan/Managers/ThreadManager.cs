@@ -100,8 +100,6 @@ namespace Titan.Managers
                             "Titan", _count + " reports have been successfully sent!"
                         );
 
-                        account.IsLast = false;
-
                         if (Titan.Instance.ParsedObject != null)
                         {
                             Environment.Exit(0);
@@ -197,8 +195,6 @@ namespace Titan.Managers
                         Titan.Instance.UIManager.SendNotification(
                             "Titan", _count + " commends have been successfully sent!"
                         );
-
-                        account.IsLast = false;
 
                         if (Titan.Instance.ParsedObject != null)
                         {

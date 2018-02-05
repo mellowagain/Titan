@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SteamKit2;
 using SteamKit2.GC;
@@ -28,7 +28,6 @@ namespace Titan.Account
             JsonAccount = json;
         }
 
-        public bool IsLast = false;
 
         ////////////////////////////////////////////////////
         // TIME
