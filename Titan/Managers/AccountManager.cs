@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -312,7 +312,6 @@ namespace Titan.Managers
 
             if (Accounts.TryGetValue(index, out var accounts))
             {
-                accounts.Last().IsLast = true;
                 
                 foreach (var acc in accounts)
                 {
@@ -353,7 +352,6 @@ namespace Titan.Managers
 
             if (Accounts.TryGetValue(index, out var accounts))
             {
-                accounts.Last().IsLast = true;
                 
                 foreach (var acc in accounts)
                 {
