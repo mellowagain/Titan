@@ -93,13 +93,24 @@ namespace Titan.Managers
 
                     if (_taskDic.Count - _count - _failCount == 0)
                     {
-                        _log.Information("SUCCESS! Titan has successfully sent {Amount} out of {Total} reports to {Target}.",
+                        if (_count == 0)
+                        {
+                            _log.Information("FAIL! Titan was not able to report {Target}.",
                             _count, _taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
 
-                        Titan.Instance.UIManager.SendNotification(
-                            "Titan", _count + " reports have been successfully sent!"
-                        );
+                            Titan.Instance.UIManager.SendNotification(
+                                "Titan", " was not able to report your target."
+                            );
+                        }
+                        else
+                        {
+                            _log.Information("SUCCESS! Titan has successfully sent {Amount} out of {Total} reports to {Target}.",
+                                _count, _taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
 
+                            Titan.Instance.UIManager.SendNotification(
+                                "Titan", _count + " reports have been successfully sent!"
+                            );
+                        }
                         if (Titan.Instance.ParsedObject != null)
                         {
                             Environment.Exit(0);
@@ -189,13 +200,24 @@ namespace Titan.Managers
 
                     if (_taskDic.Count - _count - _failCount == 0)
                     {
-                        _log.Information("SUCCESS! Titan has successfully sent {Amount} out of {Total} commends to {Target}.",
-                            _count,_taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
+                        if (_count == 0)
+                        {
+                            _log.Information("FAIL! Titan was not able to commend {Target}.",
+                            _count, _taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
 
-                        Titan.Instance.UIManager.SendNotification(
-                            "Titan", _count + " commends have been successfully sent!"
-                        );
+                            Titan.Instance.UIManager.SendNotification(
+                                "Titan", " was not able to commend your target."
+                            );
+                        }
+                        else
+                        {
+                            _log.Information("SUCCESS! Titan has successfully sent {Amount} out of {Total} commends to {Target}.",
+                                _count, _taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
 
+                            Titan.Instance.UIManager.SendNotification(
+                                "Titan", _count + " commends have been successfully sent!"
+                            );
+                        }
                         if (Titan.Instance.ParsedObject != null)
                         {
                             Environment.Exit(0);
