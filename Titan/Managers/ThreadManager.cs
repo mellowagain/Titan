@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +19,7 @@ namespace Titan.Managers
         private Dictionary<TitanAccount, Task> _taskDic = new Dictionary<TitanAccount, Task>();
 
         private int _count; // Amount of accounts that successfully reported or commended
+        private int _failCount; // Amount of accounts that failed to report or commend
 
         public void StartReport(TitanAccount account, ReportInfo info)
         {
@@ -32,6 +33,7 @@ namespace Titan.Managers
             account.FeedReportInfo(info);
 
             _count = 0;
+            _failCount = 0;
             
             _log.Debug("Starting reporting thread for {Target} in {Match} using account {Account}.",
                 info.SteamID, info.MatchID, account.JsonAccount.Username);
@@ -49,32 +51,15 @@ namespace Titan.Managers
                     var result = origin.RunUntil(account.JsonAccount.Sentry ? 
                         TimeSpan.FromMinutes(3) :
                         TimeSpan.FromSeconds(60));
-
                     switch (result.Result)
                     {
                         case Result.Success:
                             _count++;
-
-                            if (account.IsLast)
-                            {
-                                _log.Information("SUCCESS! Titan has successfully sent {Amount} reports to {Target}.",
-                                    _count, account._reportInfo.SteamID.ConvertToUInt64());
-                                
-                                Titan.Instance.UIManager.SendNotification(
-                                    "Titan", _count + " reports have been successfully sent!"
-                                );
-                                
-                                account.IsLast = false;
-
-                                if (Titan.Instance.ParsedObject != null)
-                                {
-                                    Environment.Exit(0);
-                                }
-                            }
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
                             _log.Error("Could not report with account {Account}. The account is " +
                                        "already logged in somewhere else.", account.JsonAccount.Username);
+                            _failCount++;
                             break;
                         case Result.AccountBanned:
                             _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
@@ -84,21 +69,43 @@ namespace Titan.Managers
                         case Result.NoMatches:
                             _log.Error("Could not receive match information for {Account}: User is not in live match.",
                                        account._liveGameInfo.SteamID.ConvertToUInt64());
+                            _failCount++;
                             break;
                         case Result.TimedOut:
                             _log.Error("Processing thread for {Account} has timed out.");
+                            _failCount++;
                             break;
                         case Result.SentryRequired:
                             _log.Error("The account has 2FA enabled. Please set {sentry} to {true} " +
                                        "in the accounts.json file.", "sentry", true);
+                            _failCount++;
                             break;
                         case Result.RateLimit:
                             _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
                                        "few minutes.");
+                            _failCount++;
                             break;
                         case Result.Code2FAWrong:
                             _log.Error("The provided SteamGuard code was wrong. Please retry.");
+                            _failCount++;
                             break;
+                    }
+
+                    if (_taskDic.Count - _count - _failCount == 0)
+                    {
+                        _log.Information("SUCCESS! Titan has successfully sent {Amount} out of {Total} reports to {Target}.",
+                            _count, _taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
+
+                        Titan.Instance.UIManager.SendNotification(
+                            "Titan", _count + " reports have been successfully sent!"
+                        );
+
+                        account.IsLast = false;
+
+                        if (Titan.Instance.ParsedObject != null)
+                        {
+                            Environment.Exit(0);
+                        }
                     }
                 }
                 catch (TimeoutException)
@@ -133,6 +140,7 @@ namespace Titan.Managers
             account.FeedCommendInfo(info);
 
             _count = 0;
+            _failCount = 0;
             
             _log.Debug("Starting commending thread for {Target} using account {Account}.",
                 info.SteamID, account.JsonAccount.Username);
@@ -154,29 +162,12 @@ namespace Titan.Managers
                     switch (result.Result)
                     {
                         case Result.Success:
-                            _count++;
-                            
-                            if (account.IsLast)
-                            {
-                                _log.Information("SUCCESS! Titan has successfully sent {Amount} commends to {Target}.",
-                                    _count, account._reportInfo.SteamID.ConvertToUInt64());
-                                
-                                Titan.Instance.UIManager.SendNotification(
-                                    "Titan", _count + " commends have been successfully sent!"
-                                );
-                                
-                                account.IsLast = false;
-                                
-                                if (Titan.Instance.ParsedObject != null)
-                                {
-                                    Environment.Exit(0);
-                                }
-                            }
+                            _count++; 
                             break;
                         case Result.AlreadyLoggedInSomewhereElse:
                             _log.Error("Could not commend with account {Account}. The account is " +
                                        "already logged in somewhere else.", account.JsonAccount.Username);
-                            break;
+                            break;  
                         case Result.AccountBanned:
                             _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
                                          "have not been submitted.");
@@ -196,6 +187,23 @@ namespace Titan.Managers
                         case Result.Code2FAWrong:
                             _log.Error("The provided SteamGuard code was wrong. Please retry.");
                             break;
+                    }
+
+                    if (_taskDic.Count - _count - _failCount == 0)
+                    {
+                        _log.Information("SUCCESS! Titan has successfully sent {Amount} out of {Total} commends to {Target}.",
+                            _count,_taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
+
+                        Titan.Instance.UIManager.SendNotification(
+                            "Titan", _count + " commends have been successfully sent!"
+                        );
+
+                        account.IsLast = false;
+
+                        if (Titan.Instance.ParsedObject != null)
+                        {
+                            Environment.Exit(0);
+                        }
                     }
                 }
                 catch (TimeoutException)
