@@ -60,13 +60,15 @@ namespace Titan.Account.Impl
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
-            
-            _titanHandle = new TitanHandler();
-            _steamClient.AddHandler(_titanHandle);
 
-            // Initialize debug network sniffer when debug mode is enabled
+            // This clause excludes SteamKit debug mode as that mode is handeled seperately.
+            // Normal debug mode doesn't equal SteamKit debug mode.
             if (Titan.Instance.Options.Debug)
             {
+                _titanHandle = new TitanHandler();
+                _steamClient.AddHandler(_titanHandle);
+                
+                // Initialize debug network sniffer when debug mode is enabled
                 var dir = new DirectoryInfo(Path.Combine(Titan.Instance.DebugDirectory.ToString(), json.Username));
                 if (!dir.Exists)
                 {
@@ -373,9 +375,11 @@ namespace Titan.Account.Impl
 
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
-            _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...",
-                _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend"));
-
+            var type = _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend");
+            var welcome = new ClientGCMsgProtobuf<CMsgClientWelcome>(msg);
+            
+            _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). Sending {type}.",
+                       welcome.Body.version, welcome.Body.location.country, type);
             
             if (_liveGameInfo != null)
             {
