@@ -62,7 +62,7 @@ namespace Titan.Account.Impl
             if(Titan.Instance.Options.Debug)
             {
                 var dir = new DirectoryInfo(Path.Combine(Titan.Instance.DebugDirectory.ToString(), json.Username));
-                if(!dir.Exists)
+                if (!dir.Exists)
                 {
                     dir.Create();
                 }
@@ -110,17 +110,17 @@ namespace Titan.Account.Impl
             _commendInfo = null;
             _liveGameInfo = null;
             
-            if(_steamFriends.GetPersonaState() != EPersonaState.Offline)
+            if (_steamFriends.GetPersonaState() != EPersonaState.Offline)
             {
                 _steamFriends.SetPersonaState(EPersonaState.Offline);
             }
 
-            if(_steamUser.SteamID != null)
+            if (_steamUser.SteamID != null)
             {
                 _steamUser.LogOff();
             }
 
-            if(_steamClient.IsConnected)
+            if (_steamClient.IsConnected)
             {
                 _steamClient.Disconnect();
             }
@@ -138,11 +138,18 @@ namespace Titan.Account.Impl
         {
             _log.Debug("Successfully connected to Steam. Logging in...");
 
+            var loginID = RandomUtil.RandomUInt32();
+
+            if (!Titan.Instance.Options.Secure)
+            {
+                _log.Debug("Logging in with Login ID: {id}", loginID);
+            }
+            
             _steamUser.LogOn(new SteamUser.LogOnDetails
             {
                 Username = JsonAccount.Username,
                 Password = JsonAccount.Password,
-                LoginID = RandomUtil.RandomUInt32()
+                LoginID = loginID
             });
         }
 
@@ -150,8 +157,8 @@ namespace Titan.Account.Impl
         {
             _reconnects++;
 
-            if(_reconnects <= 5 && (Result != Result.Success &&
-               Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
+            if (_reconnects <= 5 && !callback.UserInitiated && 
+               (Result != Result.Success && Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
             {
                 _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
@@ -168,7 +175,7 @@ namespace Titan.Account.Impl
 
         public override void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
-            switch(callback.Result)
+            switch (callback.Result)
             {
                 case EResult.OK:
                     _log.Debug("Successfully logged in. Checking for any VAC or game bans...");
@@ -248,10 +255,10 @@ namespace Titan.Account.Impl
 
         public override void OnLoggedOff(SteamUser.LoggedOffCallback callback)
         {
-            if(callback.Result == EResult.LoggedInElsewhere || callback.Result == EResult.AlreadyLoggedInElsewhere)
+            if (callback.Result == EResult.LoggedInElsewhere || callback.Result == EResult.AlreadyLoggedInElsewhere)
                 Result = Result.AlreadyLoggedInSomewhereElse;
 
-            if(Result == Result.AlreadyLoggedInSomewhereElse)
+            if (Result == Result.AlreadyLoggedInSomewhereElse)
                 _log.Warning("Account is already logged on somewhere else. Skipping...");
             else
                 _log.Debug("Successfully logged off from Steam: {Result}", callback.Result);
@@ -262,11 +269,11 @@ namespace Titan.Account.Impl
             _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...",
                 _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend"));
             
-            if(_liveGameInfo != null)
+            if (_liveGameInfo != null)
             {
                 _gameCoordinator.Send(GetLiveGamePayload(), GetAppID());
             }
-            else if(_reportInfo != null)
+            else if (_reportInfo != null)
             {
                 _gameCoordinator.Send(GetReportPayload(), GetAppID());
             }
@@ -280,7 +287,7 @@ namespace Titan.Account.Impl
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
-            if(_reportInfo != null)
+            if (_reportInfo != null)
             {
                 _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
             }
@@ -309,7 +316,7 @@ namespace Titan.Account.Impl
         {
             var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchList>(msg);
 
-            if(response.Body.matches.Count >= 1)
+            if (response.Body.matches.Count >= 1)
             {
                 var matchInfos = response.Body.matches.Select(match => new MatchInfo
                     {

@@ -170,6 +170,14 @@ namespace Titan.Account.Impl
                 _log.Debug("Logging in with Auth Code: {a} / 2FA Code: {b} / Hash: {c}", _authCode, _2FactorCode,
                     hash != null ? Convert.ToBase64String(hash) : null);
             }
+
+            var loginID = RandomUtil.RandomUInt32();
+
+            if (!Titan.Instance.Options.Secure)
+            {
+                _log.Debug("Logging in with Login ID: {id}", loginID);
+            }
+            
             _steamUser.LogOn(new SteamUser.LogOnDetails
             {
                 Username = JsonAccount.Username,
@@ -177,7 +185,7 @@ namespace Titan.Account.Impl
                 AuthCode = _authCode,
                 TwoFactorCode = _2FactorCode,
                 SentryFileHash = hash,
-                LoginID = RandomUtil.RandomUInt32()
+                LoginID = loginID
             });
         }
 
@@ -185,26 +193,13 @@ namespace Titan.Account.Impl
         {
             _reconnects++;
 
-            if (_reconnects <= 5 && !callback.UserInitiated &&  IsRunning)
+            if (_reconnects <= 5 && !callback.UserInitiated && 
+               (Result != Result.Success && Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
             {
-                // TODO: Fix reconnecting, see GH issue
-                _log.Information("Disconnected from Steam. Retrying in 2 seconds... ({Count}/5)", _reconnects);
-                //_log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
+                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
-                Thread.Sleep(TimeSpan.FromSeconds(2));
-                
-                var worker = new BackgroundWorker();
-                worker.DoWork += (sender, args) =>
-                {
-                    //_log.Debug("Starting watchdog.");
-                    Thread.Sleep(TimeSpan.FromSeconds(10));
-                    
-                    //_log.Debug("Steam Client connected after 10 sec: {bool}", _steamClient.IsConnected);
-                    //_log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
-                };
-                worker.RunWorkerAsync();
-                
-                _log.Debug("Reconnecting to Steam.", worker);
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+
                 _steamClient.Connect();
             }
             else
@@ -270,7 +265,7 @@ namespace Titan.Account.Impl
                             /* Wait until we receive the Steam Guard code from the UI */
                         }
                     }
-
+ 
                     if (!Titan.Instance.Options.Secure)
                     {
                         _log.Information("Received 2FA Code: {Code}", _2FactorCode);
