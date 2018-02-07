@@ -42,24 +42,23 @@ namespace Titan.UI
             TrayIcon = new TrayIndicator
             {
                 Title = "Titan",
-                Icon = SharedResources.TITAN_ICON,
-                Visible = true
-            };
-            
-            TrayIcon.SetMenu(new ContextMenu
-            {
-                Items =
+                Image = SharedResources.TITAN_ICON,
+                Visible = true,
+                Menu = new ContextMenu
                 {
-                    new Command((sender, args) => ShowForm(UIType.General))
+                    Items =
                     {
-                        MenuText = "Show"
-                    },
-                    new Command((sender, args) => Environment.Exit(0))
-                    {
-                        MenuText = "Exit"
+                        new Command((sender, args) => ShowForm(UIType.General))
+                        {
+                            MenuText = "Show"
+                        },
+                        new Command((sender, args) => Environment.Exit(0))
+                        {
+                            MenuText = "Exit"
+                        }
                     }
                 }
-            });
+            };
 
             GetForm<General.GeneralUI>(UIType.General).Closing += (sender, args) =>
             {
@@ -165,11 +164,12 @@ namespace Titan.UI
             {
                 Title = title,
                 Message = message,
-                Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON
+                ContentImage = Titan.Instance.UIManager.SharedResources.TITAN_ICON
             };
 
             if(a != null)
             {
+                // TODO: This is deprecated. Needs workaround for per-notification based activation
                 notification.Activated += (sender, args) => a();
             }
 
