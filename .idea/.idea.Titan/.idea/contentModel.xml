@@ -71,6 +71,7 @@
         </e>
         <e p="Sentry" t="Include">
           <e p="Sentry.cs" t="Include" />
+          <e p="SharedSecret.cs" t="Include" />
         </e>
         <e p="Titan.cs" t="Include" />
         <e p="Titan.csproj" t="IncludeRecursive" />

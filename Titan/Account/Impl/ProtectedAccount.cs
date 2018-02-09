@@ -14,6 +14,7 @@ using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
 using Titan.MatchID.Live;
+using Titan.Sentry;
 using Titan.UI;
 using Titan.UI._2FA;
 using Titan.Util;
@@ -29,8 +30,8 @@ namespace Titan.Account.Impl
 
         private SteamConfiguration _steamConfig;
         private Sentry.Sentry _sentry;
-        
-        private SteamGuardAccount _sgAccount;
+
+        private SharedSecret _sharedSecretGenerator;
         private string _authCode;
         private string _2FactorCode;
 
@@ -80,12 +81,9 @@ namespace Titan.Account.Impl
                 );
             }
 
-            if (json.SharedSecret != null)
+            if (!string.IsNullOrWhiteSpace(JsonAccount.SharedSecret))
             {
-                _sgAccount = new SteamGuardAccount
-                {
-                    SharedSecret = json.SharedSecret
-                };
+                _sharedSecretGenerator = new SharedSecret(this);
             }
 
             _log.Debug("Successfully initialized account object for " + json.Username + ".");
@@ -248,11 +246,11 @@ namespace Titan.Account.Impl
                     _gameCoordinator.Send(clientHello, GetAppID());
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    if (_sgAccount != null)
+                    if (!string.IsNullOrWhiteSpace(JsonAccount.SharedSecret))
                     {
                         _log.Debug("A shared secret has been provided: automatically generating it...");
                         
-                        _2FactorCode = _sgAccount.GenerateSteamGuardCode();
+                        _2FactorCode = _sharedSecretGenerator.GenerateCode();
                     }
                     else
                     {

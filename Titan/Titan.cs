@@ -3,12 +3,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using CommandLine;
 using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
+using SteamAuth;
 using SteamKit2;
 using Titan.Account;
 using Titan.Bootstrap;
@@ -206,8 +208,6 @@ namespace Titan
                 Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");
             }
 
-            Logger.Debug("Startup: Loading UI Manager, Victim Tracker, Account Manager and Ban Manager.");
-
             Instance.JsonSerializer = new JsonSerializer();
             Instance.Screenshotter = new ProfileScreenshotter();
             
@@ -254,7 +254,6 @@ namespace Titan
             }
 
             Instance.VictimTracker = new VictimTracker();
-            
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             Instance.AccountManager = new AccountManager(new FileInfo(
@@ -264,16 +263,12 @@ namespace Titan
             Instance.ThreadManager = new ThreadManager();
 
             Instance.WebHandle = new SWAHandle();
-            
-            Logger.Debug("Startup: Registering Shutdown Hook.");
 
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
-            Logger.Debug("Startup: Parsing accounts.json file.");
-
             Instance.AccountManager.ParseAccountFile(); 
-            
-            Logger.Debug("Startup: Initializing Forms...");
+
+            Task.Run(() => TimeAligner.AlignTime());
 
             Instance.UIManager.InitializeForms();
             
