@@ -37,6 +37,12 @@
     <DefineConstants>__UNIX__</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AtkSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\AtkSharp.3.22.24.29\lib\netstandard2.0\AtkSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="CairoSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CairoSharp.3.22.24.29\lib\netstandard2.0\CairoSharp.dll</HintPath>
+    </Reference>
     <Reference Include="CommandLine, Version=2.0.275.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32">
       <HintPath>..\packages\CommandLineParser.2.1.1-beta\lib\net45\CommandLine.dll</HintPath>
     </Reference>
@@ -51,6 +57,9 @@
     </Reference>
     <Reference Include="Eto, Version=2.3.6614.5260, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Forms.2.4.0-build1293\lib\netstandard1.0\Eto.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto.Gtk, Version=2.3.6614.5271, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Gtk.2.4.0-build1293\lib\netstandard2.0\Eto.Gtk.dll</HintPath>
     </Reference>
     <Reference Include="Eto.Gtk3, Version=2.3.6614.5266, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Platform.Gtk3.2.4.0-build1293\lib\net45\Eto.Gtk3.dll</HintPath>
@@ -67,6 +76,18 @@
     <Reference Include="Eto.Wpf, Version=2.3.6614.5266, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Platform.Wpf.2.4.0-build1293\lib\net45\Eto.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="GdkSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GdkSharp.3.22.24.29\lib\netstandard2.0\GdkSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GioSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GioSharp.3.22.24.29\lib\netstandard2.0\GioSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GLibSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GLibSharp.3.22.24.29\lib\netstandard2.0\GLibSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GtkSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GtkSharp.3.22.24.29\lib\netstandard2.0\GtkSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Win32.Registry, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\packages\Microsoft.Win32.Registry.4.4.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
@@ -82,6 +103,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PangoSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\PangoSharp.3.22.24.29\lib\netstandard2.0\PangoSharp.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
       <HintPath>..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>
@@ -226,6 +250,9 @@
   <Import Project="..\packages\Eto.Forms.2.4.0-build1247\build\Eto.Forms.targets" Condition="Exists('..\packages\Eto.Forms.2.4.0-build1247\build\Eto.Forms.targets')" />
   <Import Project="..\packages\Eto.Platform.Mac.2.4.0-build1247\build\Eto.Platform.Mac.targets" Condition="Exists('..\packages\Eto.Platform.Mac.2.4.0-build1247\build\Eto.Platform.Mac.targets')" />
   <Import Project="..\packages\Eto.Platform.Mac64.2.4.0-build1247\build\Eto.Platform.Mac64.targets" Condition="Exists('..\packages\Eto.Platform.Mac64.2.4.0-build1247\build\Eto.Platform.Mac64.targets')" />
+  <Import Project="..\packages\Eto.Forms.2.4.0-build1293\build\Eto.Forms.targets" Condition="Exists('..\packages\Eto.Forms.2.4.0-build1293\build\Eto.Forms.targets')" />
+  <Import Project="..\packages\Eto.Platform.Mac.2.4.0-build1293\build\Eto.Platform.Mac.targets" Condition="Exists('..\packages\Eto.Platform.Mac.2.4.0-build1293\build\Eto.Platform.Mac.targets')" />
+  <Import Project="..\packages\Eto.Platform.Mac64.2.4.0-build1293\build\Eto.Platform.Mac64.targets" Condition="Exists('..\packages\Eto.Platform.Mac64.2.4.0-build1293\build\Eto.Platform.Mac64.targets')" />
   <Import Project="..\packages\Eto.Forms.2.4.0-build1293\build\Eto.Forms.targets" Condition="Exists('..\packages\Eto.Forms.2.4.0-build1293\build\Eto.Forms.targets')" />
   <Import Project="..\packages\Eto.Platform.Mac.2.4.0-build1293\build\Eto.Platform.Mac.targets" Condition="Exists('..\packages\Eto.Platform.Mac.2.4.0-build1293\build\Eto.Platform.Mac.targets')" />
   <Import Project="..\packages\Eto.Platform.Mac64.2.4.0-build1293\build\Eto.Platform.Mac64.targets" Condition="Exists('..\packages\Eto.Platform.Mac64.2.4.0-build1293\build\Eto.Platform.Mac64.targets')" />
