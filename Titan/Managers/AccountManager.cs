@@ -19,6 +19,8 @@ namespace Titan.Managers
         private Logger _log = LogCreator.Create();
 
         public Dictionary<int, List<TitanAccount>> Accounts = new Dictionary<int, List<TitanAccount>>();
+        private JsonAccounts _origin;
+        
         private List<TitanAccount> _allAccounts = new List<TitanAccount>();
 
         private Dictionary<int, long> _indexEntries = new Dictionary<int, long>();
@@ -86,6 +88,8 @@ namespace Titan.Managers
 
             if (_parsedAccounts != null)
             {
+                _origin = _parsedAccounts;
+                
                 foreach (var indexes in _parsedAccounts.Indexes)
                 {
                     var accounts = new List<TitanAccount>();
@@ -94,10 +98,9 @@ namespace Titan.Managers
                     {
                         TitanAccount acc;
 
-                        var sentry = account.Sentry ||
-                                     account.SharedSecret != null &&
-                                     !account.SharedSecret.Equals("Shared Secret for SteamGuard",
-                                         StringComparison.InvariantCultureIgnoreCase); // Paster proofing
+                        var sentry = account.Sentry || account.SharedSecret != null && !account.SharedSecret.Equals(
+                            "Shared Secret for SteamGuard", StringComparison.InvariantCultureIgnoreCase
+                        ); // Paster proofing
 
                         if (sentry)
                         {
@@ -106,6 +109,14 @@ namespace Titan.Managers
                         else
                         {
                             acc = new UnprotectedAccount(account);
+                        }
+
+                        if (string.IsNullOrWhiteSpace(acc.JsonAccount.Username) ||
+                            string.IsNullOrWhiteSpace(acc.JsonAccount.Password))
+                        {
+                            _log.Warning("Account in index #{index} contains empty username or password." +
+                                         "Account has been disabled and will not be available.", Index);
+                            account.Enabled = false;
                         }
 
                         if (account.Enabled)
@@ -164,7 +175,7 @@ namespace Titan.Managers
             _log.Information("Account file has been successfully parsed. {Count} accounts " +
                              "have been parsed. Details: {@List}", _allAccounts.Count, list);
             
-            Accounts.Add(-1, _allAccounts);
+            Accounts.Add(-1, _allAccounts); // Index -1 contains all accounts (used by "Use all accounts" checkbox)
 
             _lastIndex = Index;
             Index = 0;
@@ -182,21 +193,20 @@ namespace Titan.Managers
 
         public void SaveAccountsFile()
         {
-            var indexes = (from keyPair in Accounts
-                where keyPair.Key != -1
-                select new JsonAccounts.JsonIndex
-                {
-                    Accounts = keyPair.Value.Select(account => account.JsonAccount).ToArray()
-                }).ToList();
+            var indexes = new List<JsonAccounts.JsonIndex>();
 
-            var jsonAccount = new JsonAccounts
+            foreach (var originIndex in _origin.Indexes)
             {
-                Indexes = indexes.ToArray()
-            };
+                var index = originIndex;
+                indexes.AddRange(from acc in originIndex.Accounts 
+                    where index.Accounts.Length > 0 
+                    select new JsonAccounts.JsonIndex { Accounts = originIndex.Accounts });
+            }
             
             using (var writer = File.CreateText(_file.ToString()))
             {
-                var textToWrite = JsonConvert.SerializeObject(jsonAccount, Formatting.Indented);
+                var textToWrite = JsonConvert.SerializeObject(new JsonAccounts { Indexes = indexes.ToArray() }, 
+                                                              Formatting.Indented);
                 writer.Write(textToWrite);
             }
         }
@@ -208,7 +218,6 @@ namespace Titan.Managers
                 using (var reader = File.OpenText(_indexFile.ToString()))
                 {
                     _parsedIndex = (JsonIndex) Titan.Instance.JsonSerializer.Deserialize(reader, typeof(JsonIndex));
-                    // read it and deserialize it into a Index object
                 }
 
                 var lowest = _parsedIndex.AvailableIndex; // find the available index and set it to lowest
@@ -220,19 +229,17 @@ namespace Titan.Managers
 
                 foreach (var expireEntry in _parsedIndex.Entries)
                 {
-                    // check if a entry that is marked for expiration is already expired and ready to bot
                     if (expireEntry.ExpireTimestamp <= DateTime.Now.ToEpochTime())
                     {
                         _log.Debug("Index {Index} has expired. It is now available for botting.",
                             expireEntry.TargetedIndex);
 
-                        if (lowest > expireEntry.TargetedIndex) // if thats the case, check if its lower than the available one
+                        if (lowest > expireEntry.TargetedIndex)
                         {
                             lowest = expireEntry.TargetedIndex;
                         }
 
-                        _parsedIndex.Entries = _parsedIndex.Entries.Where(val => val != expireEntry)
-                            .ToArray(); // and remove it from the expiration list
+                        _parsedIndex.Entries = _parsedIndex.Entries.Where(val => val != expireEntry).ToArray();
                     }
                     else
                     {
@@ -257,7 +264,7 @@ namespace Titan.Managers
             else
             {
                 Index = 0;
-                SaveIndexFile(); // it doesn't exist, we're gonna' create it!
+                SaveIndexFile(); // SaveIndexFile creates a new file if it doesn't exist, so we're just using that
             }
 
             var valid = false;
@@ -281,7 +288,7 @@ namespace Titan.Managers
 
         public void SaveIndexFile()
         {
-            if(_indexFile.Exists)
+            if (_indexFile.Exists)
             {
                 _indexFile.Delete();
             }
