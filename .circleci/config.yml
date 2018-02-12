@@ -1,14 +1,10 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/titan
+    working_directory: ~/repo
     docker:
       - image: mono:latest
     steps:
-      - restore_cache:
-          keys:
-            - titan-{{ .Branch }}
-            - titan-
       - run:
           name: Install dependencies
           command: |
@@ -17,6 +13,10 @@ jobs:
             wget http://download.mono-project.com/repo/ubuntu/pool/main/m/msbuild/msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
             dpkg -i msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
       - checkout
+      - restore_cache:
+          keys:
+            - titan-{{ .Branch }}
+            - titan-
       - run:
           name: Run build script
           command: |
@@ -24,10 +24,10 @@ jobs:
       - save_cache:
           key: titan-{{ .Branch }}
           paths:
-            - "~/titan/packages"
-            - "~/titan/tools"
+            - "~/repo/packages"
+            - "~/repo/tools"
       - store_artifacts:
-          path: ~/titan/Titan/bin/Release/Titan.exe
+          path: ~/repo/Titan/bin/Release/Titan.exe
           destination: Titan.exe
 
 notify:
