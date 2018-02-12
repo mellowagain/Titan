@@ -12,6 +12,7 @@ jobs:
             apt-get install -y git wget
             wget http://download.mono-project.com/repo/ubuntu/pool/main/m/msbuild/msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
             dpkg -i msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
+            rm -rf msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
       - checkout
       - restore_cache:
           keys:
