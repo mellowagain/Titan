@@ -37,7 +37,7 @@ Every version of Titan is provided as binary archive. An installation process is
 #### Dependencies
 
 **Windows**: [.NET Framework ≥4.6.1](https://www.microsoft.com/en-us/download/details.aspx?id=53344) (and for building [Git](https://git-scm.com/), [Visual Studio 2017](https://www.visualstudio.com/downloads/) with .NET Desktop Development tools and [Visual Studio 2017 Build Tools](https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017)).  
-**Linux**: [Mono ≥5.4](http://www.mono-project.com), [Gtk 3](https://www.gtk.org/), [Gtk# 3](http://www.mono-project.com/docs/gui/gtksharp/),
+**Linux**: [Mono ≥5.4](http://www.mono-project.com), [Gtk 3](https://www.gtk.org/),
 [libNotify](https://launchpad.net/ubuntu/+source/libnotify) and [libAppindicator 3](https://packages.ubuntu.com/trusty/libappindicator3-dev) (and for building [Git](https://git-scm.com/) and [MsBuild ≥15.0](https://github.com/Microsoft/msbuild)).
 
 #### Option 1: Binary
@@ -47,15 +47,17 @@ Download the package for your operating system, unpack it and run the `Titan.exe
 
 #### Option 2: From Source
 
-```
+```bash
 $ git clone https://github.com/Marc3842h/Titan.git
 $ cd Titan
 
 # Run this in a PowerShell terminal on Windows
+PS> Set-ExecutionPolicy Unrestricted
 PS> .\build.ps1
 
 # Run this in a terminal on Linux
-$ chmod +x build.sh && ./build.sh
+$ chmod +x build.sh
+$ ./build.sh
 ```
 
 #### Option 3: Distro-provided packages
@@ -64,9 +66,58 @@ Arch Linux: [`titan-bot-git`](https://aur.archlinux.org/packages/titan-bot-git/)
 
 ## Usage
 
+#### Start
+
+Run Titan on Windows by simple double clicking the `Titan.exe` executeable.
+
+On Linux, run Titan from the command line using the following syntax:
+
+```bash
+$ mono Titan.exe [Verb] [Arguments ...]
+```
+
+You can find a list of command line arguments [here](https://github.com/Marc3842h/Titan/blob/master/Titan/Bootstrap/Options.cs).  
+If no (or not enough) arguments have been supplied, Titan will open the GUI:
+
+![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Form.png)
+
+If one of your recently botted players got banned, you'll also receive a notification:
+
+![Notification](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Notification.png)
+
+Please note that Titan is running as service by default. To close Titan
+completely, please click `File > Exit` in the menu bar.
+
+![About](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/About.png)
+
+<sup>All screenshots have been taken on <b>Arch Linux</b> using <b>Gnome</b> with the <b>Ark-Dark</b> theme.</sup>
+
+#### Converting existing accounts file
+
+Titan brings a Python3 script that can convert an existing `accounts.txt` file (in the format of `username:password`,
+from for example [Askwrite's report bot](https://github.com/Askwrite/node-csgo-reportbot)) to a Titan-compatible `accounts.json`
+file that can be used with the Titan report & commend bot.
+
+Use it like this:
+
+```python
+python convert.py <original accounts file>
+```
+
+After it ran successfully you can find a `accounts.json` file in the current directory.
+
+#### i3wm
+
+If you are using i3 window manager, I suggest enabling floating for Titan in the `.config/i3/config`:
+
+```i3config
+for_window [class="Titan"] floating enable
+```
+
 #### Accounts file
 
-Create a `accounts.json` in main directory with data:
+Here is the syntax of the accounts.json. You may read more about it on the [wiki](https://github.com/Marc3842h/Titan/wiki/Creating-a-accounts.json).
+
 ```json
 {
     // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
@@ -110,61 +161,6 @@ Create a `accounts.json` in main directory with data:
     ]
 }
 ```
-
-#### Start
-Run the program from command line with the following syntax:
-
-```bash
-$ mono Titan.exe [Verb] [Arguments ...]
-```
-
-On Windows, run Titan without the `mono` part at the beginning.
-
-You can find a list of command line arguments [here](https://github.com/Marc3842h/Titan/blob/master/Titan/Bootstrap/Options.cs).  
-If no (or not enough) arguments have been supplied, Titan will open the GUI:
-
-![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Form.png)
-
-If one of your recently botted players got banned, you'll also receive a notification:
-
-![Notification](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Notification.png)
-
-Please note that Titan is running as service by default. To close Titan
-completely, please click `File > Exit` in the menu bar.
-
-![About](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/About.png)
-
-<sup>All screenshots have been taken on <b>Arch Linux</b> using <b>Gnome</b> with the <b>Ark-Dark</b> theme.</sup>
-
-#### Converting existing accounts file
-
-Titan brings a Python3 script that can convert an existing `accounts.txt` file (in the format of `username:password`,
-from for example [Askwrite's report bot](https://github.com/Askwrite/node-csgo-reportbot)) to a Titan-compatible `accounts.json`
-file that can be used with the Titan report & commend bot.
-
-Use it like this:
-
-```python
-python convert.py <original accounts file>
-```
-
-After it ran successfully you can find a `accounts.json` file in the current directory.
-
-#### i3wm
-
-If you are using i3 window manager, I suggest enabling floating for Titan in the `.config/i3/config`:
-
-```i3config
-for_window [class="Titan"] floating enable
-```
-
-## Benchmarks
-
-Titan is a multi-threaded C# report bot for Counter-Strike Global Offensive.
-Because Titan is multi-threaded, it obviously has an advantage when comparing it to other report bots,
-which are mostly one-threaded and written in JavaScript using Node.js.
-
-Benchmarks will follow soon.
 
 ## Contributing
 

@@ -7,7 +7,7 @@ pkgdesc="A free, advanced CS:GO report and commendation bot built with performan
 arch=("x86_64")
 url="https://github.com/Marc3842h/Titan"
 license=("MIT")
-depends=("mono>=5.4.0" "gtk3" "gtk-sharp-3" "libnotify" "libappindicator-gtk3")
+depends=("mono>=5.4.0" "gtk3" "libnotify" "libappindicator-gtk3")
 makedepends=("git" "msbuild")
 provides=("titan-bot")
 install="Titan.install"
