@@ -118,7 +118,7 @@ for_window [class="Titan"] floating enable
 
 Here is the syntax of the accounts.json. You may read more about it on the [wiki](https://github.com/Marc3842h/Titan/wiki/Creating-a-accounts.json).
 
-```json
+```js
 {
     // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
     "indexes": [
