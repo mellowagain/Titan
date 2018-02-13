@@ -174,6 +174,7 @@ namespace Titan
                         Console.Read();
                     #endif
 
+                    Instance.Scheduler.Shutdown();
                     return -1;
                 }
 
