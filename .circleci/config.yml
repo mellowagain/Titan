@@ -30,6 +30,8 @@ jobs:
       - store_artifacts:
           path: ~/repo/Titan/bin/Release/Titan.exe
           destination: Titan.exe
+      - store_test_results:
+          path: ~/repo/TitanTest/bin/Release/results
 
 notify:
   webhooks:
