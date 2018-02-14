@@ -10,13 +10,9 @@ namespace Titan.UI
 
         public Icon TITAN_ICON;
 
-        public Icon STEAM_ICON;
-
         public SharedResources()
         {
             var resDir = Path.Combine(Titan.Instance.Directory.ToString(), "Resources");
-
-            STEAM_ICON = new Icon(File.Open(Path.Combine(resDir, "Steam.ico"), FileMode.Open));
 
             TITAN_ICON = new Icon(File.Open(Path.Combine(resDir, "Logo.ico"), FileMode.Open));
         }

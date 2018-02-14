@@ -63,8 +63,6 @@
           <e p="Logo.ico" t="Include" />
           <e p="Logo.png" t="Include" />
           <e p="Notification.png" t="Include" />
-          <e p="Steam.ico" t="Include" />
-          <e p="Text.png" t="Include" />
         </e>
         <e p="Restrictions" t="Include">
           <e p="Blacklist.cs" t="Include" />
