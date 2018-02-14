@@ -65,17 +65,6 @@ namespace Titan.UI.General
                 {
                     new ButtonMenuItem
                     {
-                        Text = "&File",
-                        Items =
-                        {
-                            new Command((s, a) => { _uiManager.SendNotification("Titan", "Not implemented yet."); })
-                            {
-                                MenuText = "Settings"
-                            }
-                        }
-                    },
-                    new ButtonMenuItem
-                    {
                         Text = "&Tools",
                         Items =
                         {
@@ -86,6 +75,14 @@ namespace Titan.UI.General
                             new Command((sender, args) => Process.Start("http://jsonlint.com"))
                             {
                                 MenuText = "Json Validator"
+                            },
+                            new Command((sender, args) => Process.Start("https://www.vac-ban.com/"))
+                            {
+                                MenuText = "VAC-Ban.com"
+                            },
+                            new Command((sender, args) => Process.Start("https://steamstat.us/"))
+                            {
+                                MenuText = "Steam Status"
                             }
                         }
                     },
@@ -101,15 +98,6 @@ namespace Titan.UI.General
                             new Command((sender, args) => Process.Start("https://discord.me/titanbot"))
                             {
                                 MenuText = "Discord"
-                            },
-                            new SeparatorMenuItem(),
-                            new Command((s, a) => { _uiManager.SendNotification("Titan", "Not implemented yet."); })
-                            {
-                                MenuText = "System Informations"
-                            },
-                            new Command((s, a) => { _uiManager.SendNotification("Titan", "Not implemented yet."); })
-                            {
-                                MenuText = "Check for Updates"
                             }
                         }
                     }
