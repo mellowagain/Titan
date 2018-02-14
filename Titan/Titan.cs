@@ -225,7 +225,7 @@ namespace Titan
                     Logger.Error("Eto.Forms could not detect your current operating system.");
                     
                     #if __UNIX__
-                        Logger.Error("Please install {0}, {1}, {2}, {3} and {4} before submitting a bug report.",
+                        Logger.Error("Please install {0}, {1}, {2} and {3} before submitting a bug report.",
                                      "Mono (\u22655.4)", 
                                      "Gtk 3",
                                      "libNotify",
