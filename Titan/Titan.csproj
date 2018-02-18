@@ -231,7 +231,9 @@
     <Content Include="Resources\About.png" />
     <Content Include="Resources\CREDIT.txt" />
     <Content Include="Resources\Form.png" />
-    <Content Include="Resources\Logo.png" />
+    <EmbeddedResource Include="Resources\Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Resources\Notification.png" />
     <EmbeddedResource Include="Resources\Logo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
