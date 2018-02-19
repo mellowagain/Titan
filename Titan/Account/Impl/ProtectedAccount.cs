@@ -14,6 +14,7 @@ using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
 using Titan.MatchID.Live;
+using Titan.Sentry;
 using Titan.UI;
 using Titan.UI._2FA;
 using Titan.Util;
@@ -29,8 +30,8 @@ namespace Titan.Account.Impl
 
         private SteamConfiguration _steamConfig;
         private Sentry.Sentry _sentry;
-        
-        private SteamGuardAccount _sgAccount;
+
+        private SharedSecret _sharedSecretGenerator;
         private string _authCode;
         private string _2FactorCode;
 
@@ -60,13 +61,15 @@ namespace Titan.Account.Impl
             _steamUser = _steamClient.GetHandler<SteamUser>();
             _steamFriends = _steamClient.GetHandler<SteamFriends>();
             _gameCoordinator = _steamClient.GetHandler<SteamGameCoordinator>();
-            
-            _titanHandle = new TitanHandler();
-            _steamClient.AddHandler(_titanHandle);
 
-            // Initialize debug network sniffer when debug mode is enabled
+            // This clause excludes SteamKit debug mode as that mode is handeled seperately.
+            // Normal debug mode doesn't equal SteamKit debug mode.
             if (Titan.Instance.Options.Debug)
             {
+                _titanHandle = new TitanHandler();
+                _steamClient.AddHandler(_titanHandle);
+                
+                // Initialize debug network sniffer when debug mode is enabled
                 var dir = new DirectoryInfo(Path.Combine(Titan.Instance.DebugDirectory.ToString(), json.Username));
                 if (!dir.Exists)
                 {
@@ -78,12 +81,9 @@ namespace Titan.Account.Impl
                 );
             }
 
-            if (json.SharedSecret != null)
+            if (!string.IsNullOrWhiteSpace(JsonAccount.SharedSecret))
             {
-                _sgAccount = new SteamGuardAccount
-                {
-                    SharedSecret = json.SharedSecret
-                };
+                _sharedSecretGenerator = new SharedSecret(this);
             }
 
             _log.Debug("Successfully initialized account object for " + json.Username + ".");
@@ -170,6 +170,14 @@ namespace Titan.Account.Impl
                 _log.Debug("Logging in with Auth Code: {a} / 2FA Code: {b} / Hash: {c}", _authCode, _2FactorCode,
                     hash != null ? Convert.ToBase64String(hash) : null);
             }
+
+            var loginID = RandomUtil.RandomUInt32();
+
+            if (!Titan.Instance.Options.Secure)
+            {
+                _log.Debug("Logging in with Login ID: {id}", loginID);
+            }
+            
             _steamUser.LogOn(new SteamUser.LogOnDetails
             {
                 Username = JsonAccount.Username,
@@ -177,7 +185,7 @@ namespace Titan.Account.Impl
                 AuthCode = _authCode,
                 TwoFactorCode = _2FactorCode,
                 SentryFileHash = hash,
-                LoginID = RandomUtil.RandomUInt32()
+                LoginID = loginID
             });
         }
 
@@ -185,26 +193,13 @@ namespace Titan.Account.Impl
         {
             _reconnects++;
 
-            if (_reconnects <= 5 && !callback.UserInitiated &&  IsRunning)
+            if (_reconnects <= 5 && !callback.UserInitiated && 
+               (Result != Result.Success && Result != Result.AlreadyLoggedInSomewhereElse || IsRunning))
             {
-                // TODO: Fix reconnecting, see GH issue
-                _log.Information("Disconnected from Steam. Retrying in 2 seconds... ({Count}/5)", _reconnects);
-                //_log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
+                _log.Debug("Disconnected from Steam. Retrying in 5 seconds... ({Count}/5)", _reconnects);
 
-                Thread.Sleep(TimeSpan.FromSeconds(2));
-                
-                var worker = new BackgroundWorker();
-                worker.DoWork += (sender, args) =>
-                {
-                    //_log.Debug("Starting watchdog.");
-                    Thread.Sleep(TimeSpan.FromSeconds(10));
-                    
-                    //_log.Debug("Steam Client connected after 10 sec: {bool}", _steamClient.IsConnected);
-                    //_log.Debug("Steam: {@steam} - Account: {@this}", _steamClient, this);
-                };
-                worker.RunWorkerAsync();
-                
-                _log.Debug("Reconnecting to Steam.", worker);
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+
                 _steamClient.Connect();
             }
             else
@@ -251,11 +246,11 @@ namespace Titan.Account.Impl
                     _gameCoordinator.Send(clientHello, GetAppID());
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
-                    if (_sgAccount != null)
+                    if (!string.IsNullOrWhiteSpace(JsonAccount.SharedSecret))
                     {
                         _log.Debug("A shared secret has been provided: automatically generating it...");
                         
-                        _2FactorCode = _sgAccount.GenerateSteamGuardCode();
+                        _2FactorCode = _sharedSecretGenerator.GenerateCode();
                     }
                     else
                     {
@@ -270,7 +265,7 @@ namespace Titan.Account.Impl
                             /* Wait until we receive the Steam Guard code from the UI */
                         }
                     }
-
+ 
                     if (!Titan.Instance.Options.Secure)
                     {
                         _log.Information("Received 2FA Code: {Code}", _2FactorCode);
@@ -378,9 +373,11 @@ namespace Titan.Account.Impl
 
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
-            _log.Debug("Successfully received client hello from CS:GO services. Sending {Mode}...",
-                _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend"));
-
+            var type = _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend");
+            var welcome = new ClientGCMsgProtobuf<CMsgClientWelcome>(msg);
+            
+            _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). Sending {type}.",
+                       welcome.Body.version, welcome.Body.location.country, type);
             
             if (_liveGameInfo != null)
             {

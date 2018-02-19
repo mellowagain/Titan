@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using CommandLine;
 using Newtonsoft.Json;
 using Quartz;
@@ -10,6 +11,7 @@ using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
 using SteamKit2;
+using SteamAuth;
 using Titan.Account;
 using Titan.Bootstrap;
 using Titan.Bootstrap.Verbs;
@@ -274,7 +276,9 @@ namespace Titan
             Instance.AccountManager.ParseAccountFile(); 
             
             Logger.Debug("Startup: Initializing Forms...");
-
+            
+            Task.Run(() => TimeAligner.AlignTime());
+            
             Instance.UIManager.InitializeForms();
             
             // Load after Forms were initialized

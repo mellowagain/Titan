@@ -59,6 +59,17 @@ namespace Titan.UI.General.Tabs
 
                     if(steamID != null)
                     {
+                        if (Blacklist.IsBlacklisted(steamID))
+                        {
+                            UIManager.SendNotification(
+                                "Restriction applied", 
+                                "The target you are trying to report is blacklisted from botting " +
+                                "in Titan.", 
+                                () => Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist")
+                            );
+                            return;
+                        }
+                        
                         if(matchID == 8)
                         {
                             _log.Warning("Could not convert {ID} to a valid Match ID. Trying to resolve the " +
@@ -71,17 +82,6 @@ namespace Titan.UI.General.Tabs
                                     SteamID = steamID,
                                     AppID = TitanAccount.CSGO_APPID
                                 });
-                        }
-
-                        if (Blacklist.IsBlacklisted(steamID))
-                        {
-                            UIManager.SendNotification(
-                                "Restriction applied", 
-                                "The target you are trying to report is blacklisted from botting " +
-                                "in Titan.", 
-                                () => Process.Start("https://github.com/Marc3842h/Titan/wiki/Blacklist")
-                            );
-                            return;
                         }
 
                         if (Titan.Instance.WebHandle.RequestBanInfo(steamID.ConvertToUInt64(), out var banInfo))

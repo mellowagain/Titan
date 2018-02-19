@@ -167,6 +167,7 @@
     <Compile Include="Meta\ReportInfo.cs" />
     <Compile Include="Managers\ThreadManager.cs" />
     <Compile Include="Sentry\Sentry.cs" />
+    <Compile Include="Sentry\SharedSecret.cs" />
     <Compile Include="Titan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\2FA\2FAForm.cs" />
