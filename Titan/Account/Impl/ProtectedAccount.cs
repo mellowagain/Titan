@@ -34,6 +34,7 @@ namespace Titan.Account.Impl
         private SharedSecret _sharedSecretGenerator;
         private string _authCode;
         private string _2FactorCode;
+        private LoginKey _loginKey;
 
         private SteamClient _steamClient;
         private SteamUser _steamUser;
@@ -55,6 +56,7 @@ namespace Titan.Account.Impl
             });
             
             _sentry = new Sentry.Sentry(this);
+            _loginKey = new LoginKey(this);
             
             _steamClient = new SteamClient(_steamConfig);
             _callbacks = new CallbackManager(_steamClient);
@@ -107,6 +109,7 @@ namespace Titan.Account.Impl
             _callbacks.Subscribe<SteamUser.LoggedOffCallback>(OnLoggedOff);
             _callbacks.Subscribe<SteamGameCoordinator.MessageCallback>(OnGCMessage);
             _callbacks.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
+            _callbacks.Subscribe<SteamUser.LoginKeyCallback>(OnNewLoginKey);
 
             IsRunning = true;
             _steamClient.Connect();
@@ -165,17 +168,18 @@ namespace Titan.Account.Impl
                 _log.Debug("No Sentry file found. Titan will ask for a confirmation code...");
             }
 
-            if (!Titan.Instance.Options.Secure)
-            {
-                _log.Debug("Logging in with Auth Code: {a} / 2FA Code: {b} / Hash: {c}", _authCode, _2FactorCode,
-                    hash != null ? Convert.ToBase64String(hash) : null);
-            }
-
             var loginID = RandomUtil.RandomUInt32();
 
+            string loginKey = null;
+            if (_loginKey.Exists())
+            {
+                loginKey = _loginKey.GetLastKey();
+            }
+
             if (!Titan.Instance.Options.Secure)
             {
-                _log.Debug("Logging in with Login ID: {id}", loginID);
+                _log.Debug("Logging in with Auth Code: {a} / 2FA Code {b} / Hash: {c} / LoginID: {d} / LoginKey {e}",
+                    _authCode, _2FactorCode, hash != null ? Convert.ToBase64String(hash) : null, loginID, loginKey);
             }
             
             _steamUser.LogOn(new SteamUser.LogOnDetails
@@ -185,7 +189,9 @@ namespace Titan.Account.Impl
                 AuthCode = _authCode,
                 TwoFactorCode = _2FactorCode,
                 SentryFileHash = hash,
-                LoginID = loginID
+                LoginID = loginID,
+                ShouldRememberPassword = true,
+                LoginKey = loginKey
             });
         }
 
@@ -369,6 +375,17 @@ namespace Titan.Account.Impl
             {
                 _log.Error("Could not save sentry file. Titan will ask again for Steam Guard code on next attempt.");
             }
+        }
+
+        public void OnNewLoginKey(SteamUser.LoginKeyCallback callback)
+        {
+            if (!Titan.Instance.Options.Secure)
+            {
+                _log.Debug("Received new login key: {key}", callback.LoginKey);
+            }
+
+            _loginKey.Save(callback.LoginKey);
+            _steamUser.AcceptNewLoginKey(callback);
         }
 
         public override void OnClientWelcome(IPacketGCMsg msg)

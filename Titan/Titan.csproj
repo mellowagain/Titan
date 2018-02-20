@@ -196,6 +196,7 @@
     <Compile Include="Meta\LiveGameInfo.cs" />
     <Compile Include="Meta\ReportInfo.cs" />
     <Compile Include="Managers\ThreadManager.cs" />
+    <Compile Include="Sentry\LoginKey.cs" />
     <Compile Include="Sentry\Sentry.cs" />
     <Compile Include="Sentry\SharedSecret.cs" />
     <Compile Include="Titan.cs" />
