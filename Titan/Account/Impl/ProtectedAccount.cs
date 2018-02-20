@@ -185,7 +185,7 @@ namespace Titan.Account.Impl
             _steamUser.LogOn(new SteamUser.LogOnDetails
             {
                 Username = JsonAccount.Username,
-                Password = JsonAccount.Password,
+                Password = loginKey == null ? JsonAccount.Password : null,
                 AuthCode = _authCode,
                 TwoFactorCode = _2FactorCode,
                 SentryFileHash = hash,
