@@ -12,6 +12,7 @@ using Serilog;
 using Serilog.Core;
 using SteamAuth;
 using SteamKit2;
+using SteamAuth;
 using Titan.Account;
 using Titan.Bootstrap;
 using Titan.Bootstrap.Verbs;
@@ -266,10 +267,10 @@ namespace Titan
 
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
-            Instance.AccountManager.ParseAccountFile(); 
-
+            Instance.AccountManager.ParseAccountFile();
+          
             Task.Run(() => TimeAligner.AlignTime());
-
+          
             Instance.UIManager.InitializeForms();
             
             // Load after Forms were initialized

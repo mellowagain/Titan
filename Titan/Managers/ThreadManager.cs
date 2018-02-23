@@ -176,6 +176,8 @@ namespace Titan.Managers
                         case Result.AlreadyLoggedInSomewhereElse:
                             _log.Error("Could not commend with account {Account}. The account is " +
                                        "already logged in somewhere else.", account.JsonAccount.Username);
+
+                            _failCount++;
                             break;  
                         case Result.AccountBanned:
                             _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
@@ -184,17 +186,21 @@ namespace Titan.Managers
                             break;
                         case Result.TimedOut:
                             _log.Error("Processing thread for {Account} has timed out.");
+                            _failCount++;
                             break;
                         case Result.SentryRequired:
                             _log.Error("The account has 2FA enabled. Please set {sentry} to {true} " +
                                        "in the accounts.json file.", "sentry", true);
+                            _failCount++;
                             break;
                         case Result.RateLimit:
                             _log.Error("The Steam Rate Limit has been reached. Please try again in a " +
                                        "few minutes.");
+                            _failCount++;
                             break;
                         case Result.Code2FAWrong:
                             _log.Error("The provided SteamGuard code was wrong. Please retry.");
+                            _failCount++;
                             break;
                     }
 
@@ -203,7 +209,7 @@ namespace Titan.Managers
                         if (_count == 0)
                         {
                             _log.Information("FAIL! Titan was not able to commend {Target}.",
-                            _count, _taskDic.Count, account._reportInfo.SteamID.ConvertToUInt64());
+                            account._reportInfo.SteamID.ConvertToUInt64());
 
                             Titan.Instance.UIManager.SendNotification(
                                 "Titan", " was not able to commend your target."
