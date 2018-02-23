@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -469,6 +469,19 @@ namespace Titan.Account.Impl
             var type = _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend");
             _log.Debug("Received hello from CS:GO matchmaking services. Authentificated as {id}. Sending {type}.",
                        response.Body.account_id, type);
+            
+            if (_liveGameInfo != null)
+            {
+                _gameCoordinator.Send(GetLiveGamePayload(), GetAppID());
+            }
+            else if (_reportInfo != null)
+            {
+                _gameCoordinator.Send(GetReportPayload(), GetAppID());
+            }
+            else
+            {
+                _gameCoordinator.Send(GetCommendPayload(), GetAppID());
+            }
         }
 
         public override void OnReportResponse(IPacketGCMsg msg)
