@@ -65,6 +65,21 @@ namespace Titan.Logging
                 .CreateLogger();
         }
 
+        public static Logger CreateDebugFileLogger(string name)
+        {
+            return new LoggerConfiguration()
+                .WriteTo.Async(c => c.RollingFile(
+                    Path.Combine(_logDir.ToString(), name + "-{Date}.log"), 
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u}] {Name} {ThreadId} - {Message}{NewLine}{Exception}"
+                ))
+                .MinimumLevel.Debug()
+                .Enrich.WithProperty("Name", name)
+                .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
+                .Enrich.FromLogContext()
+                .Enrich.WithThreadId()
+                .CreateLogger();
+        }
+
         public static Logger CreateQuartzLogger()
         {
             return new LoggerConfiguration()

@@ -10,8 +10,8 @@ using Quartz;
 using Quartz.Impl;
 using Serilog;
 using Serilog.Core;
-using SteamKit2;
 using SteamAuth;
+using SteamKit2;
 using Titan.Account;
 using Titan.Bootstrap;
 using Titan.Bootstrap.Verbs;
@@ -100,20 +100,20 @@ namespace Titan
                 };
             #endif
             
-            Logger.Debug("Startup: Loading Serilog <-> Common Logging Bridge.");
+            Logger.Debug("Loading Serilog <-> Common Logging Bridge.");
             
             // The bridge between Common Logging and Serilog uses the global Logger (Log.Logger).
             // As Quartz.NET is the only dependency using Common Logging (and because of our bridge the global logger)
             // we're creating the global logger as Quartz logger (which hides annoying debug messages).
             Log.Logger = LogCreator.CreateQuartzLogger();
             
-            Logger.Debug("Startup: Loading Quartz.NET.");
+            Logger.Debug("Loading Quartz.NET.");
             
             // Quartz.NET
             Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             Instance.Scheduler.Start();
 
-            Logger.Debug("Startup: Parsing Command Line Arguments.");
+            Logger.Debug("Parsing Command Line Arguments.");
 
             var parser = new Parser(config =>
             {
@@ -174,6 +174,7 @@ namespace Titan
                         Console.Read();
                     #endif
 
+                    Instance.Scheduler.Shutdown();
                     return -1;
                 }
 
@@ -208,8 +209,6 @@ namespace Titan
                 Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");
             }
 
-            Logger.Debug("Startup: Loading UI Manager, Victim Tracker, Account Manager and Ban Manager.");
-
             Instance.JsonSerializer = new JsonSerializer();
             Instance.Screenshotter = new ProfileScreenshotter();
             
@@ -226,10 +225,9 @@ namespace Titan
                     Logger.Error("Eto.Forms could not detect your current operating system.");
                     
                     #if __UNIX__
-                        Logger.Error("Please install {0}, {1}, {2}, {3} and {4} before submitting a bug report.",
+                        Logger.Error("Please install {0}, {1}, {2} and {3} before submitting a bug report.",
                                      "Mono (\u22655.4)", 
                                      "Gtk 3",
-                                     "Gtk# 3 (GTK Sharp)",
                                      "libNotify",
                                      "libAppindicator3");
                     #else
@@ -256,7 +254,6 @@ namespace Titan
             }
 
             Instance.VictimTracker = new VictimTracker();
-            
             Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             Instance.AccountManager = new AccountManager(new FileInfo(
@@ -266,25 +263,25 @@ namespace Titan
             Instance.ThreadManager = new ThreadManager();
 
             Instance.WebHandle = new SWAHandle();
-            
-            Logger.Debug("Startup: Registering Shutdown Hook.");
 
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
-            Logger.Debug("Startup: Parsing accounts.json file.");
-
             Instance.AccountManager.ParseAccountFile(); 
-            
-            Logger.Debug("Startup: Initializing Forms...");
-            
+
             Task.Run(() => TimeAligner.AlignTime());
-            
+
             Instance.UIManager.InitializeForms();
             
             // Load after Forms were initialized
             Instance.WebHandle.Load();
 
-            Logger.Information("Hello and welcome to Titan v1.6.0-EAP.");
+            var attribute = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>(); 
+            var version = attribute != null ? attribute.InformationalVersion : 
+                                              Assembly.GetEntryAssembly().GetName().Version.Major + "." +
+                                              Assembly.GetEntryAssembly().GetName().Version.Minor + "." +
+                                              Assembly.GetEntryAssembly().GetName().Version.Build;
+            
+            Logger.Information("Hello and welcome to Titan {version}.", "v" + version);
 
             if (Instance.EnableUI && Instance.ParsedObject == null || Instance.DummyMode)
             {
@@ -350,11 +347,11 @@ namespace Titan
             // The Shutdown handler gets only called after the last thread finished.
             // Quartz runs a Watchdog until Scheduler#Shutdown is called, so we're calling it
             // before Titan will be calling the Shutdown Hook.
-            Logger.Debug("Shutdown: Shutting down Quartz.NET Scheduler.");
+            Logger.Debug("Shutting down Quartz.NET Scheduler.");
             
             Instance.Scheduler.Shutdown();
             
-            return 0; // OK.
+            return 0x0; // OK.
         }
 
         public static void OnShutdown(object sender, EventArgs args)

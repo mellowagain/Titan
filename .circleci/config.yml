@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: mono:latest
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get update -qq
+            apt-get install -y git wget
+            wget http://download.mono-project.com/repo/ubuntu/pool/main/m/msbuild/msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
+            dpkg -i msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
+            rm -rf msbuild_15.4+xamarinxplat.2017.11.27.11.23-0xamarin1+ubuntu1404b1_all.deb
+      - checkout
+      - restore_cache:
+          keys:
+            - titan-{{ .Branch }}
+            - titan-
+      - run:
+          name: Run build script
+          command: |
+            ./build.sh
+      - save_cache:
+          key: titan-{{ .Branch }}
+          paths:
+            - "~/repo/packages"
+            - "~/repo/tools"
+      - store_artifacts:
+          path: ~/repo/Titan/bin/Release/Titan.exe
+          destination: Titan.exe
+      - store_test_results:
+          path: ~/repo/TitanTest/bin/Release/results
+
+notify:
+  webhooks:
+    - url: https://rainly.herokuapp.com/circle/370181720797872130/QdWybpGUWOaJkVaJXggJled3VqKdOYoh8471GL7lv9iFzVKHyrO0e-58j9AMvVEmcq-x

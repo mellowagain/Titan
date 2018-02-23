@@ -16,9 +16,17 @@ namespace Titan.Account
 
         public const uint TF2_APPID = 440;
         public const uint CSGO_APPID = 730;
+        
+        public const uint PENALTY_NONE = 0;
+        public const uint PENALTY_TEAM_KILL_AT_ROUND_START = 3; // Speculation: may also be the 30min cooldown
+        public const uint PENALTY_MATCH_ABANDON = 5; // Speculation: may also be the 2hr cooldown
+        public const uint PENALTY_OVERWATCH_CONVICTED_MAJORLY_DISRUPTIVE = 10;
+        public const uint PENALTY_OVERWATCH_CONVICTED_MINORLY_DISRUPTIVE = 11;
+        //public const uint PENALTY_PERMANENTLY_UNTRUSTED_ANGLES = 13, // Only speculation at this point as I can't test it
+        public const uint PENALTY_PERMANENTLY_UNTRUSTED_VAC = 14;
 
         ////////////////////////////////////////////////////
-        // JSON SPECIFICATIONS
+        // INIT
         ////////////////////////////////////////////////////
 
         public JsonAccounts.JsonAccount JsonAccount;
@@ -28,6 +36,13 @@ namespace Titan.Account
             JsonAccount = json;
         }
 
+        ~TitanAccount()
+        {
+            if (IsRunning)
+            {
+                Stop();
+            }
+        }
 
         ////////////////////////////////////////////////////
         // TIME
@@ -60,6 +75,7 @@ namespace Titan.Account
             {
                 { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
+                { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingGC2ClientHello, OnMatchmakingHelloResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
             };
@@ -71,6 +87,7 @@ namespace Titan.Account
         }
 
         public abstract void OnClientWelcome(IPacketGCMsg msg);
+        public abstract void OnMatchmakingHelloResponse(IPacketGCMsg msg);
         public abstract void OnReportResponse(IPacketGCMsg msg);
         public abstract void OnCommendResponse(IPacketGCMsg msg);
         public abstract void OnLiveGameRequestResponse(IPacketGCMsg msg);
@@ -118,7 +135,7 @@ namespace Titan.Account
                 return _liveGameInfo.AppID;
             }
 
-            return 0;
+            return CSGO_APPID; // Default to CS:GO App ID
         }
 
         ////////////////////////////////////////////////////
@@ -183,6 +200,14 @@ namespace Titan.Account
             };
 
             return payload;
+        }
+
+        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello> GetMatchmakingHelloPayload()
+        {
+            // This payload doesn't have any explicit body values
+            return new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello>(
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingClient2GCHello
+            );
         }
 
     }

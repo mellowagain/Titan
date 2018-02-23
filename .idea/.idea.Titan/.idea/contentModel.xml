@@ -63,14 +63,14 @@
           <e p="Logo.ico" t="Include" />
           <e p="Logo.png" t="Include" />
           <e p="Notification.png" t="Include" />
-          <e p="Steam.ico" t="Include" />
-          <e p="Text.png" t="Include" />
         </e>
         <e p="Restrictions" t="Include">
           <e p="Blacklist.cs" t="Include" />
         </e>
         <e p="Sentry" t="Include">
+          <e p="LoginKey.cs" t="Include" />
           <e p="Sentry.cs" t="Include" />
+          <e p="SharedSecret.cs" t="Include" />
         </e>
         <e p="Titan.cs" t="Include" />
         <e p="Titan.csproj" t="IncludeRecursive" />

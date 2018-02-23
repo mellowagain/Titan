@@ -52,12 +52,12 @@ namespace Titan.UI.General.Tabs
             var btnReport = new Button { Text = "Report" };
             btnReport.Click += (sender, args) =>
             {
-                if(!string.IsNullOrWhiteSpace(txtBoxSteamID.Text))
+                if (!string.IsNullOrWhiteSpace(txtBoxSteamID.Text))
                 {
                     var steamID = SteamUtil.Parse(txtBoxSteamID.Text);
                     var matchID = SharecodeUtil.Parse(txtBoxMatchID.Text);
 
-                    if(steamID != null)
+                    if (steamID != null)
                     {
                         if (Blacklist.IsBlacklisted(steamID))
                         {
@@ -70,7 +70,7 @@ namespace Titan.UI.General.Tabs
                             return;
                         }
                         
-                        if(matchID == 8)
+                        if (matchID == 8)
                         {
                             _log.Warning("Could not convert {ID} to a valid Match ID. Trying to resolve the " +
                                          "the Match ID in which the target is playing at the moment.", matchID);
@@ -86,14 +86,14 @@ namespace Titan.UI.General.Tabs
 
                         if (Titan.Instance.WebHandle.RequestBanInfo(steamID.ConvertToUInt64(), out var banInfo))
                         {
-                            if(banInfo.VacBanned || banInfo.GameBanCount > 0)
+                            if (banInfo.VacBanned || banInfo.GameBanCount > 0)
                             {
                                 _log.Warning("The target has already been banned. Are you sure you " +
                                              "want to bot this player? Ignore this message if the " +
                                              "target has been banned in other games.");
                             }
 
-                            if(Titan.Instance.VictimTracker.IsVictim(steamID))
+                            if (Titan.Instance.VictimTracker.IsVictim(steamID))
                             {
                                 _log.Warning("You already report botted this victim. " +
                                              "Are you sure you want to bot this player? " +

@@ -144,6 +144,7 @@ namespace Titan.Web
                 else
                 {
                     Log.Information("Steam Web API key was valid. Enjoy using Titan!");
+                    Save();
                 }
             }
         }

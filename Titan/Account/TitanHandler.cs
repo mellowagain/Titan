@@ -9,22 +9,27 @@ namespace Titan.Account
     public class TitanHandler : ClientMsgHandler
     {
 
-        private Logger _log = LogCreator.Create();
-
-        private long _lastReceivedPacket;
+        private Logger _log = LogCreator.CreateDebugFileLogger("Titan Handler");
+        public DateTime LastPacket;
         
         public override void HandleMsg(IPacketMsg packetMsg)
         {
             if (packetMsg != null)
             {
-                _lastReceivedPacket = DateTime.Now.ToEpochTime();
+                LastPacket = DateTime.Now;
+
+                switch (packetMsg.MsgType)
+                {
+                    case EMsg.ClientSharedLibraryLockStatus:
+                        // TODO: Handle CS:GO shared over family sharing (It doesn't work for report botting!)
+                        break;
+                }
                 
-                // TODO: Implement handler
+                _log.Debug("Recv'd msg: {msg} Content: {@content}", packetMsg, packetMsg);
+                return;
             }
-            else
-            {
-                _log.Error("Received packet payload from Steam network: {null}", null);
-            }
+            
+            _log.Error("Received null package: {package}", nameof(packetMsg));
         }
         
     }

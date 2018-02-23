@@ -6,16 +6,16 @@ namespace Titan.Restrictions
     public static class Blacklist
     {
         
-/*      This is the hardcoded implementation of a Blacklist in Titan.
-        This prevents users from botting persons on this
-        blacklist, to prevent my own accounts and these
-        from my friends from getting report botted and banned.
+        // This is the hardcoded implementation of a Blacklist in Titan.
+        // This prevents users from botting persons on this
+        // blacklist, to prevent my own accounts and thse
+        // from my friends from getting report botted and banned.
         
-        Purchasing yourself into this blacklist is not possible
-        and this whole application is open-source. If users
-        wish to disable the blacklist, they could either remove
-        the whole blacklist or include the "--noblacklist" command
-        line argument when starting Titan.*/
+        // Purchasing yourself into this blacklist is not possible
+        // and this whole application is open-source. If users
+        // wish to disable the blacklist, they could either remove
+        // the whole blacklist or include the "--noblacklist" command
+        // line argument when starting Titan.
 
         public static List<string> BlackList = new List<string>
         {
