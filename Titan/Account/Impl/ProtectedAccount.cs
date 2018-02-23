@@ -91,14 +91,6 @@ namespace Titan.Account.Impl
             _log.Debug("Successfully initialized account object for " + json.Username + ".");
         }
 
-        ~ProtectedAccount()
-        {
-            if (IsRunning)
-            {
-                Stop();
-            }
-        }
-
         public override Result Start()
         {
             Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" : "Commend");
@@ -128,7 +120,7 @@ namespace Titan.Account.Impl
             _commendInfo = null;
             _liveGameInfo = null;
             
-            if (_steamFriends.GetPersonaState() == EPersonaState.Online)
+            if (_steamFriends.GetPersonaState() != EPersonaState.Offline)
             {
                 _steamFriends.SetPersonaState(EPersonaState.Offline);
             }
@@ -154,7 +146,7 @@ namespace Titan.Account.Impl
 
         public override void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            //_log.Debug("Received on connected: {@callback} - Job ID: {id}", callback, callback.JobID.Value);
+            _log.Debug("Successfully connected to Steam. Logging in...");
             
             byte[] hash = null;
             if (_sentry.Exists())
@@ -178,7 +170,7 @@ namespace Titan.Account.Impl
 
             if (!Titan.Instance.Options.Secure)
             {
-                _log.Debug("Logging in with Auth Code: {a} / 2FA Code {b} / Hash: {c} / LoginID: {d} / LoginKey {e}",
+                _log.Debug("Logging in with Auth Code: {a} / 2FA Code {b} / Hash: {c} / LoginID: {d} / LoginKey: {e}",
                     _authCode, _2FactorCode, hash != null ? Convert.ToBase64String(hash) : null, loginID, loginKey);
             }
             
@@ -220,20 +212,7 @@ namespace Titan.Account.Impl
             switch (callback.Result)
             {
                 case EResult.OK:
-                    _log.Debug("Successfully logged in. Checking for any VAC or game bans...");
-
-                    if (Titan.Instance.WebHandle.RequestBanInfo(_steamUser.SteamID.ConvertToUInt64(), out var banInfo))
-                    {
-                        if (banInfo.VacBanned || banInfo.GameBanCount > 0)
-                        {
-                            _log.Warning("The account has a ban on record. " +
-                                         "If the VAC/Game ban ban is from CS:GO, a {Mode} is not possible. " +
-                                         "Proceeding with caution.", _reportInfo != null ? "report" :"commend");
-                            Result = Result.AccountBanned;
-                        }
-                    }
-
-                    _log.Debug("Registering that we're playing CS:GO...");
+                    _log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
 
                     _steamFriends.SetPersonaState(EPersonaState.Online);
 
@@ -248,7 +227,9 @@ namespace Titan.Account.Impl
 
                     _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
 
-                    var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>((uint) EGCBaseClientMsg.k_EMsgGCClientHello);
+                    var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>(
+                        (uint) EGCBaseClientMsg.k_EMsgGCClientHello
+                    );
                     _gameCoordinator.Send(clientHello, GetAppID());
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
@@ -298,33 +279,25 @@ namespace Titan.Account.Impl
                     _log.Error("Steam is currently offline. Please try again later.");
 
                     Stop();
-
-                    IsRunning = false;
                     break;
                 case EResult.RateLimitExceeded:
                     _log.Error("Steam Rate Limit has been reached. Please try it again in a few minutes...");
 
-                    Stop();
-
-                    IsRunning = false;
                     Result = Result.RateLimit;
+                    Stop();
                     break;
                 case EResult.TwoFactorCodeMismatch:
                 case EResult.TwoFactorActivationCodeMismatch:
                 case EResult.Invalid:
                     _log.Error("A invalid SteamGuard authentificator code has been provided. Aborting!");
                     
-                    Stop();
-
-                    IsRunning = false;
                     Result = Result.Code2FAWrong;
+                    Stop();
                     break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
 
                     Stop();
-
-                    IsRunning = false;
                     break;
             }
         }
@@ -390,11 +363,112 @@ namespace Titan.Account.Impl
 
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
-            var type = _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend");
             var welcome = new ClientGCMsgProtobuf<CMsgClientWelcome>(msg);
             
-            _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). Sending {type}.",
-                       welcome.Body.version, welcome.Body.location.country, type);
+            _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). " +
+                       "Sending hello the CS:GO's matchmaking service.",
+                       welcome.Body.version, welcome.Body.location.country);
+            
+            _gameCoordinator.Send(GetMatchmakingHelloPayload(), GetAppID());
+        }
+
+        public override void OnMatchmakingHelloResponse(IPacketGCMsg msg)
+        {
+            var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingGC2ClientHello>(msg);
+
+            if (response.Body.penalty_reasonSpecified)
+            {
+                switch (response.Body.penalty_reason)
+                {
+                    case PENALTY_OVERWATCH_CONVICTED_MAJORLY_DISRUPTIVE:
+                    {
+                        _log.Error("This account has been convicted by Overwatch as majorly disruptive and has been " +
+                                   "permanently banned. Botting with banned accounts is not possible and will not " +
+                                   "give succesful results. Aborting!");
+                        Result = Result.AccountBanned;
+
+                        Stop();
+                        return;
+                    }
+                    case PENALTY_OVERWATCH_CONVICTED_MINORLY_DISRUPTIVE:
+                    {
+                        var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
+
+                        _log.Error("This account has been convicted by Overwatch as majorly minorly and has been " +
+                                   "banned for {days} more days. Botting with banned accounts is not possible and " +
+                                   "will not give succesful results. Aborting!", penalty.Days);
+                        Result = Result.AccountBanned;
+
+                        Stop();
+                        return;
+                    }
+                    case PENALTY_PERMANENTLY_UNTRUSTED_VAC:
+                    {
+                        _log.Error("This account is permanently untrusted. Botting with banned accounts is not " +
+                                   "possible and will not give succesful results. Aborting!");
+                        Result = Result.AccountBanned;
+
+                        Stop();
+                        return;
+                    }
+                    default:
+                    {
+                        if (response.Body.penalty_secondsSpecified)
+                        {
+                            var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
+
+                            // 604800 seconds = 7 days
+                            // If the penalty seconds are over 7 days, the account is permanently banned.
+                            // If not, the account has received a temporary Matchmaking cooldown
+                            if (penalty.Seconds <= 604800)
+                            {
+                                string timeString;
+                                if (penalty.Minutes >= 60)
+                                {
+                                    timeString = penalty.Hours + " Hours";
+                                }
+                                else
+                                {
+                                    timeString = penalty.Minutes + " Minutes";
+                                }
+
+                                _log.Error("This account has received a Matchmaking cooldown. Botting with banned " +
+                                           "accounts is not possible and will not give successful results. Aborting!");
+                                _log.Error("The matchmaking cooldown of this account will end in {end}.", timeString);
+                                Result = Result.AccountBanned;
+
+                                Stop();
+                                return;
+                            }
+                        }
+
+                        _log.Error("This account has been permanently banned from CS:GO. Botting with banned " +
+                                   "accounts is not possible and will not give successful results. Aborting!");
+                        Result = Result.AccountBanned;
+
+                        Stop();
+                        return;
+                    }
+                }
+            }
+
+            // When the CS:GO GC sends a vac_banned (type 2) but not a penalty_reason (type 0)
+            // the account has received a yellow "This account has been banned by Overwatch"
+            // banner in-game and has no longer the ability to report or commend.
+            if (response.Body.vac_bannedSpecified && !response.Body.penalty_reasonSpecified && 
+                response.Body.vac_banned == 2 && !response.Body.penalty_secondsSpecified)
+            {
+                _log.Error("This account has been banned by Valve Anti Cheat. Botting with banned " +
+                           "accounts is not possible and will not give successfull results. Aborting!");
+                Result = Result.AccountBanned;
+                
+                Stop();
+                return;
+            }
+            
+            var type = _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend");
+            _log.Debug("Received hello from CS:GO matchmaking services. Authentificated as {id}. Sending {type}.",
+                       response.Body.account_id, type);
             
             if (_liveGameInfo != null)
             {
