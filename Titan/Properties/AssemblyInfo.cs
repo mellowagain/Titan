@@ -18,6 +18,6 @@ using System.Runtime.InteropServices;
 // Titan uses SemVer (Microsoft doesn't prefer that and displays a warning), thats why we disable the compiler warnings.
 [assembly: AssemblyVersion("1.6.0")]
 [assembly: AssemblyFileVersion("1.6.0")]
-[assembly: AssemblyInformationalVersion("1.6.0-<%GitHash%>")] // Will be edited by Cake Build Script
+[assembly: AssemblyInformationalVersion("1.6.0-e7b1319")] // Will be edited by Cake Build Script
 
 #pragma warning restore 7035
