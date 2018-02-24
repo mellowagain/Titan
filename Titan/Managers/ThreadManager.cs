@@ -99,7 +99,7 @@ namespace Titan.Managers
                     {
                         if (_successCount == 0)
                         {
-                            _log.Information("FAIL! Titan was not able to report target {Target}.",
+                            _log.Error("FAIL! Titan was not able to report target {Target}.",
                                 info.SteamID.ConvertToUInt64());
 
                             Titan.Instance.UIManager.SendNotification(
@@ -218,7 +218,7 @@ namespace Titan.Managers
                     {
                         if (_successCount == 0)
                         {
-                            _log.Information("FAIL! Titan was not able to commend target {Target}.",
+                            _log.Error("FAIL! Titan was not able to commend target {Target}.",
                                 info.SteamID.ConvertToUInt64());
 
                             Titan.Instance.UIManager.SendNotification(
