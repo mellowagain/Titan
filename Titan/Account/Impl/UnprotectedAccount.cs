@@ -183,7 +183,7 @@ namespace Titan.Account.Impl
                     });
                     _steamClient.Send(playGames);
 
-                    Thread.Sleep(5000);
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
                     
                     _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
 

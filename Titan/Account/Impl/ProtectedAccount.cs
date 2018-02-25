@@ -223,7 +223,7 @@ namespace Titan.Account.Impl
                     });
                     _steamClient.Send(playGames);
 
-                    Thread.Sleep(5000);
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
 
                     _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
 
@@ -289,10 +289,10 @@ namespace Titan.Account.Impl
                 case EResult.TwoFactorCodeMismatch:
                 case EResult.TwoFactorActivationCodeMismatch:
                 case EResult.Invalid:
-                    _log.Error("A invalid SteamGuard authentificator code has been provided. Aborting!");
-                    
-                    Result = Result.Code2FAWrong;
-                    Stop();
+                    _log.Error("Invalid Steam Guard code provided. Reasking after reconnecting.");
+
+                    _authCode = null;
+                    _2FactorCode = null;
                     break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
