@@ -52,6 +52,8 @@ namespace Titan.Managers
                     var result = origin.RunUntil(account.JsonAccount.Sentry
                         ? TimeSpan.FromMinutes(3)
                         : TimeSpan.FromSeconds(60));
+                    _count++;
+
                     switch (result.Result)
                     {
                         case Result.Success:
