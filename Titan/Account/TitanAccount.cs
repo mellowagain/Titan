@@ -118,6 +118,26 @@ namespace Titan.Account
             _liveGameInfo = info;
         }
 
+        public uint GetTargetAccountID()
+        {
+            if (_reportInfo != null)
+            {
+                return _reportInfo.SteamID.AccountID;
+            }
+
+            if (_commendInfo != null)
+            {
+                return _commendInfo.SteamID.AccountID;
+            }
+
+            if (_liveGameInfo != null)
+            {
+                return _liveGameInfo.SteamID.AccountID;
+            }
+
+            return 0;
+        }
+
         public uint GetAppID()
         {
             if (_reportInfo != null)
@@ -152,12 +172,12 @@ namespace Titan.Account
                 {
                     account_id = _reportInfo.SteamID.AccountID,
                     match_id = _reportInfo.MatchID,
-                    rpt_aimbot = (uint) (_reportInfo.AimHacking ? 1 : 0),
-                    rpt_wallhack = (uint) (_reportInfo.WallHacking ? 1 : 0),
-                    rpt_speedhack = (uint) (_reportInfo.OtherHacking ? 1 : 0),
-                    rpt_teamharm = (uint) (_reportInfo.Griefing ? 1 : 0),
-                    rpt_textabuse = (uint) (_reportInfo.AbusiveText ? 1 : 0),
-                    rpt_voiceabuse = (uint) (_reportInfo.AbusiveVoice ? 1 : 0)
+                    rpt_aimbot = Convert.ToUInt32(_reportInfo.AimHacking),
+                    rpt_wallhack = Convert.ToUInt32(_reportInfo.WallHacking),
+                    rpt_speedhack = Convert.ToUInt32(_reportInfo.OtherHacking),
+                    rpt_teamharm = Convert.ToUInt32(_reportInfo.Griefing),
+                    rpt_textabuse = Convert.ToUInt32(_reportInfo.AbusiveText),
+                    rpt_voiceabuse = Convert.ToUInt32(_reportInfo.AbusiveVoice)
                 }
             };
 
@@ -176,9 +196,9 @@ namespace Titan.Account
                     match_id = 0,
                     commendation = new PlayerCommendationInfo
                     {
-                        cmd_friendly = (uint) (_commendInfo.Friendly ? 1 : 0),
-                        cmd_teaching = (uint) (_commendInfo.Teacher ? 1 : 0),
-                        cmd_leader = (uint) (_commendInfo.Leader ? 1 : 0)
+                        cmd_friendly = Convert.ToUInt32(_commendInfo.Friendly),
+                        cmd_teaching = Convert.ToUInt32(_commendInfo.Teacher),
+                        cmd_leader = Convert.ToUInt32(_commendInfo.Leader)
                     },
                     tokens = 0
                 }
@@ -202,12 +222,20 @@ namespace Titan.Account
             return payload;
         }
 
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello> GetMatchmakingHelloPayload()
+        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientRequestPlayersProfile> GetRequestPlayerProfile()
         {
-            // This payload doesn't have any explicit body values
-            return new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingClient2GCHello
-            );
+            var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientRequestPlayersProfile>(
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientRequestPlayersProfile
+            )
+            {
+                Body =
+                {
+                    account_id = GetTargetAccountID(),
+                    account_idSpecified = true
+                }
+            };
+
+            return payload;
         }
 
     }

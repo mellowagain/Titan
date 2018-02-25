@@ -190,6 +190,7 @@ namespace Titan.Account.Impl
                     var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>(
                         (uint) EGCBaseClientMsg.k_EMsgGCClientHello
                     );
+                    
                     _gameCoordinator.Send(clientHello, GetAppID());
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
@@ -261,7 +262,11 @@ namespace Titan.Account.Impl
                        "Sending hello the CS:GO's matchmaking service.",
                        welcome.Body.version, welcome.Body.location.country);
             
-            _gameCoordinator.Send(GetMatchmakingHelloPayload(), GetAppID());
+            var mmHello = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello>(
+                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingClient2GCHello
+            );
+            
+            _gameCoordinator.Send(mmHello, GetAppID());
         }
 
         public override void OnMatchmakingHelloResponse(IPacketGCMsg msg)
