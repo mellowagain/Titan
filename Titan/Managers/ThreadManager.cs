@@ -52,6 +52,8 @@ namespace Titan.Managers
                     var result = origin.RunUntil(account.JsonAccount.Sentry
                         ? TimeSpan.FromMinutes(3)
                         : TimeSpan.FromSeconds(60));
+                    _count++;
+
                     switch (result.Result)
                     {
                         case Result.Success:
@@ -128,7 +130,7 @@ namespace Titan.Managers
 
                     _log.Error("Connection to account {Account} timed out. It was not possible to " +
                                "report the target after {Timespan} seconds.", account.JsonAccount.Username,
-                               timeSpent.Seconds);
+                        timeSpent.Seconds);
                     timedOut = true;
                 }
                 finally
@@ -247,7 +249,7 @@ namespace Titan.Managers
 
                     _log.Error("Connection to account {Account} timed out. It was not possible to " +
                                "commend the target after {Timespan} seconds.", account.JsonAccount.Username,
-                               timeSpent.Seconds);
+                        timeSpent.Seconds);
                     timedOut = true;
                 }
                 finally
