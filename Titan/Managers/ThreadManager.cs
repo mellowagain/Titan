@@ -25,7 +25,7 @@ namespace Titan.Managers
         {
             if (_taskDic.ContainsKey(account))
             {
-                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                _log.Warning("Account is already reporting / commending. Aborting forcefully!");
 
                 FinishBotting(account);
             }
@@ -149,7 +149,7 @@ namespace Titan.Managers
         {
             if (_taskDic.ContainsKey(account))
             {
-                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                _log.Warning("Account is already reporting / commending. Aborting forcefully!");
 
                 FinishBotting(account);
             }
@@ -268,7 +268,7 @@ namespace Titan.Managers
         {
             if (_taskDic.ContainsKey(account))
             {
-                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                _log.Warning("Account is already reporting / commending. Aborting forcefully!");
 
                 FinishBotting(account);
             }
