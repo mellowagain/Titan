@@ -20,6 +20,9 @@
             <e p="ReportOptions.cs" t="Include" />
           </e>
         </e>
+        <e p="Config" t="Include">
+          <e p="Config.cs" t="Include" />
+        </e>
         <e p="Json" t="Include">
           <e p="JsonAccounts.cs" t="Include" />
           <e p="JsonIndex.cs" t="Include" />

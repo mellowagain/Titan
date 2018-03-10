@@ -100,20 +100,16 @@ namespace Titan
                 };
             #endif
             
-            Logger.Debug("Loading Serilog <-> Common Logging Bridge.");
-            
             // The bridge between Common Logging and Serilog uses the global Logger (Log.Logger).
             // As Quartz.NET is the only dependency using Common Logging (and because of our bridge the global logger)
             // we're creating the global logger as Quartz logger (which hides annoying debug messages).
             Log.Logger = LogCreator.CreateQuartzLogger();
             
-            Logger.Debug("Loading Quartz.NET.");
-            
             // Quartz.NET
             Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             Instance.Scheduler.Start();
-
-            Logger.Debug("Parsing Command Line Arguments.");
+            
+            Instance.JsonSerializer = new JsonSerializer();
 
             var parser = new Parser(config =>
             {
@@ -149,6 +145,8 @@ namespace Titan
                         Logger.Information("No valid verb has been provided while parsing. Opening UI...");
                     }
                 });
+            
+            new Config.Config().Load();
             
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
@@ -209,7 +207,6 @@ namespace Titan
                 Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");
             }
 
-            Instance.JsonSerializer = new JsonSerializer();
             Instance.Screenshotter = new ProfileScreenshotter();
 
             if (Instance.EnableUI)

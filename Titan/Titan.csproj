@@ -181,6 +181,7 @@
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\Verbs\CommendOptions.cs" />
     <Compile Include="Bootstrap\Verbs\ReportOptions.cs" />
+    <Compile Include="Config\Config.cs" />
     <Compile Include="Logging\TitanListener.cs" />
     <Compile Include="Meta\TitanPayloadInfo.cs" />
     <Compile Include="Proof\ProfileScreenshotter.cs" />
