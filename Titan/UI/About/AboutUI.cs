@@ -16,7 +16,7 @@ namespace Titan.UI.About
             Copyright = "Copyright \u00A9 2017-" + DateTime.Now.Year + " Marc3842h";
             Developers = new [] { "Marc3842h", "raspbianlike", "ra1N1336", "bananasss00" };
             Documenters = new[] { "Marc3842h", "ikfe", "BoberMod", "ZeroMemes" };
-            Logo = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
+            Logo = Titan.Instance.UIManager.TitanIcon;
             License = _license;
             
             var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>(); 

@@ -4,7 +4,7 @@ using Titan.Util;
 using Titan.Web;
 using Xunit;
 
-namespace TitanTest
+namespace Titan.Test
 {
     public class BanManagerTest
     {

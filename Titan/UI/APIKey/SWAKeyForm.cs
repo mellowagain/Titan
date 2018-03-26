@@ -20,7 +20,7 @@ namespace Titan.UI.APIKey
             Title = "Titan - Steam Web API action required";
             Resizable = false;
             Topmost = true;
-            Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
+            Icon = Titan.Instance.UIManager.TitanIcon;
 
             _uiManager = uiManager;
 

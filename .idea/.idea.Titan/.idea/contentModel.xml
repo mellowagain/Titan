@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.Rider2017.3/system/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_Titan.-776688983.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.Rider2017.3/system/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_Titan.81550107.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.3.1/build/netcoreapp1.0/xunit.runner.reporters.netcoreapp10.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.3.1/build/netcoreapp1.0/xunit.runner.utility.netcoreapp10.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xunit.runner.visualstudio/2.3.1/build/netcoreapp1.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="Titan" t="IncludeRecursive">
         <e p="Account" t="Include">
@@ -53,12 +56,6 @@
           <e p="ReportInfo.cs" t="Include" />
           <e p="TitanPayloadInfo.cs" t="Include" />
         </e>
-        <e p="Proof" t="Include">
-          <e p="ProfileScreenshotter.cs" t="Include" />
-        </e>
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
         <e p="Resources" t="Include">
           <e p="About.png" t="Include" />
           <e p="CREDIT.txt" t="Include" />
@@ -96,7 +93,6 @@
               <e p="ReportTab.cs" t="Include" />
             </e>
           </e>
-          <e p="SharedResources.cs" t="Include" />
           <e p="UIManager.cs" t="Include" />
           <e p="UIType.cs" t="Include" />
         </e>
@@ -117,28 +113,32 @@
         <e p="accounts.json" t="Include" />
         <e p="app.config" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
-      </e>
-      <e p="Titan.sln" t="IncludeFlat" />
-      <e p="TitanTest" t="IncludeRecursive">
-        <e p="BanManagerTest.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.0" t="Include">
+              <e p="Titan.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
         </e>
-        <e p="ScreenshotTest.cs" t="Include" />
+      </e>
+      <e p="Titan.Test" t="IncludeRecursive">
+        <e p="BanManagerTest.cs" t="Include" />
         <e p="ShareCodeDecoderTest.cs" t="Include" />
         <e p="SteamUtilTest.cs" t="Include" />
         <e p="ThreadTimeoutTest.cs" t="Include" />
-        <e p="TitanTest.csproj" t="IncludeRecursive" />
+        <e p="Titan.Test.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
-        <e p="packages.config" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.0" t="Include">
+              <e p="Titan.Test.AssemblyInfo.cs" t="Include" />
+              <e p="Titan.Test.Program.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
+      <e p="Titan.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
-  </component>
-  <component name="RiderRiderContentModelStore">
-    <excludedPaths />
   </component>
 </project>

@@ -18,7 +18,6 @@ using Titan.Bootstrap.Verbs;
 using Titan.Logging;
 using Titan.Managers;
 using Titan.Meta;
-using Titan.Proof;
 using Titan.Restrictions;
 using Titan.UI;
 using Titan.Util;
@@ -50,7 +49,6 @@ namespace Titan
 
         public JsonSerializer JsonSerializer;
         public SWAHandle WebHandle;
-        public ProfileScreenshotter Screenshotter;
 
         public bool DummyMode = false;
         public IScheduler Scheduler;
@@ -64,7 +62,7 @@ namespace Titan
         public static int Main(string[] args)
         {
             Thread.CurrentThread.Name = "Main";
-
+            
             Instance = new Titan
             {
                 Options = new Options()
@@ -206,8 +204,6 @@ namespace Titan
             {
                 Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");
             }
-
-            Instance.Screenshotter = new ProfileScreenshotter();
 
             if (Instance.EnableUI)
             {

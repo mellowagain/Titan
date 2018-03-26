@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
@@ -17,14 +19,15 @@ namespace Titan.UI
         private Application _etoApp;
 
         private Dictionary<UIType, Form> _forms = new Dictionary<UIType, Form>();
-        
-        public SharedResources SharedResources;
+
+        public Icon TitanIcon;
         public TrayIndicator TrayIcon;
         
         public UIManager()
         {
             _etoApp = new Application();
-            SharedResources = new SharedResources();
+            
+            TitanIcon = new Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("Titan.Resources.Logo.ico"));
         }
 
         public void InitializeForms()
@@ -42,7 +45,7 @@ namespace Titan.UI
             TrayIcon = new TrayIndicator
             {
                 Title = "Titan",
-                Image = SharedResources.TITAN_ICON,
+                Image = TitanIcon,
                 Visible = true,
                 Menu = new ContextMenu
                 {
@@ -164,18 +167,16 @@ namespace Titan.UI
             {
                 Title = title,
                 Message = message,
-                ContentImage = Titan.Instance.UIManager.SharedResources.TITAN_ICON
+                ContentImage = Titan.Instance.UIManager.TitanIcon
             };
 
-            if(a != null)
+            /*if(a != null)
             {
                 // TODO: This is deprecated. Needs workaround for per-notification based activation
-                notification.Activated += (sender, args) => a();
-            }
+                notification.Activated += delegate { a(); };
+            }*/
 
-            Application.Instance.Invoke(() =>
-                notification.Show(TrayIcon)
-            );
+            Application.Instance.Invoke(delegate { notification.Show(); });
         }
 
     }

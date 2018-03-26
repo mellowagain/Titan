@@ -1,7 +1,7 @@
 ﻿using Titan.MatchID.Sharecode;
 using Xunit;
 
-namespace TitanTest
+namespace Titan.Test
 {
     public class ShareCodeDecoderTest
     {

@@ -16,7 +16,7 @@ namespace Titan.UI._2FA
             Title = "Titan - 2FA Action required - " + account.JsonAccount.Username;
             Resizable = false;
             Topmost = true;
-            Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON;
+            Icon = Titan.Instance.UIManager.TitanIcon;
 
             _log = LogCreator.Create("2FA Form - " + account.JsonAccount.Username + " (Protected)");
 

@@ -5,7 +5,7 @@ using Titan.Web;
 using Xunit;
 using static Titan.Util.SteamUtil;
 
-namespace TitanTest
+namespace Titan.Test
 {
     public class SteamUtilTest
     {
