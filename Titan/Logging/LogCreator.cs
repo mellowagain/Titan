@@ -43,7 +43,6 @@ namespace Titan.Logging
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
-                .Enrich.WithThreadId()
                 .CreateLogger();
         }
 
@@ -61,7 +60,6 @@ namespace Titan.Logging
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
-                .Enrich.WithThreadId()
                 .CreateLogger();
         }
 
@@ -76,7 +74,6 @@ namespace Titan.Logging
                 .Enrich.WithProperty("Name", name)
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
-                .Enrich.WithThreadId()
                 .CreateLogger();
         }
 
@@ -94,7 +91,6 @@ namespace Titan.Logging
                 .Enrich.WithProperty("Name", "Quartz.NET Scheduler")
                 .Enrich.WithProperty("Thread", Thread.CurrentThread.Name)
                 .Enrich.FromLogContext()
-                .Enrich.WithThreadId()
                 .Filter.ByExcluding(logEvent => 
                     logEvent.RenderMessage().Contains("Batch acquisition") && 
                     logEvent.RenderMessage().Contains("triggers"))

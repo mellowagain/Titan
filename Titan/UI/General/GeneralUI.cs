@@ -20,7 +20,7 @@ namespace Titan.UI.General
             Title = "Titan";
             ClientSize = new Size(640, 450);
             Resizable = false;
-            Icon = uiManager.SharedResources.TITAN_ICON;
+            Icon = uiManager.TitanIcon;
 
             _uiManager = uiManager;
             

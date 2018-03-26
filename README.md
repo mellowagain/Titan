@@ -12,9 +12,10 @@
 [![Discord](https://img.shields.io/discord/342308069897928706.svg?label=discord)](https://discord.me/titanbot)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-Titan `/ˈtaɪtən/` is an advanced Counter-Strike Global Offensive report and commendation bot.
-Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch.
-It provides a advanced set of features and high effiency when compared against other report and commendation bots.
+Titan `/ˈtaɪtən/` is a modern report & commendation bot for the Source engine.
+It has been built from the ground up with performance and easy-of-use in mind 
+using modern technologies like SteamKit and is supporting various source games including
+Counter-Strike: Global Offensive and Team Fortress 2.
 
 ## Features
 
@@ -22,9 +23,11 @@ It provides a advanced set of features and high effiency when compared against o
 * High performance thanks to multi-threaded reporting and commending (when compared to other report bots).
 * Ban checking for both target and bot accounts. (Requires own generated [Steam Web API](https://steamcommunity.com/dev/apikey) key)
 * Integrated Sharecode parser that automatically parses the Match ID from a CS:GO Demo Share URL.
+* Support for all Steam ID's known to man (SteamID, SteamID3, SteamID64) as well as Steam profile urls.
 * Integrated Match ID resolver that automatically resolves the Match ID from the targets current match.
 * Automatic index timer which outputs when an account has finished its 12 hours cooldown.
-* Cross-platform compatibility, supports both Windows and Linux. Darwin support is coming soon.
+* Runs on .NET Core and has support for .NET Standard 2.0.
+* Cross-platform compatibility, supports Windows, macOS and Linux.
 * No installation necessary, every release is provided as binary archive.
 * Tracking of botted victims with automatic notification when a ban occurs.
 * Automatic Steam Guard code generation from Shared Secrets.
@@ -37,13 +40,18 @@ Every version of Titan is provided as binary archive. An installation process is
 #### Dependencies
 
 **Windows**: [.NET Framework ≥4.6.1](https://www.microsoft.com/en-us/download/details.aspx?id=53344) (and for building [Git](https://git-scm.com/), [Visual Studio 2017](https://www.visualstudio.com/downloads/) with .NET Desktop Development tools and [Visual Studio 2017 Build Tools](https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017)).  
-**Linux**: [Mono ≥5.4](http://www.mono-project.com), [Gtk 3](https://www.gtk.org/),
-[libNotify](https://launchpad.net/ubuntu/+source/libnotify) and [libAppindicator 3](https://packages.ubuntu.com/trusty/libappindicator3-dev) (and for building [Git](https://git-scm.com/) and [MsBuild ≥15.0](https://github.com/Microsoft/msbuild)).
+**macOS**: None at runtime (and for building [Git](https://git-scm.com/) and [DotNet Core SDK](https://dotnet.github.io/)).  
+**Linux**: [Gtk 3](https://www.gtk.org/), [libNotify](https://launchpad.net/ubuntu/+source/libnotify) and [libAppindicator 3](https://packages.ubuntu.com/trusty/libappindicator3-dev) (and for building [Git](https://git-scm.com/) and [DotNet Core SDK](https://dotnet.github.io/)).
 
 #### Option 1: Binary
 
 Download the latest binary from the [releases](https://github.com/Marc3842h/Titan/releases) tab.
-Download the package for your operating system, unpack it and run the `Titan.exe` file.
+
+Then run the following according to your operating system:
+
+* **Windows**: `Titan.exe`
+* **macOS**: `Titan.app`
+* **Linux**: `Titan`
 
 #### Option 2: From Source
 
@@ -55,7 +63,7 @@ $ cd Titan
 PS> Set-ExecutionPolicy Unrestricted
 PS> .\build.ps1
 
-# Run this in a terminal on Linux
+# Run this in a terminal on *nix
 $ chmod +x build.sh
 $ ./build.sh
 ```
@@ -68,13 +76,11 @@ Arch Linux: [`titan-bot-git`](https://aur.archlinux.org/packages/titan-bot-git/)
 
 #### Start
 
-Run Titan on Windows by simple double clicking the `Titan.exe` executeable.
+Run the following according to your operating system:
 
-On Linux, run Titan from the command line using the following syntax:
-
-```bash
-$ mono Titan.exe [Verb] [Arguments ...]
-```
+* **Windows**: `Titan.exe [Verb] [Arguments ...]`
+* **macOS**: `Titan.app [Verb] [Arguments ...]`
+* **Linux**: `Titan [Verb] [Arguments ...]`
 
 You can find a list of command line arguments [here](https://github.com/Marc3842h/Titan/blob/master/Titan/Bootstrap/Options.cs).  
 If no (or not enough) arguments have been supplied, Titan will open the GUI:
@@ -178,16 +184,14 @@ as they are required for loading the project.
 
 #### Donations
 
-Donations are appreciated. Feel free to become a Patreon on my [Patreon](https://www.patreon.com/marc3842h).  
+Donations are appreciated. 
+
+* Feel free to donate once in a lifetime to my PayPal _accounts \< at \> marcsteiner.me_.
+* Feel free to become a monthly pledger on my [Patreon](https://www.patreon.com/marc3842h).  
   
 ## License
 
 Titan is licensed under the [MIT License](https://github.com/Marc3842h/Titan/blob/master/LICENSE.txt).
-Please visit the `LICENSE.txt` file in the root directory tree for more informations.
-All external resources that do not fall unter the MIT license (Images etc.) have been credited
-in the `CREDIT.txt` under the Resources directory.
-
-## Special
-
-Titan is supporting and is being supported by the [TuxCheats](https://www.tuxcheats.com/) community.  
-Huge thanks to them.
+Please visit the `LICENSE.txt` file in the root directory tree for more informations.  
+  
+The Titan logo has been made by Flatpak on flaticon.com. Licensed under CC 3.0 BY.

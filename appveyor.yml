@@ -15,7 +15,7 @@ build_script:
   - ps: .\build.ps1
 
 artifacts:
-  - path: Titan/bin/Release/*.exe
+  - path: Titan/bin/Release/netcoreapp2.0/Titan.dll
 
 test: off
 deploy: off

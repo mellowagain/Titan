@@ -1,13 +1,12 @@
 #tool "nuget:?package=xunit.runner.console"
 
 var config = Argument("configuration", "Release");
-var gitHash = Argument("githash", "Unknown Git Hash");
-var buildDir = Directory("./Titan/bin/") + Directory(config);
 
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectory(buildDir);
+    DotNetCoreClean("./Titan");
+    DotNetCoreClean("./Titan.Test");
 });
 
 Task("Restore-NuGet-Packages")
@@ -22,47 +21,18 @@ Task("Restore-NuGet-Packages")
         );
     }
 
-    NuGetRestore("./Titan.sln");
-});
-
-Task("Set-Version-To-Current-Git-Hash")
-    .IsDependentOn("Restore-NuGet-Packages")
-    .Does(() =>
-{
-    Information("Building for Git Hash: " + gitHash);
-    
-    CopyFile("./Titan/Properties/AssemblyInfo.cs", "./Titan/Properties/AssemblyInfo.cs.old");
-    CopyFile("./TitanTest/Properties/AssemblyInfo.cs", "./TitanTest/Properties/AssemblyInfo.cs.old");
-    
-    TransformTextFile("./Titan/Properties/AssemblyInfo.cs")
-        .WithToken("GitHash", gitHash)
-        .Save("./Titan/Properties/AssemblyInfo.cs");
-    
-    TransformTextFile("./TitanTest/Properties/AssemblyInfo.cs")
-        .WithToken("GitHash", gitHash)
-        .Save("./TitanTest/Properties/AssemblyInfo.cs");
+    DotNetCoreRestore();
 });
 
 Task("Build")
-    .IsDependentOn("Set-Version-To-Current-Git-Hash")
+    .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
 {
-    if (IsRunningOnWindows())
-    {
-      // Use MSBuild
-      MSBuild("./Titan.sln", settings => settings.SetConfiguration(config));
-    }
-    else
-    {
-      // Use MSBuild 15 provided by Mono
-      MSBuild("./Titan.sln", new MSBuildSettings {
-              Configuration = config,
-              ToolPath = "/usr/lib/mono/msbuild/15.0/bin/MSBuild.dll"
-      });
-    }
+    DotNetCoreBuild("./Titan");
+    DotNetCoreBuild("./Titan.Test");
 });
 
-Task("Run-Unit-Tests")
+/*Task("Run-Unit-Tests")
     .IsDependentOn("Build")
     .Does(() =>
 {
@@ -72,17 +42,6 @@ Task("Run-Unit-Tests")
         XmlReport = true,
         OutputDirectory = "./TitanTest/bin/" + config + "/results"
     });
-});
+});*/
 
-Task("Cleanup")
-    .IsDependentOn("Run-Unit-Tests")
-    .Does(() =>
-{
-    DeleteFile("./Titan/Properties/AssemblyInfo.cs");
-    DeleteFile("./TitanTest/Properties/AssemblyInfo.cs");
-    
-    MoveFile("./Titan/Properties/AssemblyInfo.cs.old", "./Titan/Properties/AssemblyInfo.cs");
-    MoveFile("./TitanTest/Properties/AssemblyInfo.cs.old", "./TitanTest/Properties/AssemblyInfo.cs");
-});
-
-RunTarget("Cleanup");
+RunTarget(/*"Run-Unit-Tests"*/ "Build");

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Titan.Util;
 using Xunit;
 
-namespace TitanTest
+namespace Titan.Test
 {
     public class ThreadTimeoutTest
     {
