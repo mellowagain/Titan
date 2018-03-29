@@ -1,21 +1,21 @@
 {
-    // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
+    // A maximum of 11 accounts are allowed per index. Begin a new index when a new account is required.
     "indexes": [
         {
             "accounts": [
                 {
                     "username": "username1",
                     "password": "password1",
-                    "enabled": true, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": true, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 },
                 {
                     "username": "username2",
                     "password": "password2",
-                    "enabled": false, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": false, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 }
             ]
         },
@@ -24,16 +24,16 @@
                 {
                     "username": "username3",
                     "password": "password3",
-                    "enabled": true, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": true, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 },
                 {
                     "username": "username4",
                     "password": "password4",
-                    "enabled": true, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": true, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 }
             ]
         }
