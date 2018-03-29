@@ -122,7 +122,7 @@ Here is the syntax of the accounts.json. More information about the syntax can b
 
 ```js
 {
-    // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
+    // A maximum of 11 accounts are allowed per index. Begin a new index when a new account is required.
     "indexes": [
         {
             "accounts": [
