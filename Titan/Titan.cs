@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,6 +50,8 @@ namespace Titan
         public UIManager UIManager;
 
         public JsonSerializer JsonSerializer;
+        public HttpClient HttpClient;
+        
         public SWAHandle WebHandle;
         public ProfileScreenshotter Screenshotter;
 
@@ -110,6 +113,11 @@ namespace Titan
             Instance.Scheduler.Start();
             
             Instance.JsonSerializer = new JsonSerializer();
+            
+            Instance.HttpClient = new HttpClient();
+            Instance.HttpClient.DefaultRequestHeaders.Add(
+                "User-Agent", "Titan Report & Commend Bot (https://github.com/Marc3842h/Titan)"
+            );
 
             var parser = new Parser(config =>
             {

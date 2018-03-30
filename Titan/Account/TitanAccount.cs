@@ -31,6 +31,8 @@ namespace Titan.Account
 
         public JsonAccounts.JsonAccount JsonAccount;
 
+        public Dictionary<string, string> Cookies = new Dictionary<string, string>();
+
         internal TitanAccount(JsonAccounts.JsonAccount json)
         {
             JsonAccount = json;
@@ -51,6 +53,8 @@ namespace Titan.Account
         public long StartEpoch { get; set; }
         
         public bool IsRunning { get; set; }
+        
+        public bool IsAuthenticated { get; set; }
 
         ////////////////////////////////////////////////////
         // GENERAL
@@ -64,6 +68,16 @@ namespace Titan.Account
 
         public abstract void OnLoggedOn(SteamUser.LoggedOnCallback callback);
         public abstract void OnLoggedOff(SteamUser.LoggedOffCallback callback);
+
+        ////////////////////////////////////////////////////
+        // STEAM WEB INTERFACE
+        ////////////////////////////////////////////////////
+
+        public abstract void LoginWebInterface(ulong steamID);
+
+        public abstract void JoinSteamGroup(uint groupID = 28495194); // 28495194 is /groups/TitanReportBot
+
+        public abstract void AddFreeLicense(uint appID = TF2_APPID); // For TF2
 
         ////////////////////////////////////////////////////
         // GAME COORDINATOR

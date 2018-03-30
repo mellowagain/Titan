@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
+using Quartz.Util;
 using Serilog.Core;
 using SteamKit2;
 using SteamKit2.GC;
@@ -123,6 +126,108 @@ namespace Titan.Account.Impl
             
             Titan.Instance.ThreadManager.FinishBotting(this);
         }
+        
+        ////////////////////////////////////////////////////
+        // STEAM WEB INTERFACE
+        ////////////////////////////////////////////////////
+
+        // Copied this shit straight from ArchisSteamFarm, credit to him
+        public override async void LoginWebInterface(ulong steamID)
+        {
+            if (!IsAuthenticated)
+            {
+                SteamUser.WebAPIUserNonceCallback callback;
+
+                try
+                {
+                    callback = await _steamUser.RequestWebAPIUserNonce();
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Unable to request Web API Nonce. Titan won't be able to execute Web API actions.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(callback?.Nonce))
+                {
+                    _log.Error("Received empty Web API Nonce. Titan won't be able to execute Web API actions.");
+                    return;
+                }
+
+                var sessionID = Convert.ToBase64String(Encoding.UTF8.GetBytes(steamID.ToString()));
+                var sessionKey = CryptoHelper.GenerateRandomBlock(32);
+                byte[] cryptedSessionKey;
+
+                using (var rsa = new RSACrypto(KeyDictionary.GetPublicKey(_steamClient.Universe)))
+                {
+                    cryptedSessionKey = rsa.Encrypt(sessionKey);
+                }
+
+                var loginKey = new byte[callback.Nonce.Length];
+                Array.Copy(Encoding.ASCII.GetBytes(callback.Nonce), loginKey, callback.Nonce.Length);
+                
+                // AES encrypt the login key with our session key
+                var cryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
+
+                if (!Titan.Instance.WebHandle.AuthentificateUser(
+                    steamID, cryptedLoginKey, cryptedSessionKey, out var result
+                ))
+                {
+                    _log.Error("Failed to authentificate with Web API Nonce. " +
+                               "Titan won't be able to execute Web API actions.");
+                    return;
+                }
+
+                var token = result["token"].Value;
+                var secureToken = result["tokensecure"].Value;
+
+                if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(secureToken))
+                {
+                    _log.Error("Failed to authentificate with Web API Nonce. " +
+                               "Titan won't be able to execute Web API actions.");
+                    return;
+                }
+                
+                Cookies.Add("sessionid", sessionID);
+                Cookies.Add("steamLogin", token);
+                Cookies.Add("steamLoginSecure", secureToken);
+
+                if (!Titan.Instance.Options.Secure)
+                {
+                    _log.Debug("Authorized with Steam Web API. Session ID: {id}", sessionID);
+                }
+                
+                _log.Information("Successfully authorized with Steam Web API.");
+                
+                IsAuthenticated = true;
+            }
+        }
+
+        public override async void JoinSteamGroup(uint groupID = 28495194)
+        {
+            if (IsAuthenticated)
+            {
+                var headers = new Dictionary<string, string>
+                {
+                    { "sessionID", Cookies.TryGetAndReturn("sessionid") },
+                    { "action", "join" }
+                };
+
+                var response = await Titan.Instance.HttpClient.PostAsync(
+                    "https://steamcommunity.com/gid/" + groupID, new FormUrlEncodedContent(headers)
+                );
+                
+                _log.Debug(await response.Content.ReadAsStringAsync());
+            }
+        }
+
+        public override async void AddFreeLicense(uint appID = TF2_APPID)
+        {
+            if (IsAuthenticated)
+            {
+                // TODO: Implement for receiving a free license for TF2, allows report botting in the future
+            }
+        }
 
         ////////////////////////////////////////////////////
         // CALLBACKS
@@ -176,6 +281,13 @@ namespace Titan.Account.Impl
 
                     _steamFriends.SetPersonaState(EPersonaState.Online);
 
+                    /*if (!Titan.Instance.Options.NoSteamGroup)
+                    {
+                        LoginWebInterface(callback.ClientSteamID);
+                        JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
+                        return;
+                    }*/
+                    
                     var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
                     playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
                     {
@@ -396,6 +508,8 @@ namespace Titan.Account.Impl
             }
 
             Result = Result.Success;
+            
+            JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
 
             Stop();
         }
@@ -406,6 +520,8 @@ namespace Titan.Account.Impl
                 _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
 
             Result = Result.Success;
+            
+            JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
 
             Stop();
         }
@@ -443,6 +559,8 @@ namespace Titan.Account.Impl
                 
                 Result = Result.NoMatches;
             }
+            
+            JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
             
             Stop();
         }
