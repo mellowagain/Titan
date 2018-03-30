@@ -25,7 +25,7 @@ using Titan.Util;
 using Titan.Web;
 
 #if __UNIX__
-    using Mono.Unix.Native;
+    using Titan.Native;
 #else
     using System.Security.Principal;
 #endif 
@@ -152,7 +152,7 @@ namespace Titan
             Logger = LogCreator.Create();
             
             #if __UNIX__
-                Instance.IsAdmin = Syscall.getuid() == 0; // UID of root is always 0
+                Instance.IsAdmin = Linux.getuid() == 0; // UID of root is always 0
             #else
                 Instance.IsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
                                    .IsInRole(WindowsBuiltInRole.Administrator);
