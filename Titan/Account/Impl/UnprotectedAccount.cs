@@ -403,7 +403,7 @@ namespace Titan.Account.Impl
                     {
                         var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
 
-                        _log.Error("This account has been convicted by Overwatch as majorly minorly and has been " +
+                        _log.Error("This account has been convicted by Overwatch as minorly disruptive and has been " +
                                    "banned for {days} more days. Botting with banned accounts is not possible and " +
                                    "will not give succesful results. Aborting!", penalty.Days);
                         Result = Result.AccountBanned;
@@ -508,8 +508,6 @@ namespace Titan.Account.Impl
             }
 
             Result = Result.Success;
-            
-            JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
 
             Stop();
         }
@@ -520,8 +518,6 @@ namespace Titan.Account.Impl
                 _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
 
             Result = Result.Success;
-            
-            JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
 
             Stop();
         }
@@ -559,8 +555,6 @@ namespace Titan.Account.Impl
                 
                 Result = Result.NoMatches;
             }
-            
-            JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
             
             Stop();
         }

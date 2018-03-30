@@ -505,7 +505,7 @@ namespace Titan.Account.Impl
                     {
                         var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
 
-                        _log.Error("This account has been convicted by Overwatch as majorly minorly and has been " +
+                        _log.Error("This account has been convicted by Overwatch as minorly disruptive and has been " +
                                    "banned for {days} more days. Botting with banned accounts is not possible and " +
                                    "will not give succesful results. Aborting!", penalty.Days);
                         Result = Result.AccountBanned;
