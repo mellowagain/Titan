@@ -36,6 +36,9 @@
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
     <DefineConstants>__UNIX__</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Logo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AtkSharp, Version=3.22.24.34, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\AtkSharp.3.22.24.34\lib\netstandard2.0\AtkSharp.dll</HintPath>
@@ -225,6 +228,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="accounts.json" />
+    <Content Include="Logo.ico" />
     <Content Include="Resources\About.png" />
     <Content Include="Resources\CREDIT.txt" />
     <Content Include="Resources\Form.png" />
