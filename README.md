@@ -14,7 +14,7 @@
 
 Titan `/ˈtaɪtən/` is an advanced Counter-Strike Global Offensive report and commendation bot.
 Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch.
-It provides a advanced set of features and high efficiency compared to other report and commendation bots.
+It provides an advanced set of features and high efficiency compared to other report and commendation bots.
 
 ## Features
 
