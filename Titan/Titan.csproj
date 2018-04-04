@@ -37,7 +37,7 @@
     <DefineConstants>__UNIX__</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AtkSharp, Version=3.22.24.34, Culture=neutral, PublicKeyToken=null">
