@@ -7,4 +7,4 @@ if [ "$owner" != "$USER" ]; then
     sudo chown -R "$USER" "/opt/Titan"
 fi
 
-mono /opt/Titan/Titan.exe
+TERM=xterm mono /opt/Titan/Titan.exe
