@@ -231,26 +231,26 @@ namespace Titan
                         Logger.Error("A fatal error has been detected!");
                         Logger.Error("Eto.Forms could not detect your current operating system.");
 
-                    #if __UNIX__
-                        Logger.Error("Please install {0}, {1}, {2} and {3} before submitting a bug report.",
-                            "Mono (\u22655.4)",
-                            "Gtk 3",
-                            "libNotify",
-                            "libAppindicator3");
-                    #else
-                        Logger.Error("Please install {0} before submitting a bug report.", 
-                                     ".NET Framework (\u22654.6.1)");
-                    #endif
+                        #if __UNIX__
+                            Logger.Error("Please install {0}, {1}, {2} and {3} before submitting a bug report.",
+                                "Mono (\u22655.4)",
+                                "Gtk 3",
+                                "libNotify",
+                                "libAppindicator3");
+                        #else
+                            Logger.Error("Please install {0} before submitting a bug report.", 
+                                         ".NET Framework (\u22654.6.1)");
+                        #endif
 
                         Logger.Error("Contact {Marc} on Discord if the issue still persists after installing " +
                                      "the dependencies listed above.", "Marc3842h#7312");
                         Logger.Error("---------------------------------------");
                         Logger.Debug(ex, "Include the error below if you\'re contacting Marc on Discord.");
 
-                    #if !__UNIX__
-                        Console.Write("Press any key to exit Titan...");
-                        Console.Read();
-                    #endif
+                        #if !__UNIX__
+                            Console.Write("Press any key to exit Titan...");
+                            Console.Read();
+                        #endif
 
                         Instance.Scheduler.Shutdown();
                         return -1;
