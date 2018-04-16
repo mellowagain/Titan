@@ -53,7 +53,7 @@ namespace Titan
         public HttpClient HttpClient;
         
         public SWAHandle WebHandle;
-        public ProfileScreenshotter Screenshotter;
+        public ProfileSaver ProfileSaver;
 
         public bool DummyMode = false;
         public IScheduler Scheduler;
@@ -215,7 +215,7 @@ namespace Titan
                 Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");
             }
 
-            Instance.Screenshotter = new ProfileScreenshotter();
+            Instance.ProfileSaver = new ProfileSaver();
 
             if (Instance.EnableUI)
             {

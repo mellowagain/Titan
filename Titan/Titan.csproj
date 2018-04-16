@@ -179,7 +179,7 @@
     <Compile Include="Logging\TitanListener.cs" />
     <Compile Include="Meta\TitanPayloadInfo.cs" />
     <Compile Include="Native\Linux.cs" />
-    <Compile Include="Proof\ProfileScreenshotter.cs" />
+    <Compile Include="Proof\ProfileSaver.cs" />
     <Compile Include="Restrictions\Blacklist.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
