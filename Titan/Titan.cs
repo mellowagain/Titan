@@ -261,8 +261,6 @@ namespace Titan
                 }
             }
 
-            Instance.VictimTracker = new VictimTracker();
-            Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             Instance.AccountManager = new AccountManager(new FileInfo(
                 Path.Combine(Instance.Directory.ToString(), Instance.Options.AccountsFile))
@@ -271,6 +269,8 @@ namespace Titan
             Instance.ThreadManager = new ThreadManager();
 
             Instance.WebHandle = new SWAHandle();
+            
+            Instance.VictimTracker = new VictimTracker();
 
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
@@ -353,6 +353,10 @@ namespace Titan
                 }
             }
 
+            Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
+            
+            Logger.Debug("Startup done. Active threads: {threads}", Process.GetCurrentProcess().Threads.Count + 1);
+            
             Instance.StartMainLoop();
 
             // The Shutdown handler gets only called after the last thread finished.

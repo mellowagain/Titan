@@ -58,8 +58,6 @@ namespace Titan.Proof
                 var request = (HttpWebRequest) WebRequest.Create(url);
                 var response = (HttpWebResponse) request.GetResponse();
                 
-                _log.Debug("Got response: {a}", response.StatusCode);
-
                 var stream = response.GetResponseStream();
                 
                 if (response.StatusCode == HttpStatusCode.OK && stream != null)

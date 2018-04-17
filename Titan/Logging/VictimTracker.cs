@@ -4,11 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Eto.Drawing;
+using Eto.Forms;
 using Newtonsoft.Json;
 using Quartz;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Json;
+using Titan.UI;
 using Titan.Util;
 
 namespace Titan.Logging
@@ -107,8 +110,9 @@ namespace Titan.Logging
                 }
                 else
                 {
-
-                    writer.Write("{\"victims\":[]}");
+                    writer.Write(JsonConvert.SerializeObject(new Victims {
+                        Array = new Victims.Victim[0]
+                    }, Formatting.Indented));
                 }
             }
 
@@ -120,9 +124,8 @@ namespace Titan.Logging
         {
             return Task.Run(() =>
             {
-                _log.Debug("Checking all victims if they have bans on record.");
-            
-                _log.Information("Victims: {a}", _victims);
+                _log.Information("Checking all victims if they have bans on record.");
+                _log.Debug("Victims: {a}", _victims);
             
                 foreach (var victim in _victims.ToArray())
                 {
@@ -145,12 +148,52 @@ namespace Titan.Logging
                                         id64, count,
                                         time.Hours == 0 ? time.Minutes + " minute(s)" : time.Hours + " hour(s)");
 
-                                    Titan.Instance.UIManager.SendNotification(
-                                        "Titan - " + id64 + " banned",
-                                        "Your recently botted target " + id64 + " " +
-                                        "has been banned and has now " + count + " Ban(s) on record.",
-                                        () => Process.Start("http://steamcommunity.com/profiles/" + id64)
-                                    );
+                                    if (Titan.Instance.EnableUI)
+                                    {
+                                        Titan.Instance.UIManager.SendNotification(
+                                            "Titan - " + id64 + " banned",
+                                            "Your recently botted target " + id64 + " " +
+                                            "has been banned and has now " + count + " Ban(s) on record.",
+                                            () => Process.Start("http://steamcommunity.com/profiles/" + id64)
+                                        );
+
+                                        Task.Run(() => Titan.Instance.ProfileSaver.SaveSteamProfile(target));
+                                        
+                                        Application.Instance.Invoke(() =>
+                                        {
+                                            Titan.Instance.UIManager.ShowForm(UIType.Victim, new Form
+                                            {
+                                                Title = "Banned Victim - " + id64 + " - Titan",
+                                                Icon = Titan.Instance.UIManager.SharedResources.TITAN_ICON,
+                                                Resizable = false,
+                                                Visible = true,
+                                                ClientSize = new Size(1280, 720),
+                                                Topmost = true,
+                                                Content = new TableLayout
+                                                {
+                                                    Spacing = new Size(5, 5),
+                                                    Padding = new Padding(10, 10, 10, 10),
+                                                    Rows =
+                                                    {
+                                                        new TableRow(
+                                                            new Label
+                                                            {
+                                                                Text = "Success! Your recently botted target has " +
+                                                                       "been banned after " + time.Hours + " hours. " +
+                                                                       "The profile has been saved to \"Titan/" + 
+                                                                       "victimprofiles/" + id64 + ".html\".",
+                                                                TextAlignment = TextAlignment.Center
+                                                            }
+                                                        ),
+                                                        new WebView
+                                                        {
+                                                            Url = new Uri("http://steamcommunity.com/profiles/" + id64)
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        });
+                                    }
                                 }
                             }
                         }
