@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -493,6 +494,19 @@ namespace Titan.Managers
         public int Count()
         {
             return _allAccounts.Count;
+        }
+
+        public DateTime GetExpireTimeForIndex(int index)
+        {
+            if (_indexEntries.ContainsKey(index))
+            {
+                if (_indexEntries.TryGetValue(index, out var time))
+                {
+                    return time.ToDateTime();
+                }
+            }
+            
+            return DateTime.MinValue;
         }
 
     }
