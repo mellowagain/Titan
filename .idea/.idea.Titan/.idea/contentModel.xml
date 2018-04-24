@@ -105,6 +105,8 @@
         </e>
         <e p="Util" t="Include">
           <e p="ArrayUtil.cs" t="Include" />
+          <e p="Cooldown.cs" t="Include" />
+          <e p="CooldownUtil.cs" t="Include" />
           <e p="ObjectCloner.cs" t="Include" />
           <e p="RandomUtil.cs" t="Include" />
           <e p="SharecodeUtil.cs" t="Include" />

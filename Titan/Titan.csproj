@@ -212,6 +212,8 @@
     <Compile Include="UI\UIManager.cs" />
     <Compile Include="UI\UIType.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\Cooldown.cs" />
+    <Compile Include="Util\CooldownUtil.cs" />
     <Compile Include="Util\ObjectCloner.cs" />
     <Compile Include="Util\RandomUtil.cs" />
     <Compile Include="Util\SharecodeUtil.cs" />

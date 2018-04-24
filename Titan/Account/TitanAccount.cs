@@ -17,14 +17,6 @@ namespace Titan.Account
         public const uint TF2_APPID = 440;
         public const uint CSGO_APPID = 730;
         
-        public const uint PENALTY_NONE = 0;
-        public const uint PENALTY_TEAM_KILL_AT_ROUND_START = 3; // Speculation: may also be the 30min cooldown
-        public const uint PENALTY_MATCH_ABANDON = 5; // Speculation: may also be the 2hr cooldown
-        public const uint PENALTY_OVERWATCH_CONVICTED_MAJORLY_DISRUPTIVE = 10;
-        public const uint PENALTY_OVERWATCH_CONVICTED_MINORLY_DISRUPTIVE = 11;
-        //public const uint PENALTY_PERMANENTLY_UNTRUSTED_ANGLES = 13, // Only speculation at this point as I can't test it
-        public const uint PENALTY_PERMANENTLY_UNTRUSTED_VAC = 14;
-
         ////////////////////////////////////////////////////
         // INIT
         ////////////////////////////////////////////////////

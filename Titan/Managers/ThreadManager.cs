@@ -65,8 +65,8 @@ namespace Titan.Managers
                             _failCount++;
                             break;
                         case Result.AccountBanned:
-                            _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
-                                         "have not been submitted.", account.JsonAccount.Username);
+                            _log.Error("Account {Account} has a cooldown on record. The report has been aborted.", 
+                                       account.JsonAccount.Username);
                             _failCount++;
                             break;
                         case Result.NoMatches:
@@ -189,8 +189,8 @@ namespace Titan.Managers
                             _failCount++;
                             break;
                         case Result.AccountBanned:
-                            _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
-                                         "have not been submitted.", account.JsonAccount.Username);
+                            _log.Error("Account {Account} has a cooldown on record. The report has been aborted.", 
+                                       account.JsonAccount.Username);
                             _failCount++;
                             break;
                         case Result.TimedOut:

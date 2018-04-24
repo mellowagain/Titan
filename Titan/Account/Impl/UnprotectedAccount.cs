@@ -387,78 +387,26 @@ namespace Titan.Account.Impl
 
             if (response.Body.penalty_reasonSpecified)
             {
-                switch (response.Body.penalty_reason)
+                Cooldown cooldown = response.Body.penalty_reason;
+                
+                _log.Error("This account has received a {type} cooldown: {reason}", 
+                    cooldown.Permanent ? "global" : "temporary", cooldown.Reason);
+                
+                if (cooldown.Permanent)
                 {
-                    case PENALTY_OVERWATCH_CONVICTED_MAJORLY_DISRUPTIVE:
-                    {
-                        _log.Error("This account has been convicted by Overwatch as majorly disruptive and has been " +
-                                   "permanently banned. Botting with banned accounts is not possible and will not " +
-                                   "give succesful results. Aborting!");
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
-                    case PENALTY_OVERWATCH_CONVICTED_MINORLY_DISRUPTIVE:
-                    {
-                        var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
-
-                        _log.Error("This account has been convicted by Overwatch as minorly disruptive and has been " +
-                                   "banned for {days} more days. Botting with banned accounts is not possible and " +
-                                   "will not give succesful results. Aborting!", penalty.Days);
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
-                    case PENALTY_PERMANENTLY_UNTRUSTED_VAC:
-                    {
-                        _log.Error("This account is permanently untrusted. Botting with banned accounts is not " +
-                                   "possible and will not give succesful results. Aborting!");
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
-                    default:
-                    {
-                        if (response.Body.penalty_secondsSpecified)
-                        {
-                            var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
-
-                            // 604800 seconds = 7 days
-                            // If the penalty seconds are over 7 days, the account is permanently banned.
-                            // If not, the account has received a temporary Matchmaking cooldown
-                            if (penalty.Seconds <= 604800)
-                            {
-                                string timeString;
-                                if (penalty.Minutes >= 60)
-                                {
-                                    timeString = penalty.Hours + " Hours";
-                                }
-                                else
-                                {
-                                    timeString = penalty.Minutes + " Minutes";
-                                }
-
-                                _log.Error("This account has received a Matchmaking cooldown. Botting with banned " +
-                                           "accounts is not possible and will not give successful results. Aborting!");
-                                _log.Error("The matchmaking cooldown of this account will end in {end}.", timeString);
-                                Result = Result.AccountBanned;
-
-                                Stop();
-                                return;
-                            }
-                        }
-
-                        _log.Error("This account has been permanently banned from CS:GO. Botting with banned " +
-                                   "accounts is not possible and will not give successful results. Aborting!");
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
+                    _log.Error("This ban is permanent. Botting with banned accounts is not possible.");
                 }
+                else
+                {
+                    var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
+                    var time = penalty.Minutes >= 60 ? penalty.Hours + " Hours" : penalty.Minutes + " Minutes";
+                    
+                    _log.Error("This ban will end in {end}. Botting with banned accounts is not possible.", time);
+                }
+
+                Result = Result.AccountBanned;
+                Stop();
+                return;
             }
 
             // When the CS:GO GC sends a vac_banned (type 2) but not a penalty_reason (type 0)
