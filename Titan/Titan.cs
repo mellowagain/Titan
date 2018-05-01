@@ -74,20 +74,12 @@ namespace Titan
             };
 
             Logger = LogCreator.Create();
-            
-            Logger.Debug("Titan was called from: {dir}", Environment.CurrentDirectory);
-            Logger.Debug("Working in directory: {dir}", Instance.Directory.ToString());
-            
-            // Workaround for Mono related issue regarding System.Net.Http.
-            // More detail: https://github.com/dotnet/corefx/issues/19914
-            #if __UNIX__
-                var systemNetHttpDll = new FileInfo(Path.Combine(Instance.Directory.ToString(), "System.Net.Http.dll"));
-                
-                if (systemNetHttpDll.Exists)
-                {
-                    systemNetHttpDll.Delete();
-                }
-            #endif
+
+            if (Environment.CurrentDirectory != Instance.Directory.ToString())
+            {
+                Logger.Debug("Run from {currentDir}, switching to work directory in {workingDir}.",
+                             Environment.CurrentDirectory, Instance.Directory.ToString());
+            }
 
             // Windows users run the program by double clicking Titan.exe (and then it opens a console window)
             // and in case of exception occurence, this window gets immediatly closed which is bad because
@@ -97,6 +89,9 @@ namespace Titan
                 {
                     if (eventArgs.IsTerminating)
                     {
+                        Logger.Error((Exception) eventArgs.ExceptionObject, "An error occured.");
+                        
+                        // Don't use logging object here incase the exception was thrown by a logger
                         Console.Write("Press any key to exit Titan...");
                         Console.Read();
                     }
