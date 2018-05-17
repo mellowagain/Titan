@@ -4,6 +4,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
 using Titan.Logging;
+using Titan.Util;
 
 namespace Titan.UI.APIKey
 {
@@ -132,7 +133,7 @@ namespace Titan.UI.APIKey
             }
             else if (_seen)
             {
-                Environment.Exit(-1);
+                Environment.Exit((int) ExitCodes.InvalidWebAPIKey);
             }
         }
         

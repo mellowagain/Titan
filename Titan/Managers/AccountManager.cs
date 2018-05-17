@@ -81,7 +81,8 @@ namespace Titan.Managers
                     _log.Error("Could not parse {accounts} file.", "accounts.json");
                     _log.Error("The provided JSON contains errors: {err}", ex.Message);
                     _log.Error("Please run it thought a JSON validator and try again.");
-                    Environment.Exit(-1);
+                    
+                    Environment.Exit((int) ExitCodes.UnableToParseAccounts);
                 }
             }
 

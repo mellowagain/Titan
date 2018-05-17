@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SteamKit2;
+using Titan.Account;
 
 namespace Titan.Restrictions
 {
@@ -17,7 +18,7 @@ namespace Titan.Restrictions
         // the whole blacklist or include the "--noblacklist" command
         // line argument when starting Titan.
 
-        public static List<string> BlackList = new List<string>
+        public static List<string> CSGOBlackList = new List<string>
         {
             /* Titan Report & Commend Bot Admins */
             "STEAM_0:0:131983088", // Marc @ /id/marc3842h
@@ -48,12 +49,35 @@ namespace Titan.Restrictions
             "STEAM_0:0:170566473", // Eclip @ /profiles/76561198301398674
             "STEAM_0:1:74661837",  // Eclip @ /id/2789z
             "STEAM_0:0:85041889",  // Thunder @ /id/ThunderEOW 
-            "STEAM_0:0:197847637"  // Tisjuboi @ /profiles/76561198808112544/
+            "STEAM_0:0:197847637", // Tisjuboi @ /profiles/76561198808112544/
+            "STEAM_0:1:234235334", // Warlauke @ /id/gofuckyouselfnerd/
+        };
+        
+        public static List<string> TF2BlackList = new List<string>
+        {
+            /* Titan Report & Commend Bot Admins */
+            "STEAM_0:0:131983088", // Marc @ /id/marc3842h
+            
+            /* Friends of Titan Report & Commend Bot */
+            
         };
 
-        public static bool IsBlacklisted(SteamID steamID)
+        public static bool IsBlacklisted(this SteamID steamID, uint game = TitanAccount.CSGO_APPID)
         {
-            return !Titan.Instance.Options.DisableBlacklist && BlackList.Contains(steamID.Render(false));
+            if (Titan.Instance.Options.DisableBlacklist)
+            {
+                return false;
+            }
+
+            switch (game)
+            {
+                case TitanAccount.CSGO_APPID:
+                    return CSGOBlackList.Contains(steamID.Render(false));
+                case TitanAccount.TF2_APPID:
+                    return TF2BlackList.Contains(steamID.Render(false));
+                default:
+                    return false;
+            }
         }
     
     }

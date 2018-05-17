@@ -105,8 +105,13 @@ namespace Titan.Managers
                                 info.SteamID.ConvertToUInt64());
 
                             Titan.Instance.UIManager.SendNotification(
-                                "Titan", " was not able to report your target."
+                                "Titan", "Titan was not able to report your target."
                             );
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Environment.Exit((int) ExitCodes.ReportFailed);
+                            }
                         }
                         else
                         {
@@ -117,10 +122,11 @@ namespace Titan.Managers
                             Titan.Instance.UIManager.SendNotification(
                                 "Titan", _successCount + " reports have been successfully sent!"
                             );
-                        }
-                        if (Titan.Instance.ParsedObject != null)
-                        {
-                            Environment.Exit(0);
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Environment.Exit((int) ExitCodes.Ok);
+                            }
                         }
                     }
                 }
@@ -224,8 +230,13 @@ namespace Titan.Managers
                                 info.SteamID.ConvertToUInt64());
 
                             Titan.Instance.UIManager.SendNotification(
-                                "Titan", " was not able to commend your target."
+                                "Titan", "Titan was not able to commend your target."
                             );
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Environment.Exit((int) ExitCodes.CommendFailed);
+                            }
                         }
                         else
                         {
@@ -236,10 +247,11 @@ namespace Titan.Managers
                             Titan.Instance.UIManager.SendNotification(
                                 "Titan", _successCount + " commends have been successfully sent!"
                             );
-                        }
-                        if (Titan.Instance.ParsedObject != null)
-                        {
-                            Environment.Exit(0);
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Environment.Exit((int) ExitCodes.Ok);
+                            }
                         }
                     }
                 }

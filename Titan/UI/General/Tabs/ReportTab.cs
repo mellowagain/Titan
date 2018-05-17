@@ -25,6 +25,7 @@ namespace Titan.UI.General.Tabs
             var txtBoxSteamID = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
             var txtBoxMatchID = new TextBox { PlaceholderText = "CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE" };
 
+            // CS:GO
             var cbAbusiveText = new CheckBox { Text = "Abusive Text Chat", Checked = true };
             var cbAbusiveVoice = new CheckBox { Text = "Abusive Voice Chat", Checked = true };
             var cbGriefing = new CheckBox { Text = "Griefing", Checked = true };
@@ -32,6 +33,55 @@ namespace Titan.UI.General.Tabs
             var cbCheatWall = new CheckBox { Text = "Wall Hacking", Checked = true };
             var cbCheatOther = new CheckBox { Text = "Other Hacking", Checked = true };
 
+            var csgoGroupBox = new GroupBox
+            {
+                Text = "Options",
+                Visible = true,
+                Content = new TableLayout
+                {
+                    Spacing = new Size(5, 5),
+                    Padding = new Padding(10, 10, 10, 10),
+                    Rows =
+                    {
+                        new TableRow(
+                            new TableCell(cbAbusiveText, true),
+                            new TableCell(cbAbusiveVoice, true),
+                            new TableCell(cbGriefing, true)
+                        ),
+                        new TableRow(
+                            new TableCell(cbCheatAim),
+                            new TableCell(cbCheatWall),
+                            new TableCell(cbCheatOther)
+                        )
+                    }
+                }
+            };
+            
+            // TF2
+            var dropReportReason = new DropDown
+            {
+                Items = { "Cheating", "Idling", "Harassment", "Griefing" },
+                SelectedIndex = 0
+            };
+
+            var tf2GroupBox = new GroupBox
+            {
+                Text = "Options",
+                Visible = false,
+                Content = new TableLayout
+                {
+                    Spacing = new Size(5, 5),
+                    Padding = new Padding(10, 10, 10, 10),
+                    Rows =
+                    {
+                        new TableRow(
+                            new TableCell(new Label { Text = "Reason" }, true),
+                            new TableCell(dropReportReason, true)
+                        )
+                    }
+                }
+            };
+            
             var dropIndexes = new DropDown();
             RefreshIndexesDropDown(dropIndexes);
             DropDownIndex.Add(dropIndexes);
@@ -49,6 +99,22 @@ namespace Titan.UI.General.Tabs
                 }
             };
 
+            var dropGame = new DropDown
+            {
+                Items = { "Counter-Strike: Global Offensive", "Team Fortress 2" },
+                SelectedIndex = 0
+            };
+            
+            dropGame.SelectedIndexChanged += (sender, args) =>
+            {
+                txtBoxMatchID.Enabled = dropGame.SelectedIndex == 0;
+
+                csgoGroupBox.Visible = dropGame.SelectedIndex == 0;
+                tf2GroupBox.Visible = dropGame.SelectedIndex == 1;
+                
+                _log.Debug("Switched game to {game}.", dropGame.SelectedValue);
+            };
+            
             var btnReport = new Button { Text = "Report" };
             btnReport.Click += (sender, args) =>
             {
@@ -59,7 +125,7 @@ namespace Titan.UI.General.Tabs
 
                     if (steamID != null)
                     {
-                        if (Blacklist.IsBlacklisted(steamID))
+                        if (steamID.IsBlacklisted(dropGame.ToAppID()))
                         {
                             UIManager.SendNotification(
                                 "Restriction applied", 
@@ -70,7 +136,7 @@ namespace Titan.UI.General.Tabs
                             return;
                         }
                         
-                        if (matchID == 8)
+                        if (matchID == 8 && dropGame.SelectedIndex == 0)
                         {
                             _log.Warning("Could not convert {ID} to a valid Match ID. Trying to resolve the " +
                                          "the Match ID in which the target is playing at the moment.", matchID);
@@ -100,22 +166,24 @@ namespace Titan.UI.General.Tabs
                                              "Ignore this message if the first report didn't have enough reports.");
                             }
 
-                            _log.Information("Starting reporting of {Target} in Match {Match}.",
-                                steamID.ConvertToUInt64(), matchID);
+                            _log.Information("Starting reporting of {Target} in Match {Match} in game {Game}.",
+                                steamID.ConvertToUInt64(), matchID, dropGame.SelectedValue);
 
                             Titan.Instance.AccountManager.StartReporting(
                                 cbAllIndexes.Checked != null && (bool) cbAllIndexes.Checked ? -1 : dropIndexes.SelectedIndex,
                                 new ReportInfo {
                                     SteamID = steamID,
                                     MatchID = matchID,
-                                    AppID = TitanAccount.CSGO_APPID,
+                                    AppID = dropGame.ToAppID(),
                                 
                                     AbusiveText = cbAbusiveText.Checked != null && (bool) cbAbusiveText.Checked,
                                     AbusiveVoice = cbAbusiveVoice.Checked != null && (bool) cbAbusiveVoice.Checked,
                                     Griefing = cbGriefing.Checked != null && (bool) cbGriefing.Checked,
                                     AimHacking = cbCheatAim.Checked != null && (bool) cbCheatAim.Checked,
                                     WallHacking = cbCheatWall.Checked != null && (bool) cbCheatWall.Checked,
-                                    OtherHacking = cbCheatOther.Checked != null && (bool) cbCheatOther.Checked
+                                    OtherHacking = cbCheatOther.Checked != null && (bool) cbCheatOther.Checked,
+                                    
+                                    Reason = dropReportReason.ToTF2ReportReason()
                                 });
                         }
                     }
@@ -166,28 +234,8 @@ namespace Titan.UI.General.Tabs
                                 }
                             }
                         },
-                        new GroupBox
-                        {
-                            Text = "Options",
-                            Content = new TableLayout
-                            {
-                                Spacing = new Size(5, 5),
-                                Padding = new Padding(10, 10, 10, 10),
-                                Rows =
-                                {
-                                    new TableRow(
-                                        new TableCell(cbAbusiveText, true),
-                                        new TableCell(cbAbusiveVoice, true),
-                                        new TableCell(cbGriefing, true)
-                                    ),
-                                    new TableRow(
-                                        new TableCell(cbCheatAim),
-                                        new TableCell(cbCheatWall),
-                                        new TableCell(cbCheatOther)
-                                    )
-                                }
-                            }
-                        },
+                        csgoGroupBox,
+                        tf2GroupBox,
                         new GroupBox
                         {
                             Text = "Bots",
@@ -215,6 +263,7 @@ namespace Titan.UI.General.Tabs
                             Rows =
                             {
                                 new TableRow(
+                                    new TableCell(dropGame),
                                     new TableCell(new Panel(), true),
                                     new TableCell(new Panel(), true),
                                     new TableCell(btnReport)

@@ -176,7 +176,7 @@ namespace Titan
                     #endif
 
                     Instance.Scheduler.Shutdown();
-                    return -1;
+                    return (int) ExitCodes.RunningAsAdmin;
                 }
 
                 Logger.Warning("Titan has been started as Administrator but will continue to run as the " +
@@ -248,7 +248,7 @@ namespace Titan
                         #endif
 
                         Instance.Scheduler.Shutdown();
-                        return -1;
+                        return (int) ExitCodes.UIInitFailed;
                     }
 
                     Logger.Error(ex, "A error occured while loading UI.");
@@ -300,7 +300,7 @@ namespace Titan
                     var opt = (ReportOptions) Instance.ParsedObject;
 
                     var steamID = SteamUtil.Parse(opt.Target);
-                    if (Blacklist.IsBlacklisted(steamID))
+                    if (steamID.IsBlacklisted(opt.Game.ToAppID()))
                     {
                         Instance.UIManager.SendNotification(
                             "Restriction applied",
@@ -316,7 +316,7 @@ namespace Titan
                             {
                                 SteamID = SteamUtil.Parse(opt.Target),
                                 MatchID = SharecodeUtil.Parse(opt.Match),
-                                AppID = TitanAccount.CSGO_APPID,
+                                AppID = opt.Game.ToAppID(),
 
                                 AbusiveText = opt.AbusiveTextChat,
                                 AbusiveVoice = opt.AbusiveVoiceChat,
@@ -361,7 +361,7 @@ namespace Titan
             
             Instance.Scheduler.Shutdown();
             
-            return 0x0; // OK.
+            return (int) ExitCodes.Ok;
         }
 
         public static void OnShutdown(object sender, EventArgs args)

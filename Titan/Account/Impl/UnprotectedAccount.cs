@@ -5,21 +5,17 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Quartz;
 using Quartz.Util;
 using Serilog.Core;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
+using SteamKit2.GC.TF2.Internal;
 using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
 using Titan.MatchID.Live;
-using Titan.UI;
-using Titan.UI.General;
 using Titan.Util;
-using Titan.Web;
 
 namespace Titan.Account.Impl
 {
@@ -277,7 +273,7 @@ namespace Titan.Account.Impl
             switch (callback.Result)
             {
                 case EResult.OK:
-                    _log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
+                    _log.Debug("Successfully logged in. Registering that we're playing app {app id}...", GetAppID());
 
                     _steamFriends.SetPersonaState(EPersonaState.Online);
 
@@ -297,13 +293,45 @@ namespace Titan.Account.Impl
 
                     Thread.Sleep(TimeSpan.FromSeconds(2));
                     
-                    _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
+                    _log.Debug("Successfully registered app {game}. Sending client hello to gc services.", GetAppID());
 
-                    var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>(
-                        (uint) EGCBaseClientMsg.k_EMsgGCClientHello
-                    );
-                    
-                    _gameCoordinator.Send(clientHello, GetAppID());
+                    switch (GetAppID())
+                    {
+                        case CSGO_APPID:
+                        {
+                            var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.CSGO.Internal.CMsgClientHello>(
+                                (uint) SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg.k_EMsgGCClientHello
+                            );
+
+                            _gameCoordinator.Send(clientHello, GetAppID());
+                            break;
+                        }
+                        case TF2_APPID:
+                        {
+                            var clientInit = new ClientGCMsgProtobuf<CMsgTFClientInit>(
+                                (uint) ETFGCMsg.k_EMsgGC_TFClientInit
+                            )
+                            {
+                                Body =
+                                {
+                                    client_version = 4478108, // up2date as of 17th may 2018
+                                    client_versionSpecified = true,
+
+                                    language = 0, // We are english
+                                    languageSpecified = true
+                                }
+                            };
+
+                            _gameCoordinator.Send(clientInit, GetAppID());
+
+                            var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgClientHello>(
+                                (uint) SteamKit2.GC.TF2.Internal.EGCBaseClientMsg.k_EMsgGCClientHello 
+                            );
+
+                            _gameCoordinator.Send(clientHello, GetAppID());
+                            break;
+                        }
+                    }
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                 case EResult.AccountLogonDenied:
@@ -368,17 +396,34 @@ namespace Titan.Account.Impl
 
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
-            var welcome = new ClientGCMsgProtobuf<CMsgClientWelcome>(msg);
-            
-            _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). " +
-                       "Sending hello the CS:GO's matchmaking service.",
-                       welcome.Body.version, welcome.Body.location.country);
-            
-            var mmHello = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingClient2GCHello
-            );
-            
-            _gameCoordinator.Send(mmHello, GetAppID());
+            switch (GetAppID())
+            {
+                case CSGO_APPID:
+                {
+                    var welcome = new ClientGCMsgProtobuf<SteamKit2.GC.CSGO.Internal.CMsgClientWelcome>(msg);
+
+                    _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). " +
+                               "Sending hello the CS:GO's matchmaking service.",
+                        welcome.Body.version, welcome.Body.location.country);
+
+                    var mmHello = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello>(
+                        (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingClient2GCHello
+                    );
+
+                    _gameCoordinator.Send(mmHello, GetAppID());
+                    break;
+                }
+                case TF2_APPID:
+                {
+                    var welcome = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgClientWelcome>(msg);
+
+                    _log.Debug("Received welcome from TF2 GC version {v}. Sending report...",
+                        welcome.Body.version);
+                    
+                    _gameCoordinator.Send(GetReportPayload(), GetAppID());
+                    break;
+                }
+            }
         }
 
         public override void OnMatchmakingHelloResponse(IPacketGCMsg msg)
@@ -443,18 +488,47 @@ namespace Titan.Account.Impl
 
         public override void OnReportResponse(IPacketGCMsg msg)
         {
-            var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
-
-            if (_reportInfo != null)
+            switch (GetAppID())
             {
-                _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
-            }
-            else
-            {
-                _log.Information("Successfully commended {Target} with {Pretty}.",
-                    _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
-            }
+                case CSGO_APPID:
+                {
+                    var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
+                    if (_reportInfo != null)
+                    {
+                        _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
+                    }
+                    else
+                    {
+                        _log.Information("Successfully commended {Target} with {Pretty}.",
+                            _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
+                    }
+
+                    break;
+                }
+                case TF2_APPID:
+                {
+                    var response = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgGCReportAbuseResponse>(msg);
+
+                    if (!response.Body.error_messageSpecified)
+                    {
+                        _log.Information("Successfully reported {target}. Received result: {result}",
+                            response.Body.target_steam_id, response.Body.result);
+                    }
+                    else
+                    {
+                        _log.Error("Failed to report target. Received result {result} with error {msg}.",
+                            response.Body.result, response.Body.error_message);
+                        
+                        Result = Result.TimedOut;
+                        Stop();
+                        return;
+                    }
+                    
+                    break;
+                }
+            }
+            
             Result = Result.Success;
 
             Stop();

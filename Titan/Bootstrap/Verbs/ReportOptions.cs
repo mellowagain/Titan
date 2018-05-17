@@ -17,6 +17,10 @@ namespace Titan.Bootstrap.Verbs
         [DefaultValue("8")]
         public string Match { get; set; } = "8";
 
+        [Option('g', "game", Required = false, Default = "CSGO",
+            HelpText = "Game in which the target should be reported in")]
+        public string Game { get; set; } = "CSGO";
+
         [Option('i', "index", Required = false, Default = -2,
             HelpText = "Index which should be used for botting: -1 for all accounts, -2 for available index")]
         [DefaultValue(-2)]

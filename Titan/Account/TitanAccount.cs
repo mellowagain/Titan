@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
+using SteamKit2.GC.TF2.Internal;
 using Titan.Json;
 using Titan.MatchID.Live;
 using Titan.Meta;
+using Titan.Util;
 
 namespace Titan.Account
 {
@@ -79,8 +81,10 @@ namespace Titan.Account
         {
             var map = new Dictionary<uint, Action<IPacketGCMsg>>
             {
-                { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
+                { (uint) SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
+                { (uint) SteamKit2.GC.TF2.Internal.EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
+                { (uint) SteamKit2.GC.TF2.Internal.EGCItemMsg.k_EMsgGC_ReportAbuseResponse, OnReportResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingGC2ClientHello, OnMatchmakingHelloResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
@@ -168,29 +172,90 @@ namespace Titan.Account
         // PAYLOADS
         ////////////////////////////////////////////////////
 
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer> GetReportPayload()
+        public IClientGCMsg GetReportPayload(int payloadID = 0)
         {
-            var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>(
-                (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer
-            )
+            switch (_reportInfo.AppID)
             {
-                Body =
+                case CSGO_APPID:
                 {
-                    account_id = _reportInfo.SteamID.AccountID,
-                    match_id = _reportInfo.MatchID,
-                    rpt_aimbot = Convert.ToUInt32(_reportInfo.AimHacking),
-                    rpt_wallhack = Convert.ToUInt32(_reportInfo.WallHacking),
-                    rpt_speedhack = Convert.ToUInt32(_reportInfo.OtherHacking),
-                    rpt_teamharm = Convert.ToUInt32(_reportInfo.Griefing),
-                    rpt_textabuse = Convert.ToUInt32(_reportInfo.AbusiveText),
-                    rpt_voiceabuse = Convert.ToUInt32(_reportInfo.AbusiveVoice)
-                }
-            };
+                    var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportPlayer>(
+                        (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportPlayer
+                    )
+                    {
+                        Body =
+                        {
+                            account_id = _reportInfo.SteamID.AccountID,
+                            match_id = _reportInfo.MatchID,
+                            
+                            rpt_aimbot = Convert.ToUInt32(_reportInfo.AimHacking),
+                            rpt_wallhack = Convert.ToUInt32(_reportInfo.WallHacking),
+                            rpt_speedhack = Convert.ToUInt32(_reportInfo.OtherHacking),
+                            rpt_teamharm = Convert.ToUInt32(_reportInfo.Griefing),
+                            rpt_textabuse = Convert.ToUInt32(_reportInfo.AbusiveText),
+                            rpt_voiceabuse = Convert.ToUInt32(_reportInfo.AbusiveVoice)
+                        }
+                    };
 
-            return payload;
+                    return payload;
+                }
+                case TF2_APPID:
+                {
+                    switch (payloadID)
+                    {
+                        case 0:
+                        {
+                            var payload = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgGCReportAbuse>(
+                                (uint) SteamKit2.GC.TF2.Internal.EGCItemMsg.k_EMsgGC_ReportAbuse
+                            )
+                            {
+                                Body =
+                                {
+                                    target_steam_id = _reportInfo.SteamID.ConvertToUInt64(),
+                                    target_game_server_ipSpecified = true,
+                                    
+                                    abuse_type = 10, // TODO: Find out this magic value
+                                    abuse_typeSpecified = true,
+                                    content_type = 13, // TODO: Find out this magic value
+                                    content_typeSpecified = true,
+
+                                    description = StringUtil.GetRandomKisakQuote(), // Hope the guys at the TF2 Department will mock him for this
+                                    descriptionSpecified = true,
+
+                                    target_game_server_portSpecified = false,
+                                    gidSpecified = false
+                                }
+                            };
+
+                            return payload;
+                        }
+                        case 1:
+                        {
+                            var payload = new ClientGCMsgProtobuf<CMsgGC_ReportPlayer>(
+                                (uint) ETFGCMsg.k_EMsgGC_ReportPlayer
+                            )
+                            {
+                                Body =
+                                {
+                                    account_id_target = _reportInfo.SteamID.AccountID,
+                                    account_id_targetSpecified = true,
+                                    
+                                    reason = _reportInfo.Reason,
+                                    reasonSpecified = true
+                                }
+                            };
+
+                            return payload;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            return null;
         }
 
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer> GetCommendPayload()
+        public IClientGCMsg GetCommendPayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientCommendPlayer>(
                 (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayer
@@ -213,7 +278,7 @@ namespace Titan.Account
             return payload;
         }
 
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser> GetLiveGamePayload()
+        public IClientGCMsg GetLiveGamePayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser>(
                 (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchListRequestLiveGameForUser
@@ -228,7 +293,7 @@ namespace Titan.Account
             return payload;
         }
 
-        public ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientRequestPlayersProfile> GetRequestPlayerProfile()
+        public IClientGCMsg GetRequestPlayerProfile()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientRequestPlayersProfile>(
                 (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientRequestPlayersProfile

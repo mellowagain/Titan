@@ -5,6 +5,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using Titan.UI.About;
 using Titan.UI.General.Tabs;
+using Titan.Util;
 
 namespace Titan.UI.General
 {
@@ -107,7 +108,7 @@ namespace Titan.UI.General
                 {
                     MenuText = "About"
                 },
-                QuitItem = new Command((sender, args) => Environment.Exit(0))
+                QuitItem = new Command((sender, args) => Environment.Exit((int) ExitCodes.Ok))
                 {
                     MenuText = "Exit"
                 }
