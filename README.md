@@ -12,9 +12,17 @@
 [![Discord](https://img.shields.io/discord/342308069897928706.svg?label=discord)](https://discord.me/titanbot)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-Titan `/ˈtaɪtən/` is an advanced Counter-Strike Global Offensive report and commendation bot.
-Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch.
-It provides an advanced set of features and high efficiency compared to other report and commendation bots.
+Titan `/ˈtaɪtən/` is a modern report & commendation bot for the 
+Source engine. It has been built from the ground up with 
+performance and easy-of-use in mind using modern technologies 
+like SteamKit.  
+  
+Report & Commend Bots in Counter-Strike: Global Offensive **are
+not patched**. Thanks to regulations from the EU (namely GDPR), Valve
+has to show all data, including players that you successfully reported.
+Botted players show up on this list so the CS:GO Game Coordinator accepted
+these reports which were botted. Valve has been known for trying to patch
+report bots in the past but failed as Titan still is working correctly.
 
 ## Features
 
@@ -22,6 +30,7 @@ It provides an advanced set of features and high efficiency compared to other re
 * High performance due to multi-threaded reporting and commending.
 * Ban checking for both target and bot accounts. (Requires a generated [Steam Web API](https://steamcommunity.com/dev/apikey) key)
 * Integrated Sharecode parser that automatically parses the Match ID from a CS:GO Demo Share URL.
+* Support for all Steam ID's known to man (SteamID, SteamID3, SteamID64) as well as Steam profile urls.
 * Integrated Match ID resolver that automatically resolves the Match ID from the targets current match.
 * Automatic index timer which outputs when an account has finished its 12 hours cooldown.
 * Cross-platform compatibility, supports both Windows and Linux. Darwin support is coming soon.
@@ -179,7 +188,10 @@ before loading the `.sln` project into an IDE.
 
 #### Donations
 
-Donations are appreciated. Feel free to become a Patreon on my [Patreon](https://www.patreon.com/marc3842h).  
+Donations are appreciated. 
+
+* Feel free to donate once in a lifetime to my PayPal `accounts \< at \> marcsteiner.me`.
+* Feel free to become a monthly pledger on my [Patreon](https://www.patreon.com/marc3842h).  
 
 ## License
 
@@ -187,8 +199,3 @@ Titan is licensed under the [MIT License](https://github.com/Marc3842h/Titan/blo
 Please visit the `LICENSE.txt` file in the root directory tree for more informations.
 All external resources that do not fall unter the MIT license (Images etc.) have been credited
 in the `CREDIT.txt` under the Resources directory.
-
-## Special
-
-Titan is supporting and is being supported by the [TuxCheats](https://www.tuxcheats.com/) community.  
-Huge thanks to them.
