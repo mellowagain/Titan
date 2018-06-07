@@ -43,6 +43,7 @@ namespace Titan
         public bool IsAdmin;
         public bool EnableUI = true;
         public object ParsedObject;
+        public bool IsBotting = true;
 
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
@@ -394,7 +395,14 @@ namespace Titan
             {
                 // Titan was run in CLI mode so just run infinitely until the background threads
                 // finish and abort this loop and the whole application
-                for (;;) {}
+                while (Instance.IsBotting)
+                {
+                    Thread.Yield();
+                }
+                
+                Instance.Scheduler.Shutdown();
+                //OnShutdown(null, null);
+                Environment.Exit((int) ExitCodes.Ok);
             }
         }
 
