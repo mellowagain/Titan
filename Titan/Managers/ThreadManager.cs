@@ -35,6 +35,8 @@ namespace Titan.Managers
             _successCount = 0;
             _failCount = 0;
             _count = 0;
+            
+            Titan.Instance.IsBotting = true;
 
             _log.Debug("Starting reporting thread for {Target} in {Match} using account {Account}.",
                 info.SteamID, info.MatchID, account.JsonAccount.Username);
@@ -110,7 +112,7 @@ namespace Titan.Managers
                             
                             if (Titan.Instance.ParsedObject != null)
                             {
-                                Environment.Exit((int) ExitCodes.ReportFailed);
+                                Titan.Instance.IsBotting = false;
                             }
                         }
                         else
@@ -125,7 +127,7 @@ namespace Titan.Managers
                             
                             if (Titan.Instance.ParsedObject != null)
                             {
-                                Environment.Exit((int) ExitCodes.Ok);
+                                Titan.Instance.IsBotting = false;
                             }
                         }
                     }
@@ -165,6 +167,8 @@ namespace Titan.Managers
             _successCount = 0;
             _failCount = 0;
             _count = 0;
+            
+            Titan.Instance.IsBotting = true;
 
             _log.Debug("Starting commending thread for {Target} using account {Account}.",
                 info.SteamID, account.JsonAccount.Username);
@@ -235,7 +239,7 @@ namespace Titan.Managers
                             
                             if (Titan.Instance.ParsedObject != null)
                             {
-                                Environment.Exit((int) ExitCodes.CommendFailed);
+                                Titan.Instance.IsBotting = false;
                             }
                         }
                         else
@@ -250,7 +254,7 @@ namespace Titan.Managers
                             
                             if (Titan.Instance.ParsedObject != null)
                             {
-                                Environment.Exit((int) ExitCodes.Ok);
+                                Titan.Instance.IsBotting = false;
                             }
                         }
                     }
@@ -287,6 +291,12 @@ namespace Titan.Managers
 
             account.FeedLiveGameInfo(info);
 
+            _successCount = 0;
+            _failCount = 0;
+            _count = 0;
+            
+            Titan.Instance.IsBotting = true;
+            
             _log.Debug("Starting Match ID resolving thread for {Target} using account {Account}.",
                 info.SteamID, account.JsonAccount.Username);
 
