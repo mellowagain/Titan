@@ -58,6 +58,9 @@
     <Reference Include="Common.Logging.Serilog, Version=4.3.6.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Common.Logging.Serilog.4.3.6\lib\net461\Common.Logging.Serilog.dll</HintPath>
     </Reference>
+    <Reference Include="Costura, Version=2.0.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.2.0.1\lib\net452\Costura.dll</HintPath>
+    </Reference>
     <Reference Include="Eto, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Forms.2.4.1\lib\netstandard1.0\Eto.dll</HintPath>
     </Reference>
@@ -277,6 +280,8 @@
   <Import Project="..\packages\Eto.Platform.Mac.2.4.1\build\Eto.Platform.Mac.targets" Condition="Exists('..\packages\Eto.Platform.Mac.2.4.1\build\Eto.Platform.Mac.targets')" />
   <Import Project="..\packages\Eto.Platform.Mac64.2.4.1\build\Eto.Platform.Mac64.targets" Condition="Exists('..\packages\Eto.Platform.Mac64.2.4.1\build\Eto.Platform.Mac64.targets')" />
   <Import Project="..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets" Condition="Exists('..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets')" />
+  <Import Project="..\packages\Fody.3.0.3\build\Fody.targets" Condition="Exists('..\packages\Fody.3.0.3\build\Fody.targets') AND '$(OS)' == 'Windows_NT'" />
+  <Import Project="..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets') AND '$(OS)' == 'Windows_NT'" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
