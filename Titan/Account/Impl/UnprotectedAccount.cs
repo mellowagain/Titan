@@ -273,7 +273,7 @@ namespace Titan.Account.Impl
             switch (callback.Result)
             {
                 case EResult.OK:
-                    _log.Debug("Successfully logged in. Registering that we're playing app {app id}...", GetAppID());
+                    _log.Debug("Successfully logged in. Registering that we're playing app {id}...", GetAppID());
 
                     _steamFriends.SetPersonaState(EPersonaState.Online);
 

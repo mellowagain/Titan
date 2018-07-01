@@ -9,6 +9,11 @@ using Titan.MatchID.Live;
 using Titan.Meta;
 using Titan.Util;
 
+using CSGOBaseClientMsg = SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg;
+
+using TF2BaseClientMsg = SteamKit2.GC.TF2.Internal.EGCBaseClientMsg;
+using TF2GCItemMsg = SteamKit2.GC.TF2.Internal.EGCItemMsg;
+
 namespace Titan.Account
 {
     
@@ -81,10 +86,10 @@ namespace Titan.Account
         {
             var map = new Dictionary<uint, Action<IPacketGCMsg>>
             {
-                { (uint) SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
-                { (uint) SteamKit2.GC.TF2.Internal.EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
+                { (uint) CSGOBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
+                { (uint) TF2BaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
-                { (uint) SteamKit2.GC.TF2.Internal.EGCItemMsg.k_EMsgGC_ReportAbuseResponse, OnReportResponse },
+                { (uint) TF2GCItemMsg.k_EMsgGC_ReportAbuseResponse, OnReportResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingGC2ClientHello, OnMatchmakingHelloResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }

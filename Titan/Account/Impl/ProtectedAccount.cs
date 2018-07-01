@@ -312,7 +312,7 @@ namespace Titan.Account.Impl
             switch (callback.Result)
             {
                 case EResult.OK:
-                    _log.Debug("Successfully logged in. Registering that we're playing app {app id}...", GetAppID());
+                    _log.Debug("Successfully logged in. Registering that we're playing app {id}...", GetAppID());
 
                     _steamFriends.SetPersonaState(EPersonaState.Online);
                     
@@ -353,8 +353,8 @@ namespace Titan.Account.Impl
                             {
                                 Body =
                                 {
-                                    client_version = 4478108, // up2date as of 17th may 2018
-                                    client_versionSpecified = true,
+                                    //client_version = 4478108, // up2date as of 17th may 2018
+                                    //client_versionSpecified = true,
 
                                     language = 0, // We are english
                                     languageSpecified = true
@@ -362,12 +362,17 @@ namespace Titan.Account.Impl
                             };
 
                             _gameCoordinator.Send(clientInit, GetAppID());
+                            
+                            
+                            _log.Debug("SUCCESSFULLY SENT TF2 CLIENT INIT");
 
                             var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgClientHello>(
                                 (uint) SteamKit2.GC.TF2.Internal.EGCBaseClientMsg.k_EMsgGCClientHello 
                             );
 
                             _gameCoordinator.Send(clientHello, GetAppID());
+                            
+                            _log.Debug("SUCCESSFULLY SENT TF2 CLIENT HELLO");
                             break;
                         }
                     }
