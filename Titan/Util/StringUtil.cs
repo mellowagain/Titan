@@ -11,6 +11,7 @@ namespace Titan.Util
 
         private static List<string> _kisakQuotes = new List<string>
         {
+            // Kisak gets welcomed to the CS:GO team - Life of Kisak Part I
             "​​​​Hello i'm kisak-valve!",
             "I'm the github moderator of volvo  softwar.",
             "Here's my github: github.com/kisak-valve.",
@@ -38,6 +39,8 @@ namespace Titan.Util
             "No time, kissass, we gotta head over into the recording studio to meet with Soulja Boy for the new half-life 3 OST.",
             "I want you to get back to work ASAP.",
             "Alright.",
+            
+            // Kisak has to deal with cheaters on GitHub - Life of Kisak Part II
             "So I was sitting my Office and in comes Kissass..",
             "Oh boy I thought to myself.",
             "Uhhh... Excuse me...., Kisak whimpered.",
@@ -84,6 +87,8 @@ namespace Titan.Util
             "Just then my phone went off. It was from Gabe...",
             "Tycho, come to my office immediately bitch.",
             "And bring the lube",
+            
+            // Time for revenge - Life of Kisak Part III (Tycho perspective)
             "My anus was still sore from the last Gaben meeting.",
             "Pretty much everyone had left the office for the night, but I was stuck here working on VAC, trying to ban those damn free-tard cheaters.",
             "At the very least, catbots at least boost the tf2 player count, I thought to myself.",
@@ -183,6 +188,8 @@ namespace Titan.Util
             "We teleported directly into Starbucks, the barista gave us a weird look, and Jess disabled the portal.",
             "He turned to me, That, ladies and gentlemen, was Portal #3.",
             "We both started to laugh.",
+            
+            // What a panoramic view - Life of Kisak Part IV
             "*slurrrrrpppppp*",
             "\"Ahhh, that's good stuff.\", Kisak said to himself as he browsed the csgo perforce repo on his thinkpad.",
             "He alt-tabbed to Visual Studio and clicked the build button one more time.",
