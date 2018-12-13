@@ -4,6 +4,7 @@ using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using SteamKit2.GC.TF2.Internal;
+using SteamKit2.Internal;
 using Titan.Json;
 using Titan.MatchID.Live;
 using Titan.Meta;
@@ -153,6 +154,8 @@ namespace Titan.Account
             return 0;
         }
 
+        public abstract uint GetReporterAccountID();
+        
         public uint GetAppID()
         {
             if (_reportInfo != null)
@@ -298,7 +301,7 @@ namespace Titan.Account
             return payload;
         }
 
-        public IClientGCMsg GetRequestPlayerProfile()
+        public IClientGCMsg GetRequestPlayerProfilePayload()
         {
             var payload = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientRequestPlayersProfile>(
                 (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientRequestPlayersProfile
@@ -308,6 +311,35 @@ namespace Titan.Account
                 {
                     account_id = GetTargetAccountID(),
                     account_idSpecified = true
+                }
+            };
+
+            return payload;
+        }
+
+        public IClientGCMsg GetClientGamesPlayedPayload()
+        {
+            var payload = new ClientGCMsgProtobuf<CMsgClientGamesPlayed>(
+                (uint) EMsg.ClientGamesPlayed
+            )
+            {
+                Body =
+                {
+                    games_played =
+                    {
+                        new CMsgClientGamesPlayed.GamePlayed
+                        {
+                            steam_id_gs = _reportInfo.GameServerID,
+                            game_id = GetAppID(),
+                            game_ip_address = 0,
+                            game_port = 0,
+                            game_extra_info = "Counter - Strike: Global Offensive",
+                            process_id = RandomUtil.RandomUInt32(),
+                            game_flags = 1,
+                            streaming_provider_id = 0,
+                            owner_id = GetReporterAccountID()
+                        }
+                    }
                 }
             };
 

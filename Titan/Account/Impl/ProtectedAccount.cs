@@ -590,6 +590,17 @@ namespace Titan.Account.Impl
             }
             else if (_reportInfo != null)
             {
+                if (_reportInfo.GameServerID != 0)
+                {
+                    _log.Debug("Additional game server ID provided, registering with Steam...");
+                    
+                    _gameCoordinator.Send(GetClientGamesPlayedPayload(), GetAppID());
+                    
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
+                    
+                    _log.Debug("Successfully registered playing on server. Sending report...");
+                }
+                
                 _gameCoordinator.Send(GetReportPayload(), GetAppID());
             }
             else
@@ -703,5 +714,10 @@ namespace Titan.Account.Impl
             _2FactorCode = twofactorCode;
         }
 
+        public override uint GetReporterAccountID()
+        {
+            return _steamClient.SteamID.AccountID;
+        }
+        
     }
 }

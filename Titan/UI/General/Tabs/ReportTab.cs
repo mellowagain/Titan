@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;
 using Serilog.Core;
@@ -24,6 +25,7 @@ namespace Titan.UI.General.Tabs
         {
             var txtBoxSteamID = new TextBox { PlaceholderText = "STEAM_0:0:131983088" };
             var txtBoxMatchID = new TextBox { PlaceholderText = "CSGO-727c4-5oCG3-PurVX-sJkdn-LsXfE" };
+            var txtBoxGameServerID = new TextBox { PlaceholderText = "90562375182086009" };
 
             // CS:GO
             var cbAbusiveText = new CheckBox { Text = "Abusive Text Chat", Checked = true };
@@ -108,6 +110,7 @@ namespace Titan.UI.General.Tabs
             dropGame.SelectedIndexChanged += (sender, args) =>
             {
                 txtBoxMatchID.Enabled = dropGame.SelectedIndex == 0;
+                txtBoxGameServerID.Enabled = dropGame.SelectedIndex == 0;
 
                 csgoGroupBox.Visible = dropGame.SelectedIndex == 0;
                 tf2GroupBox.Visible = dropGame.SelectedIndex == 1;
@@ -122,6 +125,20 @@ namespace Titan.UI.General.Tabs
                 {
                     var steamID = SteamUtil.Parse(txtBoxSteamID.Text);
                     var matchID = SharecodeUtil.Parse(txtBoxMatchID.Text);
+                    
+                    if (!string.IsNullOrEmpty(txtBoxGameServerID.Text) && 
+                        !int.TryParse(txtBoxGameServerID.Text, out var gameServerID))
+                    {
+                        UIManager.SendNotification(
+                            "Invalid parameter",
+                            "Please provide a valid game server ID."
+                        );
+                        return;
+                    }
+                    else
+                    {
+                        gameServerID = 0;
+                    }
 
                     if (steamID != null)
                     {
@@ -174,6 +191,7 @@ namespace Titan.UI.General.Tabs
                                 new ReportInfo {
                                     SteamID = steamID,
                                     MatchID = matchID,
+                                    GameServerID = Convert.ToUInt64(gameServerID),
                                     AppID = dropGame.ToAppID(),
                                 
                                     AbusiveText = cbAbusiveText.Checked != null && (bool) cbAbusiveText.Checked,
@@ -230,6 +248,10 @@ namespace Titan.UI.General.Tabs
                                     new TableRow(
                                         new TableCell(new Label { Text = "Match ID" }),
                                         new TableCell(txtBoxMatchID)
+                                    ),
+                                    new TableRow(
+                                        new TableCell(new Label { Text = "Game Server ID" }),
+                                        new TableCell(txtBoxGameServerID)
                                     )
                                 }
                             }

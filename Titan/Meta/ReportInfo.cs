@@ -6,6 +6,7 @@ namespace Titan.Meta
     {
 
         public ulong MatchID { get; set; }
+        public ulong GameServerID { get; set; } = 0;
 
         public bool AbusiveText { get; set; } = true;
         public bool AbusiveVoice { get; set; } = true;
