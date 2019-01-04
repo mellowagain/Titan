@@ -170,6 +170,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\Impl\PrimitiveFreeGamesRequestHandler.cs" />
     <Compile Include="Account\Impl\ProtectedAccount.cs" />
     <Compile Include="Account\Impl\UnprotectedAccount.cs" />
     <Compile Include="Account\Result.cs" />
