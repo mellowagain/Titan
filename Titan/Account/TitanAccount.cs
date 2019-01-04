@@ -102,6 +102,8 @@ namespace Titan.Account
             }
         }
 
+        public abstract void OnFreeLicenseResponse(ClientMsgProtobuf<CMsgClientRequestFreeLicenseResponse> action);
+        
         public abstract void OnClientWelcome(IPacketGCMsg msg);
         public abstract void OnMatchmakingHelloResponse(IPacketGCMsg msg);
         public abstract void OnReportResponse(IPacketGCMsg msg);

@@ -94,6 +94,10 @@ namespace Titan.Managers
                             _log.Error("The provided SteamGuard code was wrong. Please retry.");
                             _failCount++;
                             break;
+                        case Result.NoGame:
+                            _log.Error("The bot account does not own the required app.");
+                            _failCount++;
+                            break;
                         default:
                             _failCount++;
                             break;

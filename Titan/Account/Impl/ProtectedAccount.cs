@@ -45,6 +45,8 @@ namespace Titan.Account.Impl
         private CallbackManager _callbacks;
         private TitanHandler _titanHandle;
 
+        private PrimitiveFreeGamesRequestHandler _freeGamesHandler;
+        
         public Result Result { get; private set; } = Result.Unknown;
 
         public ProtectedAccount(JsonAccounts.JsonAccount json) : base(json)
@@ -97,6 +99,9 @@ namespace Titan.Account.Impl
         {
             Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" : "Commend");
 
+            _freeGamesHandler = new PrimitiveFreeGamesRequestHandler(OnFreeLicenseResponse);
+            _steamClient.AddHandler(_freeGamesHandler);
+            
             _callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             _callbacks.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
             _callbacks.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
@@ -312,10 +317,10 @@ namespace Titan.Account.Impl
             switch (callback.Result)
             {
                 case EResult.OK:
-                    _log.Debug("Successfully logged in. Registering that we're playing app {id}...", GetAppID());
+                    _log.Debug("Successfully logged in. Requesting license for {id}...", GetAppID());
 
                     _steamFriends.SetPersonaState(EPersonaState.Online);
-                    
+
                     /*if (!Titan.Instance.Options.NoSteamGroup)
                     {
                         LoginWebInterface(callback.ClientSteamID);
@@ -323,59 +328,9 @@ namespace Titan.Account.Impl
                         return;
                     }*/
 
-                    var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-                    playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
-                    {
-                        game_id = GetAppID()
-                    });
-                    _steamClient.Send(playGames);
-
-                    Thread.Sleep(TimeSpan.FromSeconds(2));
-
-                    _log.Debug("Successfully registered app {game}. Sending client hello to gc services.", GetAppID());
-
-                    switch (GetAppID())
-                    {
-                        case CSGO_APPID:
-                        {
-                            var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.CSGO.Internal.CMsgClientHello>(
-                                (uint) SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg.k_EMsgGCClientHello
-                            );
-
-                            _gameCoordinator.Send(clientHello, GetAppID());
-                            break;
-                        }
-                        case TF2_APPID:
-                        {
-                            var clientInit = new ClientGCMsgProtobuf<CMsgTFClientInit>(
-                                (uint) ETFGCMsg.k_EMsgGC_TFClientInit
-                            )
-                            {
-                                Body =
-                                {
-                                    //client_version = 4478108, // up2date as of 17th may 2018
-                                    //client_versionSpecified = true,
-
-                                    language = 0, // We are english
-                                    languageSpecified = true
-                                }
-                            };
-
-                            _gameCoordinator.Send(clientInit, GetAppID());
-                            
-                            
-                            _log.Debug("SUCCESSFULLY SENT TF2 CLIENT INIT");
-
-                            var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgClientHello>(
-                                (uint) SteamKit2.GC.TF2.Internal.EGCBaseClientMsg.k_EMsgGCClientHello 
-                            );
-
-                            _gameCoordinator.Send(clientHello, GetAppID());
-                            
-                            _log.Debug("SUCCESSFULLY SENT TF2 CLIENT HELLO");
-                            break;
-                        }
-                    }
+                    var requestLicense = new ClientMsgProtobuf<CMsgClientRequestFreeLicense>(EMsg.ClientRequestFreeLicense);
+                    requestLicense.Body.appids.Add(GetAppID());
+                    _steamClient.Send(requestLicense);
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                     if (!string.IsNullOrWhiteSpace(JsonAccount.SharedSecret))
@@ -504,6 +459,69 @@ namespace Titan.Account.Impl
 
             _loginKey.Save(callback.LoginKey);
             _steamUser.AcceptNewLoginKey(callback);
+        }
+
+        public override void OnFreeLicenseResponse(ClientMsgProtobuf<CMsgClientRequestFreeLicenseResponse> payload)
+        {
+            if (!payload.Body.granted_appids.Contains(GetAppID()))
+            {
+                _log.Error("Unable to request free license for app {id}. Aborting.", GetAppID());
+
+                Result = Result.NoGame;
+                Stop();
+                return;
+            }
+            
+            _log.Debug("Successfully acquired license for app. Starting game...");
+            
+            var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
+            playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+            {
+                game_id = GetAppID()
+            });
+            _steamClient.Send(playGames);
+
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+            
+            _log.Debug("Successfully registered app {game}. Sending client hello to gc services.", GetAppID());
+
+            switch (GetAppID())
+            {
+                case CSGO_APPID:
+                {
+                    var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.CSGO.Internal.CMsgClientHello>(
+                        (uint) SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg.k_EMsgGCClientHello
+                    );
+
+                    _gameCoordinator.Send(clientHello, GetAppID());
+                    break;
+                }
+                case TF2_APPID:
+                {
+                    var clientInit = new ClientGCMsgProtobuf<CMsgTFClientInit>(
+                        (uint) ETFGCMsg.k_EMsgGC_TFClientInit
+                    )
+                    {
+                        Body =
+                        {
+                            client_version = 4478108, // up2date as of 17th may 2018
+                            client_versionSpecified = true,
+
+                            language = 0, // We are english
+                            languageSpecified = true
+                        }
+                    };
+
+                    _gameCoordinator.Send(clientInit, GetAppID());
+
+                    var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgClientHello>(
+                        (uint) SteamKit2.GC.TF2.Internal.EGCBaseClientMsg.k_EMsgGCClientHello 
+                    );
+
+                    _gameCoordinator.Send(clientHello, GetAppID());
+                    break;
+                }
+            }
         }
 
         public override void OnClientWelcome(IPacketGCMsg msg)

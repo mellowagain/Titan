@@ -11,6 +11,7 @@
         RateLimit,
         NoMatches,
         Code2FAWrong,
+        NoGame,
         Unknown
 
     }
