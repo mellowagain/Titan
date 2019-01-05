@@ -222,14 +222,6 @@ namespace Titan.Account.Impl
             }
         }
 
-        public override async void AddFreeLicense(uint appID = TF2_APPID)
-        {
-            if (IsAuthenticated)
-            {
-                // TODO: Implement for receiving a free license for TF2, allows report botting in the future
-            }
-        }
-
         ////////////////////////////////////////////////////
         // CALLBACKS
         ////////////////////////////////////////////////////

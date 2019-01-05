@@ -239,11 +239,6 @@ namespace Titan.Account.Impl
                 _log.Debug(await response.Content.ReadAsStringAsync());
             }
         }
-
-        public override async void AddFreeLicense(uint appID = TF2_APPID)
-        {
-            // TODO: Implement for receiving a free license for TF2, allows report botting in the future
-        }
         
         ////////////////////////////////////////////////////
         // CALLBACKS

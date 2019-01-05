@@ -3,17 +3,11 @@ using System.Collections.Generic;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
-using SteamKit2.GC.TF2.Internal;
 using SteamKit2.Internal;
 using Titan.Json;
 using Titan.MatchID.Live;
 using Titan.Meta;
 using Titan.Util;
-
-using CSGOBaseClientMsg = SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg;
-
-using TF2BaseClientMsg = SteamKit2.GC.TF2.Internal.EGCBaseClientMsg;
-using TF2GCItemMsg = SteamKit2.GC.TF2.Internal.EGCItemMsg;
 
 namespace Titan.Account
 {
@@ -77,8 +71,6 @@ namespace Titan.Account
 
         public abstract void JoinSteamGroup(uint groupID = 28495194); // 28495194 is /groups/TitanReportBot
 
-        public abstract void AddFreeLicense(uint appID = TF2_APPID); // For TF2
-
         ////////////////////////////////////////////////////
         // GAME COORDINATOR
         ////////////////////////////////////////////////////
@@ -87,10 +79,8 @@ namespace Titan.Account
         {
             var map = new Dictionary<uint, Action<IPacketGCMsg>>
             {
-                { (uint) CSGOBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
-                { (uint) TF2BaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
+                { (uint) EGCBaseClientMsg.k_EMsgGCClientWelcome, OnClientWelcome },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientReportResponse, OnReportResponse },
-                { (uint) TF2GCItemMsg.k_EMsgGC_ReportAbuseResponse, OnReportResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingGC2ClientHello, OnMatchmakingHelloResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_ClientCommendPlayerQueryResponse, OnCommendResponse },
                 { (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList, OnLiveGameRequestResponse }
@@ -240,7 +230,7 @@ namespace Titan.Account
                         }
                         case 1:
                         {
-                            var payload = new ClientGCMsgProtobuf<CMsgGC_ReportPlayer>(
+                            /*var payload = new ClientGCMsgProtobuf<CMsgGC_ReportPlayer>(
                                 (uint) ETFGCMsg.k_EMsgGC_ReportPlayer
                             )
                             {
@@ -254,7 +244,8 @@ namespace Titan.Account
                                 }
                             };
 
-                            return payload;
+                            return payload;*/
+                            return null;
                         }
                     }
 
