@@ -465,11 +465,7 @@ namespace Titan.Account.Impl
         {
             if (!payload.Body.granted_appids.Contains(GetAppID()))
             {
-                _log.Error("Unable to request free license for app {id}. Aborting.", GetAppID());
-
-                Result = Result.NoGame;
-                Stop();
-                return;
+                // We already own it, let's continue
             }
             
             _log.Debug("Successfully acquired license for app. Starting game...");

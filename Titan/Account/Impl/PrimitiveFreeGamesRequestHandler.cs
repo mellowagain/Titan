@@ -6,8 +6,6 @@ namespace Titan.Account.Impl
 {
     public class PrimitiveFreeGamesRequestHandler : ClientMsgHandler
     {
-        
-        // CMsgClientRequestFreeLicenseResponse
 
         private Action<ClientMsgProtobuf<CMsgClientRequestFreeLicenseResponse>> _action;
         
