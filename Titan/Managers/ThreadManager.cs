@@ -25,7 +25,7 @@ namespace Titan.Managers
         {
             if (_taskDic.ContainsKey(account))
             {
-                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                _log.Warning("Account is already reporting / commending. Aborting forcefully!");
 
                 FinishBotting(account);
             }
@@ -35,6 +35,8 @@ namespace Titan.Managers
             _successCount = 0;
             _failCount = 0;
             _count = 0;
+            
+            Titan.Instance.IsBotting = true;
 
             _log.Debug("Starting reporting thread for {Target} in {Match} using account {Account}.",
                 info.SteamID, info.MatchID, account.JsonAccount.Username);
@@ -65,8 +67,8 @@ namespace Titan.Managers
                             _failCount++;
                             break;
                         case Result.AccountBanned:
-                            _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
-                                         "have not been submitted.", account.JsonAccount.Username);
+                            _log.Error("Account {Account} has a cooldown on record. The report has been aborted.", 
+                                       account.JsonAccount.Username);
                             _failCount++;
                             break;
                         case Result.NoMatches:
@@ -92,6 +94,10 @@ namespace Titan.Managers
                             _log.Error("The provided SteamGuard code was wrong. Please retry.");
                             _failCount++;
                             break;
+                        case Result.NoGame:
+                            _log.Error("The bot account does not own the required app.");
+                            _failCount++;
+                            break;
                         default:
                             _failCount++;
                             break;
@@ -105,8 +111,13 @@ namespace Titan.Managers
                                 info.SteamID.ConvertToUInt64());
 
                             Titan.Instance.UIManager.SendNotification(
-                                "Titan", " was not able to report your target."
+                                "Titan", "Titan was not able to report your target."
                             );
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Titan.Instance.IsBotting = false;
+                            }
                         }
                         else
                         {
@@ -117,10 +128,11 @@ namespace Titan.Managers
                             Titan.Instance.UIManager.SendNotification(
                                 "Titan", _successCount + " reports have been successfully sent!"
                             );
-                        }
-                        if (Titan.Instance.ParsedObject != null)
-                        {
-                            Environment.Exit(0);
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Titan.Instance.IsBotting = false;
+                            }
                         }
                     }
                 }
@@ -149,7 +161,7 @@ namespace Titan.Managers
         {
             if (_taskDic.ContainsKey(account))
             {
-                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                _log.Warning("Account is already reporting / commending. Aborting forcefully!");
 
                 FinishBotting(account);
             }
@@ -159,6 +171,8 @@ namespace Titan.Managers
             _successCount = 0;
             _failCount = 0;
             _count = 0;
+            
+            Titan.Instance.IsBotting = true;
 
             _log.Debug("Starting commending thread for {Target} using account {Account}.",
                 info.SteamID, account.JsonAccount.Username);
@@ -189,8 +203,8 @@ namespace Titan.Managers
                             _failCount++;
                             break;
                         case Result.AccountBanned:
-                            _log.Warning("Account {Account} has VAC or game bans on record. The report may " +
-                                         "have not been submitted.", account.JsonAccount.Username);
+                            _log.Error("Account {Account} has a cooldown on record. The report has been aborted.", 
+                                       account.JsonAccount.Username);
                             _failCount++;
                             break;
                         case Result.TimedOut:
@@ -224,8 +238,13 @@ namespace Titan.Managers
                                 info.SteamID.ConvertToUInt64());
 
                             Titan.Instance.UIManager.SendNotification(
-                                "Titan", " was not able to commend your target."
+                                "Titan", "Titan was not able to commend your target."
                             );
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Titan.Instance.IsBotting = false;
+                            }
                         }
                         else
                         {
@@ -236,10 +255,11 @@ namespace Titan.Managers
                             Titan.Instance.UIManager.SendNotification(
                                 "Titan", _successCount + " commends have been successfully sent!"
                             );
-                        }
-                        if (Titan.Instance.ParsedObject != null)
-                        {
-                            Environment.Exit(0);
+                            
+                            if (Titan.Instance.ParsedObject != null)
+                            {
+                                Titan.Instance.IsBotting = false;
+                            }
                         }
                     }
                 }
@@ -268,13 +288,19 @@ namespace Titan.Managers
         {
             if (_taskDic.ContainsKey(account))
             {
-                _log.Warning("Account is already reporting / commending / idling. Aborting forcefully!");
+                _log.Warning("Account is already reporting / commending. Aborting forcefully!");
 
                 FinishBotting(account);
             }
 
             account.FeedLiveGameInfo(info);
 
+            _successCount = 0;
+            _failCount = 0;
+            _count = 0;
+            
+            Titan.Instance.IsBotting = true;
+            
             _log.Debug("Starting Match ID resolving thread for {Target} using account {Account}.",
                 info.SteamID, account.JsonAccount.Username);
 

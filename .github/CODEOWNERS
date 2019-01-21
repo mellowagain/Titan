@@ -1,0 +1,8 @@
+# Code Owners for the Titan repository
+# Code Owners are peoply that get automatically requested a review as soon as a Pull request is opened
+
+# Default code owners for all files in this repository
+* @Marc3842h
+
+# Code Owners for specified directories
+Titan/Managers/ThreadManager.cs @raspbianlike

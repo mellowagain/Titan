@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
@@ -75,6 +76,12 @@ namespace Titan.UI.General.Tabs
                 DataCell = new TextBoxCell("Secret"),
                 HeaderText = "Shared Secret",
                 Visible = !Titan.Instance.Options.Secure
+            });
+            
+            grid.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell("Cooldown"),
+                HeaderText = "Cooldown"
             });
             
             var txtBoxUsername = new TextBox { PlaceholderText = "Username" };
@@ -276,9 +283,19 @@ namespace Titan.UI.General.Tabs
             dataTable.Columns.Add("Password", typeof(string));
             dataTable.Columns.Add("Sentry", typeof(bool));
             dataTable.Columns.Add("Shared Secret", typeof(string));
+            dataTable.Columns.Add("Cooldown", typeof(string));
             
             foreach (var index in Titan.Instance.AccountManager.Accounts)
             {
+                var cooldownEnd = Titan.Instance.AccountManager.GetExpireTimeForIndex(index.Key);
+                var difference = cooldownEnd.Subtract(DateTime.Now);
+                var cooldown = "-";
+                if (cooldownEnd != DateTime.MinValue)
+                {
+                    cooldown = difference.Hours == 1 ? "1 hour" : difference.Hours + " hours";
+                    cooldown += ", " + difference.Minutes + " minutes";
+                }
+
                 if (index.Key != -1)
                 {
                     foreach (var account in index.Value)
@@ -290,7 +307,8 @@ namespace Titan.UI.General.Tabs
                             account.JsonAccount.Password,
                             account.JsonAccount.Sentry,
                             string.IsNullOrWhiteSpace(account.JsonAccount.SharedSecret) 
-                                ? "-" : account.JsonAccount.SharedSecret
+                                ? "-" : account.JsonAccount.SharedSecret,
+                            cooldown
                         );
                     }
                 }
@@ -304,7 +322,8 @@ namespace Titan.UI.General.Tabs
                     Username = x[2],
                     Password = x[3],
                     Sentry = (bool) x[4] ? "\u2714" : "\u2718", // ✔ : ✘
-                    Secret = x[5]
+                    Secret = x[5],
+                    Cooldown = x[6]
                 })
                 .ToList();
 

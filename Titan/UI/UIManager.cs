@@ -5,6 +5,7 @@ using Serilog.Core;
 using Titan.Logging;
 using Titan.UI.About;
 using Titan.UI.APIKey;
+using Titan.Util;
 
 namespace Titan.UI
 {
@@ -52,7 +53,7 @@ namespace Titan.UI
                         {
                             MenuText = "Show"
                         },
-                        new Command((sender, args) => Environment.Exit(0))
+                        new Command((sender, args) => Environment.Exit((int) ExitCodes.Ok))
                         {
                             MenuText = "Exit"
                         }

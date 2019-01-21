@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using Mono.CSharp;
 using Serilog.Core;
 using SteamKit2;
 using Titan.Bans;
@@ -95,6 +98,32 @@ namespace Titan.Web
 
             steamID64 = 0;
             return false;
+        }
+
+        public bool AuthentificateUser(ulong steamID, byte[] sessionKey, byte[] loginKey, out KeyValue result)
+        {
+            result = null;
+            
+            try
+            {
+                using (dynamic steamUserAuth = WebAPI.GetAsyncInterface("ISteamUserAuth", _keyManager.SWAKey))
+                {
+                    result = steamUserAuth.AuthenticateUser(
+                        steamid: steamID,
+                        sessionkey: Encoding.ASCII.GetString(WebUtility.UrlEncodeToBytes(sessionKey, 0, sessionKey.Length)),
+                        encrypted_loginkey: Encoding.ASCII.GetString(WebUtility.UrlEncodeToBytes(loginKey, 0, loginKey.Length)),
+                        method: WebRequestMethods.Http.Post,
+                        secure: true
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Could not authentificate with Steam Web API: {Error}", ex.Message);
+                return false;
+            }
+
+            return result != null;
         }
 
         // Used for checking if Steam Web API key is valid

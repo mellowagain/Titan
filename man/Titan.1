@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "TITAN" "1" "January 2018" "" ""
+.TH "TITAN" "1" "April 2018" "" ""
 .
 .SH "NAME"
 \fBTitan\fR \- Advanced CS:GO report and commend bot
@@ -10,7 +10,7 @@
 \fBtitan\fR [\fIverb\fR] [\fIargs\fR \.\.\.]
 .
 .br
-\fBtitan\fR \fBreport\fR \fB\-t\fR \fItarget\fR [\fB\-m\fR \fImatchid\fR \.\.\.]
+\fBtitan\fR \fBreport\fR \fB\-t\fR \fItarget\fR [\fB\-m\fR \fImatchid\fR] \.\.\.]
 .
 .br
 \fBtitan\fR \fBcommend\fR \fB\-t\fR \fItarget\fR [\.\.\.]
@@ -18,7 +18,7 @@
 .br
 .
 .SH "DESCRIPTION"
-\fBTitan\fR is an advanced Counter\-Strike Global Offensive report and commendation bot\. Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch\. It provides a advanced set of features and high effiency when compared against other report and commendation bots\.
+\fBTitan\fR is an advanced Counter\-Strike Global Offensive report and commendation bot\. Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch\. It provides a advanced set of features and high efficiency compared to other report and commendation bots\.
 .
 .P
 In its default mode, \fBTitan\fR opens up a user\-friendly clickable UI that can be used for reporting and commending aswell as adding multiple new bot accounts to Titans internal list\.
@@ -101,6 +101,14 @@ Optional\. Provides path to \fBaccounts\.json\fR in which the bot accounts that 
 .TP
 \fB\-s\fR, \fB\-\-secure\fR
 Optional\. If passed, console output will be secured so that no account information or other serious information will be printed\. This can be used for taking screenshots or recording videos\.
+.
+.TP
+\fB\-a\fR, \fB\-\-admin\fR
+Optional\. Allows \fBTitan\fR to be run as root\.
+.
+.TP
+\fB\-g\fR, \fB\-\-nosteamgroup\fR
+Optional\. Disables automatic joining of the \fBTitan\fR Steam group with bot accounts\.
 .
 .TP
 \fB\-b\fR, \fB\-\-noblacklist\fR

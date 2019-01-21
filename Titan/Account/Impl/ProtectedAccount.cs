@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using Eto.Forms;
+using Quartz.Util;
 using Serilog.Core;
-using SteamAuth;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
+using SteamKit2.GC.TF2.Internal;
 using SteamKit2.Internal;
 using Titan.Json;
 using Titan.Logging;
@@ -43,6 +45,8 @@ namespace Titan.Account.Impl
         private CallbackManager _callbacks;
         private TitanHandler _titanHandle;
 
+        private PrimitiveFreeGamesRequestHandler _freeGamesHandler;
+        
         public Result Result { get; private set; } = Result.Unknown;
 
         public ProtectedAccount(JsonAccounts.JsonAccount json) : base(json)
@@ -95,6 +99,9 @@ namespace Titan.Account.Impl
         {
             Thread.CurrentThread.Name = JsonAccount.Username + " - " + (_reportInfo != null ? "Report" : "Commend");
 
+            _freeGamesHandler = new PrimitiveFreeGamesRequestHandler(OnFreeLicenseResponse);
+            _steamClient.AddHandler(_freeGamesHandler);
+            
             _callbacks.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             _callbacks.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
             _callbacks.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
@@ -139,7 +146,100 @@ namespace Titan.Account.Impl
             
             Titan.Instance.ThreadManager.FinishBotting(this);
         }
+        
+        ////////////////////////////////////////////////////
+        // STEAM WEB INTERFACE
+        ////////////////////////////////////////////////////
 
+        public override async void LoginWebInterface(ulong steamID)
+        {
+            if (!IsAuthenticated)
+            {
+                SteamUser.WebAPIUserNonceCallback callback;
+
+                try
+                {
+                    callback = await _steamUser.RequestWebAPIUserNonce();
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Unable to request Web API Nonce. Titan won't be able to execute Web API actions.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(callback?.Nonce))
+                {
+                    _log.Error("Received empty Web API Nonce. Titan won't be able to execute Web API actions.");
+                    return;
+                }
+
+                var sessionID = Convert.ToBase64String(Encoding.UTF8.GetBytes(steamID.ToString()));
+                var sessionKey = CryptoHelper.GenerateRandomBlock(32);
+                byte[] cryptedSessionKey;
+
+                using (var rsa = new RSACrypto(KeyDictionary.GetPublicKey(_steamClient.Universe)))
+                {
+                    cryptedSessionKey = rsa.Encrypt(sessionKey);
+                }
+
+                var loginKey = new byte[callback.Nonce.Length];
+                Array.Copy(Encoding.ASCII.GetBytes(callback.Nonce), loginKey, callback.Nonce.Length);
+                
+                // AES encrypt the login key with our session key
+                var cryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
+
+                if (!Titan.Instance.WebHandle.AuthentificateUser(
+                    steamID, cryptedLoginKey, cryptedSessionKey, out var result
+                ))
+                {
+                    _log.Error("Failed to authentificate with Web API Nonce. " +
+                               "Titan won't be able to execute Web API actions.");
+                    return;
+                }
+
+                var token = result["token"].Value;
+                var secureToken = result["tokensecure"].Value;
+
+                if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(secureToken))
+                {
+                    _log.Error("Failed to authentificate with Web API Nonce. " +
+                               "Titan won't be able to execute Web API actions.");
+                    return;
+                }
+                
+                Cookies.Add("sessionid", sessionID);
+                Cookies.Add("steamLogin", token);
+                Cookies.Add("steamLoginSecure", secureToken);
+
+                if (!Titan.Instance.Options.Secure)
+                {
+                    _log.Debug("Authorized with Steam Web API. Session ID: {id}", sessionID);
+                }
+                
+                _log.Information("Successfully authorized with Steam Web API.");
+                
+                IsAuthenticated = true;
+            }
+        }
+
+        public override async void JoinSteamGroup(uint groupID = 28495194)
+        {
+            if (IsAuthenticated)
+            {
+                var headers = new Dictionary<string, string>
+                {
+                    { "sessionID", Cookies.TryGetAndReturn("sessionid") },
+                    { "action", "join" }
+                };
+
+                var response = await Titan.Instance.HttpClient.PostAsync(
+                    "https://steamcommunity.com/gid/" + groupID, new FormUrlEncodedContent(headers)
+                );
+                
+                _log.Debug(await response.Content.ReadAsStringAsync());
+            }
+        }
+        
         ////////////////////////////////////////////////////
         // CALLBACKS
         ////////////////////////////////////////////////////
@@ -212,25 +312,20 @@ namespace Titan.Account.Impl
             switch (callback.Result)
             {
                 case EResult.OK:
-                    _log.Debug("Successfully logged in. Registering that we're playing CS:GO...");
+                    _log.Debug("Successfully logged in. Requesting license for {id}...", GetAppID());
 
                     _steamFriends.SetPersonaState(EPersonaState.Online);
 
-                    var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
-                    playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+                    /*if (!Titan.Instance.Options.NoSteamGroup)
                     {
-                        game_id = GetAppID()
-                    });
-                    _steamClient.Send(playGames);
+                        LoginWebInterface(callback.ClientSteamID);
+                        JoinSteamGroup(); // https://steamcommunity.com/groups/TitanReportBot
+                        return;
+                    }*/
 
-                    Thread.Sleep(5000);
-
-                    _log.Debug("Successfully registered playing CS:GO. Sending client hello to CS:GO services.");
-
-                    var clientHello = new ClientGCMsgProtobuf<CMsgClientHello>(
-                        (uint) EGCBaseClientMsg.k_EMsgGCClientHello
-                    );
-                    _gameCoordinator.Send(clientHello, GetAppID());
+                    var requestLicense = new ClientMsgProtobuf<CMsgClientRequestFreeLicense>(EMsg.ClientRequestFreeLicense);
+                    requestLicense.Body.appids.Add(GetAppID());
+                    _steamClient.Send(requestLicense);
                     break;
                 case EResult.AccountLoginDeniedNeedTwoFactor:
                     if (!string.IsNullOrWhiteSpace(JsonAccount.SharedSecret))
@@ -289,10 +384,10 @@ namespace Titan.Account.Impl
                 case EResult.TwoFactorCodeMismatch:
                 case EResult.TwoFactorActivationCodeMismatch:
                 case EResult.Invalid:
-                    _log.Error("A invalid SteamGuard authentificator code has been provided. Aborting!");
-                    
-                    Result = Result.Code2FAWrong;
-                    Stop();
+                    _log.Error("Invalid Steam Guard code provided. Reasking after reconnecting.");
+
+                    _authCode = null;
+                    _2FactorCode = null;
                     break;
                 default:
                     _log.Error("Unable to logon to account: {Result}: {ExtendedResult}", callback.Result, callback.ExtendedResult);
@@ -361,15 +456,95 @@ namespace Titan.Account.Impl
             _steamUser.AcceptNewLoginKey(callback);
         }
 
+        public override void OnFreeLicenseResponse(ClientMsgProtobuf<CMsgClientRequestFreeLicenseResponse> payload)
+        {
+            if (!payload.Body.granted_appids.Contains(GetAppID()))
+            {
+                // We already own it, let's continue
+            }
+            
+            _log.Debug("Successfully acquired license for app. Starting game...");
+            
+            var playGames = new ClientMsgProtobuf<CMsgClientGamesPlayed>(EMsg.ClientGamesPlayed);
+            playGames.Body.games_played.Add(new CMsgClientGamesPlayed.GamePlayed
+            {
+                game_id = GetAppID()
+            });
+            _steamClient.Send(playGames);
+
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+            
+            _log.Debug("Successfully registered app {game}. Sending client hello to gc services.", GetAppID());
+
+            switch (GetAppID())
+            {
+                case CSGO_APPID:
+                {
+                    var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.CSGO.Internal.CMsgClientHello>(
+                        (uint) SteamKit2.GC.CSGO.Internal.EGCBaseClientMsg.k_EMsgGCClientHello
+                    );
+
+                    _gameCoordinator.Send(clientHello, GetAppID());
+                    break;
+                }
+                case TF2_APPID:
+                {
+                    var clientInit = new ClientGCMsgProtobuf<CMsgTFClientInit>(
+                        (uint) ETFGCMsg.k_EMsgGC_TFClientInit
+                    )
+                    {
+                        Body =
+                        {
+                            client_version = 4478108, // up2date as of 17th may 2018
+                            client_versionSpecified = true,
+
+                            language = 0, // We are english
+                            languageSpecified = true
+                        }
+                    };
+
+                    _gameCoordinator.Send(clientInit, GetAppID());
+
+                    var clientHello = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgClientHello>(
+                        (uint) SteamKit2.GC.TF2.Internal.EGCBaseClientMsg.k_EMsgGCClientHello 
+                    );
+
+                    _gameCoordinator.Send(clientHello, GetAppID());
+                    break;
+                }
+            }
+        }
+
         public override void OnClientWelcome(IPacketGCMsg msg)
         {
-            var welcome = new ClientGCMsgProtobuf<CMsgClientWelcome>(msg);
-            
-            _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). " +
-                       "Sending hello the CS:GO's matchmaking service.",
-                       welcome.Body.version, welcome.Body.location.country);
-            
-            _gameCoordinator.Send(GetMatchmakingHelloPayload(), GetAppID());
+            switch (GetAppID())
+            {
+                case CSGO_APPID:
+                {
+                    var welcome = new ClientGCMsgProtobuf<SteamKit2.GC.CSGO.Internal.CMsgClientWelcome>(msg);
+
+                    _log.Debug("Received welcome from CS:GO GC version {v} (Connected to {loc}). " +
+                               "Sending hello the CS:GO's matchmaking service.",
+                        welcome.Body.version, welcome.Body.location.country);
+
+                    var mmHello = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello>(
+                        (uint) ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingClient2GCHello
+                    );
+
+                    _gameCoordinator.Send(mmHello, GetAppID());
+                    break;
+                }
+                case TF2_APPID:
+                {
+                    var welcome = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgClientWelcome>(msg);
+
+                    _log.Debug("Received welcome from TF2 GC version {v}. Sending report...",
+                        welcome.Body.version);
+                    
+                    _gameCoordinator.Send(GetReportPayload(), GetAppID());
+                    break;
+                }
+            }
         }
 
         public override void OnMatchmakingHelloResponse(IPacketGCMsg msg)
@@ -378,78 +553,26 @@ namespace Titan.Account.Impl
 
             if (response.Body.penalty_reasonSpecified)
             {
-                switch (response.Body.penalty_reason)
+                Cooldown cooldown = response.Body.penalty_reason;
+                
+                _log.Error("This account has received a {type} cooldown: {reason}", 
+                           cooldown.Permanent ? "global" : "temporary", cooldown.Reason);
+                
+                if (cooldown.Permanent)
                 {
-                    case PENALTY_OVERWATCH_CONVICTED_MAJORLY_DISRUPTIVE:
-                    {
-                        _log.Error("This account has been convicted by Overwatch as majorly disruptive and has been " +
-                                   "permanently banned. Botting with banned accounts is not possible and will not " +
-                                   "give succesful results. Aborting!");
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
-                    case PENALTY_OVERWATCH_CONVICTED_MINORLY_DISRUPTIVE:
-                    {
-                        var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
-
-                        _log.Error("This account has been convicted by Overwatch as majorly minorly and has been " +
-                                   "banned for {days} more days. Botting with banned accounts is not possible and " +
-                                   "will not give succesful results. Aborting!", penalty.Days);
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
-                    case PENALTY_PERMANENTLY_UNTRUSTED_VAC:
-                    {
-                        _log.Error("This account is permanently untrusted. Botting with banned accounts is not " +
-                                   "possible and will not give succesful results. Aborting!");
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
-                    default:
-                    {
-                        if (response.Body.penalty_secondsSpecified)
-                        {
-                            var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
-
-                            // 604800 seconds = 7 days
-                            // If the penalty seconds are over 7 days, the account is permanently banned.
-                            // If not, the account has received a temporary Matchmaking cooldown
-                            if (penalty.Seconds <= 604800)
-                            {
-                                string timeString;
-                                if (penalty.Minutes >= 60)
-                                {
-                                    timeString = penalty.Hours + " Hours";
-                                }
-                                else
-                                {
-                                    timeString = penalty.Minutes + " Minutes";
-                                }
-
-                                _log.Error("This account has received a Matchmaking cooldown. Botting with banned " +
-                                           "accounts is not possible and will not give successful results. Aborting!");
-                                _log.Error("The matchmaking cooldown of this account will end in {end}.", timeString);
-                                Result = Result.AccountBanned;
-
-                                Stop();
-                                return;
-                            }
-                        }
-
-                        _log.Error("This account has been permanently banned from CS:GO. Botting with banned " +
-                                   "accounts is not possible and will not give successful results. Aborting!");
-                        Result = Result.AccountBanned;
-
-                        Stop();
-                        return;
-                    }
+                    _log.Error("This ban is permanent. Botting with banned accounts is not possible.");
                 }
+                else
+                {
+                    var penalty = TimeSpan.FromSeconds(response.Body.penalty_seconds);
+                    var time = penalty.Minutes >= 60 ? penalty.Hours + " Hours" : penalty.Minutes + " Minutes";
+                    
+                    _log.Error("This ban will end in {end}. Botting with banned accounts is not possible.", time);
+                }
+
+                Result = Result.AccountBanned;
+                Stop();
+                return;
             }
 
             // When the CS:GO GC sends a vac_banned (type 2) but not a penalty_reason (type 0)
@@ -459,7 +582,7 @@ namespace Titan.Account.Impl
                 response.Body.vac_banned == 2 && !response.Body.penalty_secondsSpecified)
             {
                 _log.Error("This account has been banned by Valve Anti Cheat. Botting with banned " +
-                           "accounts is not possible and will not give successfull results. Aborting!");
+                           "accounts is not possible.");
                 Result = Result.AccountBanned;
                 
                 Stop();
@@ -467,7 +590,7 @@ namespace Titan.Account.Impl
             }
             
             var type = _liveGameInfo != null ? "Live Game Request" : (_reportInfo != null ? "Report" : "Commend");
-            _log.Debug("Received hello from CS:GO matchmaking services. Authentificated as {id}. Sending {type}.",
+            _log.Debug("Received hello from CS:GO matchmaking services. Authenticated as {id}. Sending {type}.",
                        response.Body.account_id, type);
             
             if (_liveGameInfo != null)
@@ -476,6 +599,17 @@ namespace Titan.Account.Impl
             }
             else if (_reportInfo != null)
             {
+                if (_reportInfo.GameServerID != 0)
+                {
+                    _log.Debug("Additional game server ID provided, registering with Steam...");
+                    
+                    _gameCoordinator.Send(GetClientGamesPlayedPayload(), GetAppID());
+                    
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
+                    
+                    _log.Debug("Successfully registered playing on server. Sending report...");
+                }
+                
                 _gameCoordinator.Send(GetReportPayload(), GetAppID());
             }
             else
@@ -486,18 +620,47 @@ namespace Titan.Account.Impl
 
         public override void OnReportResponse(IPacketGCMsg msg)
         {
-            var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
-
-            if (_reportInfo != null)
+            switch (GetAppID())
             {
-                _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
-            }
-            else
-            {
-                _log.Information("Successfully commended {Target} with {Pretty}.",
-                    _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
-            }
+                case CSGO_APPID:
+                {
+                    var response = new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientReportResponse>(msg);
 
+                    if (_reportInfo != null)
+                    {
+                        _log.Information("Successfully reported. Confirmation ID: {ID}", response.Body.confirmation_id);
+                    }
+                    else
+                    {
+                        _log.Information("Successfully commended {Target} with {Pretty}.",
+                            _commendInfo.SteamID.ConvertToUInt64(), _commendInfo.ToPrettyString());
+                    }
+
+                    break;
+                }
+                case TF2_APPID:
+                {
+                    var response = new ClientGCMsgProtobuf<SteamKit2.GC.TF2.Internal.CMsgGCReportAbuseResponse>(msg);
+
+                    if (!response.Body.error_messageSpecified)
+                    {
+                        _log.Information("Successfully reported {target}. Received result: {result}",
+                            response.Body.target_steam_id, response.Body.result);
+                    }
+                    else
+                    {
+                        _log.Error("Failed to report target. Received result {result} with error {msg}.",
+                            response.Body.result, response.Body.error_message);
+                        
+                        Result = Result.TimedOut;
+                        Stop();
+                        return;
+                    }
+                    
+                    break;
+                }
+            }
+            
             Result = Result.Success;
 
             Stop();
@@ -560,5 +723,10 @@ namespace Titan.Account.Impl
             _2FactorCode = twofactorCode;
         }
 
+        public override uint GetReporterAccountID()
+        {
+            return _steamClient.SteamID.AccountID;
+        }
+        
     }
 }

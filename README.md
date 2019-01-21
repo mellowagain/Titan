@@ -12,16 +12,25 @@
 [![Discord](https://img.shields.io/discord/342308069897928706.svg?label=discord)](https://discord.me/titanbot)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-Titan `/ˈtaɪtən/` is an advanced Counter-Strike Global Offensive report and commendation bot.
-Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch.
-It provides a advanced set of features and high effiency when compared against other report and commendation bots.
+Titan `/ˈtaɪtən/` is a modern report & commendation bot for the 
+Source engine. It has been built from the ground up with 
+performance and easy-of-use in mind using modern technologies 
+like SteamKit.  
+  
+Report & Commend Bots in Counter-Strike: Global Offensive **are
+not patched**. Thanks to regulations from the EU (namely GDPR), Valve
+has to show all data, including players that you successfully reported.
+Botted players show up on this list so the CS:GO Game Coordinator accepted
+these reports which were botted. Valve has been known for trying to patch
+report bots in the past but failed as Titan still is working correctly.
 
 ## Features
 
-* Support for both a graphical user interface (GUI) and command line.
-* High performance thanks to multi-threaded reporting and commending (when compared to other report bots).
-* Ban checking for both target and bot accounts. (Requires own generated [Steam Web API](https://steamcommunity.com/dev/apikey) key)
+* Support for a graphical user interface (GUI) and command line.
+* High performance due to multi-threaded reporting and commending.
+* Ban checking for both target and bot accounts. (Requires a generated [Steam Web API](https://steamcommunity.com/dev/apikey) key)
 * Integrated Sharecode parser that automatically parses the Match ID from a CS:GO Demo Share URL.
+* Support for all Steam ID's known to man (SteamID, SteamID3, SteamID64) as well as Steam profile urls.
 * Integrated Match ID resolver that automatically resolves the Match ID from the targets current match.
 * Automatic index timer which outputs when an account has finished its 12 hours cooldown.
 * Cross-platform compatibility, supports both Windows and Linux. Darwin support is coming soon.
@@ -32,7 +41,7 @@ It provides a advanced set of features and high effiency when compared against o
 
 ## Installation
 
-Every version of Titan is provided as binary archive. An installation process is not required.
+Every version of Titan is provided as binary archive so installation is not required.
 
 #### Dependencies
 
@@ -43,7 +52,7 @@ Every version of Titan is provided as binary archive. An installation process is
 #### Option 1: Binary
 
 Download the latest binary from the [releases](https://github.com/Marc3842h/Titan/releases) tab.
-Download the package for your operating system, unpack it and run the `Titan.exe` file.
+Download the package for the appropriate operating system, unpack it and run the `Titan.exe` file.
 
 #### Option 2: From Source
 
@@ -68,7 +77,7 @@ Arch Linux: [`titan-bot-git`](https://aur.archlinux.org/packages/titan-bot-git/)
 
 #### Start
 
-Run Titan on Windows by simple double clicking the `Titan.exe` executeable.
+Run Titan on Windows by simple double clicking the `Titan.exe` executable.
 
 On Linux, run Titan from the command line using the following syntax:
 
@@ -76,17 +85,19 @@ On Linux, run Titan from the command line using the following syntax:
 $ mono Titan.exe [Verb] [Arguments ...]
 ```
 
-You can find a list of command line arguments [here](https://github.com/Marc3842h/Titan/blob/master/Titan/Bootstrap/Options.cs).  
-If no (or not enough) arguments have been supplied, Titan will open the GUI:
+A list of command line arguments can be found [here](https://github.com/Marc3842h/Titan/blob/master/Titan/Bootstrap/Options.cs).  
+If the required arguments have not been supplied, Titan will open the GUI:
 
 ![GUI](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Form.png)
 
-If one of your recently botted players got banned, you'll also receive a notification:
+If a recently botted players has been banned, a notification will appear:
 
 ![Notification](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/Notification.png)
 
-Please note that Titan is running as service by default. To close Titan
-completely, please click `File > Exit` in the menu bar.
+**NOTE**
+
+By default, Titan will run in the background as a service. To close Titan
+completely, click `File > Exit` in the menu bar.
 
 ![About](https://github.com/Marc3842h/Titan/blob/master/Titan/Resources/About.png)
 
@@ -104,11 +115,11 @@ Use it like this:
 python convert.py <original accounts file>
 ```
 
-After it ran successfully you can find a `accounts.json` file in the current directory.
+After it runs successfully a `accounts.json` file can be found in the current directory.
 
 #### i3wm
 
-If you are using i3 window manager, I suggest enabling floating for Titan in the `.config/i3/config`:
+If i3 window manager is being used, it is recommended to enable floating for Titan in the `.config/i3/config`:
 
 ```i3config
 for_window [class="Titan"] floating enable
@@ -116,27 +127,27 @@ for_window [class="Titan"] floating enable
 
 #### Accounts file
 
-Here is the syntax of the accounts.json. You may read more about it on the [wiki](https://github.com/Marc3842h/Titan/wiki/Creating-a-accounts.json).
+Here is the syntax of the accounts.json. More information about the syntax can be found on the [wiki](https://github.com/Marc3842h/Titan/wiki/Creating-a-accounts.json).
 
 ```js
 {
-    // Per index are maximum 11 accounts allowed. Begin a new index when a new account is required.
+    // A maximum of 11 accounts are allowed per index. Begin a new index when a new account is required.
     "indexes": [
         {
             "accounts": [
                 {
                     "username": "username1",
                     "password": "password1",
-                    "enabled": true, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": true, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 },
                 {
                     "username": "username11",
                     "password": "password11",
-                    "enabled": false, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": false, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 }
             ]
         },
@@ -145,16 +156,16 @@ Here is the syntax of the accounts.json. You may read more about it on the [wiki
                 {
                     "username": "username12",
                     "password": "password12",
-                    "enabled": true, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": true, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 },
                 {
                     "username": "username22",
                     "password": "password22",
-                    "enabled": true, // May be omitted if you want set it to default value (true)
-                    "sentry": false, // May be omitted if you want set it to default value (false)
-                    "secret": "Shared Secret for SteamGuard" // May be omitted if you don't want to use the shared secret generator
+                    "enabled": true, // May be omitted in order to set it to default value (true)
+                    "sentry": false, // May be omitted in order to set it to default value (false)
+                    "secret": "Shared Secret for SteamGuard" // May be omitted if usage of the shared secret generator is not needed
                 }
             ]
         }
@@ -172,22 +183,19 @@ Please use the [issue tracker](https://github.com/Marc3842h/Titan/issues) to rep
 
 #### Developing
 
-Pull Requests are welcome. Before being able to load the `.sln` project
-using your favorite IDE, please restore the NuGet packages (`nuget restore`)
-as they are required for loading the project.
+Pull Requests are welcome. Restore the NuGet packages (`nuget restore`)
+before loading the `.sln` project into an IDE.
 
 #### Donations
 
-Donations are appreciated. Feel free to become a Patreon on my [Patreon](https://www.patreon.com/marc3842h).  
-  
+Donations are appreciated. 
+
+* Feel free to donate once in a lifetime to my PayPal `accounts \< at \> marcsteiner.me`.
+* Feel free to become a monthly pledger on my [Patreon](https://www.patreon.com/marc3842h).  
+
 ## License
 
 Titan is licensed under the [MIT License](https://github.com/Marc3842h/Titan/blob/master/LICENSE.txt).
 Please visit the `LICENSE.txt` file in the root directory tree for more informations.
 All external resources that do not fall unter the MIT license (Images etc.) have been credited
 in the `CREDIT.txt` under the Resources directory.
-
-## Special
-
-Titan is supporting and is being supported by the [TuxCheats](https://www.tuxcheats.com/) community.  
-Huge thanks to them.

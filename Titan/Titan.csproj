@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\RoslynCodeTaskFactory.2.0.7\build\RoslynCodeTaskFactory.props" Condition="Exists('..\packages\RoslynCodeTaskFactory.2.0.7\build\RoslynCodeTaskFactory.props')" />
   <Import Project="..\packages\NETStandard.Library.NETFramework.2.0.0-preview2-25405-01\build\net461\NETStandard.Library.NETFramework.props" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -36,15 +37,21 @@
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
     <DefineConstants>__UNIX__</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AtkSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\AtkSharp.3.22.24.29\lib\netstandard2.0\AtkSharp.dll</HintPath>
+    <Reference Include="AtkSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\AtkSharp.3.22.24.37\lib\netstandard2.0\AtkSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CairoSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\CairoSharp.3.22.24.29\lib\netstandard2.0\CairoSharp.dll</HintPath>
+    <Reference Include="CairoSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CairoSharp.3.22.24.37\lib\netstandard2.0\CairoSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CommandLine, Version=2.2.1.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32">
-      <HintPath>..\packages\CommandLineParser.2.2.1\lib\net45\CommandLine.dll</HintPath>
+    <Reference Include="CommandLine, Version=2.3.0.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32">
+      <HintPath>..\packages\CommandLineParser.2.3.0\lib\net45\CommandLine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
       <HintPath>..\packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
@@ -52,94 +59,114 @@
     <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
       <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Logging.Serilog, Version=4.3.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Common.Logging.Serilog.4.3.0\lib\net45\Common.Logging.Serilog.dll</HintPath>
+    <Reference Include="Common.Logging.Serilog, Version=4.3.6.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Common.Logging.Serilog.4.3.6\lib\net461\Common.Logging.Serilog.dll</HintPath>
     </Reference>
-    <Reference Include="Eto, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Forms.2.4.0\lib\netstandard1.0\Eto.dll</HintPath>
+    <Reference Include="Costura, Version=2.0.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.2.0.1\lib\net452\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="Eto.Gtk, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Gtk.2.4.0\lib\netstandard2.0\Eto.Gtk.dll</HintPath>
+    <Reference Include="Eto, Version=2.5.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Forms.2.5.0-ci-10079\lib\netstandard1.0\Eto.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Eto.Gtk3, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Gtk3.2.4.0\lib\net45\Eto.Gtk3.dll</HintPath>
+    <Reference Include="Eto.Gtk, Version=2.5.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Gtk.2.5.0-ci-10079\lib\netstandard2.0\Eto.Gtk.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Eto.Mac, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Mac.2.4.0\lib\net45\Eto.Mac.dll</HintPath>
+    <Reference Include="Eto.Mac64, Version=2.5.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Mac64.2.5.0-ci-10079\lib\net45\Eto.Mac64.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Eto.Mac64, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Mac64.2.4.0\lib\net45\Eto.Mac64.dll</HintPath>
+    <Reference Include="Eto.WinForms, Version=2.5.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Windows.2.5.0-ci-10079\lib\net45\Eto.WinForms.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Eto.WinForms, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Windows.2.4.0\lib\net45\Eto.WinForms.dll</HintPath>
+    <Reference Include="Eto.Wpf, Version=2.5.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Eto.Platform.Wpf.2.5.0-ci-10079\lib\net45\Eto.Wpf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Eto.Wpf, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Wpf.2.4.0\lib\net45\Eto.Wpf.dll</HintPath>
+    <Reference Include="GdkSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GdkSharp.3.22.24.37\lib\netstandard2.0\GdkSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="GdkSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\GdkSharp.3.22.24.29\lib\netstandard2.0\GdkSharp.dll</HintPath>
+    <Reference Include="GioSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GioSharp.3.22.24.37\lib\netstandard2.0\GioSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="GioSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\GioSharp.3.22.24.29\lib\netstandard2.0\GioSharp.dll</HintPath>
+    <Reference Include="GLibSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GLibSharp.3.22.24.37\lib\netstandard2.0\GLibSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="GLibSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\GLibSharp.3.22.24.29\lib\netstandard2.0\GLibSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GtkSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\GtkSharp.3.22.24.29\lib\netstandard2.0\GtkSharp.dll</HintPath>
+    <Reference Include="GtkSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GtkSharp.3.22.24.37\lib\netstandard2.0\GtkSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Win32.Registry, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\Microsoft.Win32.Registry.4.5.0-preview1-25914-04\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
+    <Reference Include="Microsoft.Win32.Registry, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\Microsoft.Win32.Registry.4.6.0-preview.18571.3\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <HintPath>..\packages\Mono.CSharp.4.0.0.143\lib\4.5\Mono.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
-    </Reference>
     <Reference Include="MonoMac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Eto.Platform.Mac64.2.4.0\lib\net45\MonoMac.dll</HintPath>
+      <HintPath>..\packages\Eto.Platform.Mac64.2.5.0-ci-10079\lib\net45\MonoMac.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="PangoSharp, Version=3.22.24.29, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\PangoSharp.3.22.24.29\lib\netstandard2.0\PangoSharp.dll</HintPath>
+    <Reference Include="PangoSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\PangoSharp.3.22.24.37\lib\netstandard2.0\PangoSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
-      <HintPath>..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>
+    <Reference Include="protobuf-net, Version=3.0.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67">
+      <HintPath>..\packages\protobuf-net.3.0.0-alpha.3\lib\net40\protobuf-net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Quartz, Version=3.0.2.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4">
-      <HintPath>..\packages\Quartz.3.0.2\lib\net452\Quartz.dll</HintPath>
+    <Reference Include="Quartz, Version=3.0.7.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4">
+      <HintPath>..\packages\Quartz.3.0.7\lib\net452\Quartz.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-      <HintPath>..\packages\Serilog.2.7.1-dev-00950\lib\net46\Serilog.dll</HintPath>
+      <HintPath>..\packages\Serilog.2.7.2-dev-01033\lib\net46\Serilog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Serilog.Enrichers.Thread, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-      <HintPath>..\packages\Serilog.Enrichers.Thread.3.0.0\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
+      <HintPath>..\packages\Serilog.Enrichers.Thread.3.0.1-dev-00728\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Serilog.Sinks.Async, Version=1.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-      <HintPath>..\packages\Serilog.Sinks.Async.1.2.0-dev-00018\lib\net45\Serilog.Sinks.Async.dll</HintPath>
+    <Reference Include="Serilog.Sinks.Async, Version=1.3.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
+      <HintPath>..\packages\Serilog.Sinks.Async.1.3.1-dev-00063\lib\net45\Serilog.Sinks.Async.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-      <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+    <Reference Include="Serilog.Sinks.Console, Version=3.1.2.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
+      <HintPath>..\packages\Serilog.Sinks.Console.3.1.2-dev-00786\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-      <HintPath>..\packages\Serilog.Sinks.File.4.0.1-dev-00790\lib\net45\Serilog.Sinks.File.dll</HintPath>
+      <HintPath>..\packages\Serilog.Sinks.File.4.0.1-dev-00801\lib\net45\Serilog.Sinks.File.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Serilog.Sinks.RollingFile, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
       <HintPath>..\packages\Serilog.Sinks.RollingFile.3.3.1-dev-00771\lib\net45\Serilog.Sinks.RollingFile.dll</HintPath>
     </Reference>
-    <Reference Include="SteamAuth, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\SteamAuth.1.1.0\lib\net45\SteamAuth.dll</HintPath>
+    <Reference Include="SteamAuth, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\SteamAuth.3.0.0\lib\net45\SteamAuth.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SteamKit2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\SteamKit2.2.0.0\lib\netstandard2.0\SteamKit2.dll</HintPath>
+    <Reference Include="SteamKit2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\SteamKit2.2.1.0\lib\netstandard2.0\SteamKit2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Console, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Console.4.0.0-rc2-24027\lib\net46\System.Console.dll</HintPath>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Console, Version=4.0.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.Console.4.3.1\lib\net46\System.Console.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -154,18 +181,25 @@
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Reflection.TypeExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Reflection.TypeExtensions.4.1.0-rc2-24027\lib\net46\System.Reflection.TypeExtensions.dll</HintPath>
+    <Reference Include="System.Reflection.TypeExtensions, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.Reflection.TypeExtensions.4.6.0-preview.18571.3\lib\net461\System.Reflection.TypeExtensions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Runtime.Serialization.Primitives, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\packages\System.Runtime.Serialization.Primitives.4.3.0\lib\net46\System.Runtime.Serialization.Primitives.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Security.AccessControl, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Security.AccessControl.4.5.0-preview1-25914-04\lib\net461\System.Security.AccessControl.dll</HintPath>
+    <Reference Include="System.Security.AccessControl, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.Security.AccessControl.4.6.0-preview.18571.3\lib\net461\System.Security.AccessControl.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Security.Principal.Windows, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Security.Principal.Windows.4.5.0-preview1-25914-04\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.Security.Principal.Windows.4.6.0-preview.18571.3\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+      <Private>True</Private>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -173,6 +207,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\Impl\PrimitiveFreeGamesRequestHandler.cs" />
     <Compile Include="Account\Impl\ProtectedAccount.cs" />
     <Compile Include="Account\Impl\UnprotectedAccount.cs" />
     <Compile Include="Account\Result.cs" />
@@ -181,9 +216,11 @@
     <Compile Include="Bootstrap\Options.cs" />
     <Compile Include="Bootstrap\Verbs\CommendOptions.cs" />
     <Compile Include="Bootstrap\Verbs\ReportOptions.cs" />
+    <Compile Include="Config\Config.cs" />
     <Compile Include="Logging\TitanListener.cs" />
     <Compile Include="Meta\TitanPayloadInfo.cs" />
-    <Compile Include="Proof\ProfileScreenshotter.cs" />
+    <Compile Include="Native\Linux.cs" />
+    <Compile Include="Proof\ProfileSaver.cs" />
     <Compile Include="Restrictions\Blacklist.cs" />
     <Compile Include="Json\JsonIndex.cs" />
     <Compile Include="Json\JsonAccounts.cs" />
@@ -216,6 +253,11 @@
     <Compile Include="UI\UIManager.cs" />
     <Compile Include="UI\UIType.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\Cooldown.cs" />
+    <Compile Include="Util\CooldownUtil.cs" />
+    <Compile Include="Util\ExitCodes.cs" />
+    <Compile Include="Util\GameUtil.cs" />
+    <Compile Include="Util\ListUtil.cs" />
     <Compile Include="Util\ObjectCloner.cs" />
     <Compile Include="Util\RandomUtil.cs" />
     <Compile Include="Util\SharecodeUtil.cs" />
@@ -232,6 +274,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="accounts.json" />
+    <Content Include="Resources\Logo.ico" />
     <Content Include="Resources\About.png" />
     <Content Include="Resources\CREDIT.txt" />
     <Content Include="Resources\Form.png" />
@@ -243,8 +286,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets" />
   <Import Project="..\packages\NETStandard.Library.NETFramework.2.0.0-preview2-25405-01\build\net461\NETStandard.Library.NETFramework.targets" />
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.19.1\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.19.1\build\Selenium.Firefox.WebDriver.targets')" />
   <Import Project="..\packages\Eto.Forms.2.4.0-build1247\build\Eto.Forms.targets" Condition="Exists('..\packages\Eto.Forms.2.4.0-build1247\build\Eto.Forms.targets')" />
@@ -260,6 +314,22 @@
   <Import Project="..\packages\Eto.Platform.Mac.2.4.0\build\Eto.Platform.Mac.targets" Condition="Exists('..\packages\Eto.Platform.Mac.2.4.0\build\Eto.Platform.Mac.targets')" />
   <Import Project="..\packages\Eto.Platform.Mac64.2.4.0\build\Eto.Platform.Mac64.targets" Condition="Exists('..\packages\Eto.Platform.Mac64.2.4.0\build\Eto.Platform.Mac64.targets')" />
   <Import Project="..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets" Condition="Exists('..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets')" />
+  <Import Project="..\packages\Eto.Platform.Mac.2.4.1\build\Eto.Platform.Mac.targets" Condition="Exists('..\packages\Eto.Platform.Mac.2.4.1\build\Eto.Platform.Mac.targets')" />
+  <Import Project="..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets" Condition="Exists('..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets')" />
+  <Import Project="..\packages\Fody.3.0.3\build\Fody.targets" Condition="Exists('..\packages\Fody.3.0.3\build\Fody.targets') AND '$(OS)' == 'Windows_NT'" />
+  <Import Project="..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets') AND '$(OS)' == 'Windows_NT'" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\RoslynCodeTaskFactory.2.0.7\build\RoslynCodeTaskFactory.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RoslynCodeTaskFactory.2.0.7\build\RoslynCodeTaskFactory.props'))" />
+    <Error Condition="!Exists('..\packages\Eto.Forms.2.5.0-ci-10079\build\Eto.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Eto.Forms.2.5.0-ci-10079\build\Eto.Forms.targets'))" />
+    <Error Condition="!Exists('..\packages\Eto.Platform.Mac64.2.5.0-ci-10079\build\Eto.Platform.Mac64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Eto.Platform.Mac64.2.5.0-ci-10079\build\Eto.Platform.Mac64.targets'))" />
+    <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
+  </Target>
+  <Import Project="..\packages\Eto.Forms.2.5.0-ci-10079\build\Eto.Forms.targets" Condition="Exists('..\packages\Eto.Forms.2.5.0-ci-10079\build\Eto.Forms.targets')" />
+  <Import Project="..\packages\Eto.Platform.Mac64.2.5.0-ci-10079\build\Eto.Platform.Mac64.targets" Condition="Exists('..\packages\Eto.Platform.Mac64.2.5.0-ci-10079\build\Eto.Platform.Mac64.targets')" />
+  <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

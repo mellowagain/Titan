@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.Rider2017.3/system/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_Titan.-776688983.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.Rider2018.1/system/resharper-host/local/Transient/ReSharperHost/v12/SolutionCaches/_Titan.-776688983.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="Titan" t="IncludeRecursive">
         <e p="Account" t="Include">
@@ -19,6 +19,9 @@
             <e p="CommendOptions.cs" t="Include" />
             <e p="ReportOptions.cs" t="Include" />
           </e>
+        </e>
+        <e p="Config" t="Include">
+          <e p="Config.cs" t="Include" />
         </e>
         <e p="Json" t="Include">
           <e p="JsonAccounts.cs" t="Include" />
@@ -50,8 +53,11 @@
           <e p="ReportInfo.cs" t="Include" />
           <e p="TitanPayloadInfo.cs" t="Include" />
         </e>
+        <e p="Native" t="Include">
+          <e p="Linux.cs" t="Include" />
+        </e>
         <e p="Proof" t="Include">
-          <e p="ProfileScreenshotter.cs" t="Include" />
+          <e p="ProfileSaver.cs" t="Include" />
         </e>
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
@@ -99,6 +105,10 @@
         </e>
         <e p="Util" t="Include">
           <e p="ArrayUtil.cs" t="Include" />
+          <e p="Cooldown.cs" t="Include" />
+          <e p="CooldownUtil.cs" t="Include" />
+          <e p="ExitCodes.cs" t="Include" />
+          <e p="GameUtil.cs" t="Include" />
           <e p="ObjectCloner.cs" t="Include" />
           <e p="RandomUtil.cs" t="Include" />
           <e p="SharecodeUtil.cs" t="Include" />
@@ -120,10 +130,10 @@
       <e p="Titan.sln" t="IncludeFlat" />
       <e p="TitanTest" t="IncludeRecursive">
         <e p="BanManagerTest.cs" t="Include" />
+        <e p="ProfileSaverTest.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
         </e>
-        <e p="ScreenshotTest.cs" t="Include" />
         <e p="ShareCodeDecoderTest.cs" t="Include" />
         <e p="SteamUtilTest.cs" t="Include" />
         <e p="ThreadTimeoutTest.cs" t="Include" />

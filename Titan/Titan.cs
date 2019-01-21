@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ using Titan.Util;
 using Titan.Web;
 
 #if __UNIX__
-    using Mono.Unix.Native;
+    using Titan.Native;
 #else
     using System.Security.Principal;
 #endif 
@@ -42,6 +43,7 @@ namespace Titan
         public bool IsAdmin;
         public bool EnableUI = true;
         public object ParsedObject;
+        public bool IsBotting = true;
 
         public AccountManager AccountManager;
         public ThreadManager ThreadManager;
@@ -49,8 +51,10 @@ namespace Titan
         public UIManager UIManager;
 
         public JsonSerializer JsonSerializer;
+        public HttpClient HttpClient;
+        
         public SWAHandle WebHandle;
-        public ProfileScreenshotter Screenshotter;
+        public ProfileSaver ProfileSaver;
 
         public bool DummyMode = false;
         public IScheduler Scheduler;
@@ -71,20 +75,12 @@ namespace Titan
             };
 
             Logger = LogCreator.Create();
-            
-            Logger.Debug("Titan was called from: {dir}", Environment.CurrentDirectory);
-            Logger.Debug("Working in directory: {dir}", Instance.Directory.ToString());
-            
-            // Workaround for Mono related issue regarding System.Net.Http.
-            // More detail: https://github.com/dotnet/corefx/issues/19914
-            #if __UNIX__
-                var systemNetHttpDll = new FileInfo(Path.Combine(Instance.Directory.ToString(), "System.Net.Http.dll"));
-                
-                if (systemNetHttpDll.Exists)
-                {
-                    systemNetHttpDll.Delete();
-                }
-            #endif
+
+            if (Environment.CurrentDirectory != Instance.Directory.ToString())
+            {
+                Logger.Debug("Run from {currentDir}, switching to work directory in {workingDir}.",
+                             Environment.CurrentDirectory, Instance.Directory.ToString());
+            }
 
             // Windows users run the program by double clicking Titan.exe (and then it opens a console window)
             // and in case of exception occurence, this window gets immediatly closed which is bad because
@@ -94,26 +90,30 @@ namespace Titan
                 {
                     if (eventArgs.IsTerminating)
                     {
+                        Logger.Error((Exception) eventArgs.ExceptionObject, "An error occured.");
+                        
+                        // Don't use logging object here incase the exception was thrown by a logger
                         Console.Write("Press any key to exit Titan...");
                         Console.Read();
                     }
                 };
             #endif
             
-            Logger.Debug("Loading Serilog <-> Common Logging Bridge.");
-            
             // The bridge between Common Logging and Serilog uses the global Logger (Log.Logger).
             // As Quartz.NET is the only dependency using Common Logging (and because of our bridge the global logger)
             // we're creating the global logger as Quartz logger (which hides annoying debug messages).
             Log.Logger = LogCreator.CreateQuartzLogger();
             
-            Logger.Debug("Loading Quartz.NET.");
-            
             // Quartz.NET
             Instance.Scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             Instance.Scheduler.Start();
-
-            Logger.Debug("Parsing Command Line Arguments.");
+            
+            Instance.JsonSerializer = new JsonSerializer();
+            
+            Instance.HttpClient = new HttpClient();
+            Instance.HttpClient.DefaultRequestHeaders.Add(
+                "User-Agent", "Titan Report & Commend Bot (https://github.com/Marc3842h/Titan)"
+            );
 
             var parser = new Parser(config =>
             {
@@ -150,11 +150,13 @@ namespace Titan
                     }
                 });
             
+            new Config.Config().Load();
+            
             // Reinitialize logger with new parsed debug option
             Logger = LogCreator.Create();
             
             #if __UNIX__
-                Instance.IsAdmin = Syscall.getuid() == 0; // UID of root is always 0
+                Instance.IsAdmin = Linux.getuid() == 0; // UID of root is always 0
             #else
                 Instance.IsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
                                    .IsInRole(WindowsBuiltInRole.Administrator);
@@ -175,7 +177,7 @@ namespace Titan
                     #endif
 
                     Instance.Scheduler.Shutdown();
-                    return -1;
+                    return (int) ExitCodes.RunningAsAdmin;
                 }
 
                 Logger.Warning("Titan has been started as Administrator but will continue to run as the " +
@@ -209,52 +211,52 @@ namespace Titan
                 Logger.Debug("Blacklist has been disabled by passing the --noblacklist option.");
             }
 
-            Instance.JsonSerializer = new JsonSerializer();
-            Instance.Screenshotter = new ProfileScreenshotter();
-            
-            try
+            Instance.ProfileSaver = new ProfileSaver();
+
+            if (Instance.EnableUI)
             {
-                Instance.UIManager = new UIManager();
-            }
-            catch (InvalidOperationException ex)
-            {
-                if (!string.IsNullOrEmpty(ex.Message) && ex.Message.ToLower().Contains("could not detect platform"))
+                try
                 {
-                    Logger.Error("---------------------------------------");
-                    Logger.Error("A fatal error has been detected!");
-                    Logger.Error("Eto.Forms could not detect your current operating system.");
-                    
-                    #if __UNIX__
-                        Logger.Error("Please install {0}, {1}, {2} and {3} before submitting a bug report.",
-                                     "Mono (\u22655.4)", 
-                                     "Gtk 3",
-                                     "libNotify",
-                                     "libAppindicator3");
-                    #else
-                        Logger.Error("Please install {0} before submitting a bug report.", 
-                                     ".NET Framework (\u22654.6.1)");
-                    #endif
-                    
-                    Logger.Error("Contact {Marc} on Discord if the issue still persists after installing " +
-                                 "the dependencies listed above.", "Marc3842h#7312");
-                    Logger.Error("---------------------------------------");
-                    Logger.Debug(ex, "Include the error below if you\'re contacting Marc on Discord.");
-
-                    #if !__UNIX__
-                        Console.Write("Press any key to exit Titan...");
-                        Console.Read();
-                    #endif
-                    
-                    Instance.Scheduler.Shutdown();
-                    return -1;
+                    Instance.UIManager = new UIManager();
                 }
-                
-                Logger.Error(ex, "A error occured while loading UI.");
-                throw;
+                catch (InvalidOperationException ex)
+                {
+                    if (!string.IsNullOrEmpty(ex.Message) && ex.Message.ToLower().Contains("could not detect platform"))
+                    {
+                        Logger.Error("---------------------------------------");
+                        Logger.Error("A fatal error has been detected!");
+                        Logger.Error("Eto.Forms could not detect your current operating system.");
+
+                        #if __UNIX__
+                            Logger.Error("Please install {0}, {1}, {2} and {3} before submitting a bug report.",
+                                "Mono (\u22655.4)",
+                                "Gtk 3",
+                                "libNotify",
+                                "libAppindicator3");
+                        #else
+                            Logger.Error("Please install {0} before submitting a bug report.", 
+                                         ".NET Framework (\u22654.6.1)");
+                        #endif
+
+                        Logger.Error("Contact {Marc} on Discord if the issue still persists after installing " +
+                                     "the dependencies listed above.", "Marc3842h#7312");
+                        Logger.Error("---------------------------------------");
+                        Logger.Debug(ex, "Include the error below if you\'re contacting Marc on Discord.");
+
+                        #if !__UNIX__
+                            Console.Write("Press any key to exit Titan...");
+                            Console.Read();
+                        #endif
+
+                        Instance.Scheduler.Shutdown();
+                        return (int) ExitCodes.UIInitFailed;
+                    }
+
+                    Logger.Error(ex, "A error occured while loading UI.");
+                    throw;
+                }
             }
 
-            Instance.VictimTracker = new VictimTracker();
-            Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
 
             Instance.AccountManager = new AccountManager(new FileInfo(
                 Path.Combine(Instance.Directory.ToString(), Instance.Options.AccountsFile))
@@ -263,6 +265,8 @@ namespace Titan
             Instance.ThreadManager = new ThreadManager();
 
             Instance.WebHandle = new SWAHandle();
+            
+            Instance.VictimTracker = new VictimTracker();
 
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
 
@@ -270,8 +274,11 @@ namespace Titan
 
             Task.Run(() => TimeAligner.AlignTime());
 
-            Instance.UIManager.InitializeForms();
-            
+            if (Instance.EnableUI)
+            {
+                Instance.UIManager.InitializeForms();
+            }
+
             // Load after Forms were initialized
             Instance.WebHandle.Load();
 
@@ -294,7 +301,7 @@ namespace Titan
                     var opt = (ReportOptions) Instance.ParsedObject;
 
                     var steamID = SteamUtil.Parse(opt.Target);
-                    if (Blacklist.IsBlacklisted(steamID))
+                    if (steamID.IsBlacklisted(opt.Game.ToAppID()))
                     {
                         Instance.UIManager.SendNotification(
                             "Restriction applied",
@@ -310,7 +317,7 @@ namespace Titan
                             {
                                 SteamID = SteamUtil.Parse(opt.Target),
                                 MatchID = SharecodeUtil.Parse(opt.Match),
-                                AppID = TitanAccount.CSGO_APPID,
+                                AppID = opt.Game.ToAppID(),
 
                                 AbusiveText = opt.AbusiveTextChat,
                                 AbusiveVoice = opt.AbusiveVoiceChat,
@@ -342,8 +349,12 @@ namespace Titan
                 }
             }
 
-            Instance.UIManager.StartMainLoop();
+            Instance.Scheduler.ScheduleJob(Instance.VictimTracker.Job, Instance.VictimTracker.Trigger);
             
+            Logger.Debug("Startup done. Active threads: {threads}", Process.GetCurrentProcess().Threads.Count + 1);
+            
+            Instance.StartMainLoop();
+
             // The Shutdown handler gets only called after the last thread finished.
             // Quartz runs a Watchdog until Scheduler#Shutdown is called, so we're calling it
             // before Titan will be calling the Shutdown Hook.
@@ -351,7 +362,7 @@ namespace Titan
             
             Instance.Scheduler.Shutdown();
             
-            return 0x0; // OK.
+            return (int) ExitCodes.Ok;
         }
 
         public static void OnShutdown(object sender, EventArgs args)
@@ -372,6 +383,27 @@ namespace Titan
             Logger.Information("Thank you and have a nice day.");
 
             Log.CloseAndFlush();
+        }
+
+        public void StartMainLoop()
+        {
+            if (Instance.EnableUI)
+            {
+                Instance.UIManager.StartMainLoop();
+            }
+            else
+            {
+                // Titan was run in CLI mode so just run infinitely until the background threads
+                // finish and abort this loop and the whole application
+                while (Instance.IsBotting)
+                {
+                    Thread.Yield();
+                }
+                
+                Instance.Scheduler.Shutdown();
+                //OnShutdown(null, null);
+                Environment.Exit((int) ExitCodes.Ok);
+            }
         }
 
     }

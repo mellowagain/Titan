@@ -30,12 +30,25 @@ namespace Titan.UI.General.Tabs
             RefreshIndexesDropDown(dropIndexes);
             DropDownIndex.Add(dropIndexes);
             
+            var labelWarning = new Label
+            {
+                Text = "All your indexes sum up to over 100 accounts.\n" +
+                       "Titan will delay the botting process to\n" +
+                       "prevent Steam rate limit issues.",
+                Visible = false
+            };
+            
             var cbAllIndexes = new CheckBox { Text = "Use all accounts", Checked = false };
             cbAllIndexes.CheckedChanged += (sender, args) =>
             {
                 if (cbAllIndexes.Checked != null)
                 {
                     dropIndexes.Enabled = (bool) !cbAllIndexes.Checked;
+
+                    if (Titan.Instance.AccountManager.Count() > 00)
+                    {
+                        labelWarning.Visible = (bool) cbAllIndexes.Checked;
+                    }
                 }
                 else
                 {
@@ -140,7 +153,7 @@ namespace Titan.UI.General.Tabs
                                         new TableCell(dropIndexes, true)
                                     ),
                                     new TableRow(
-                                        new TableCell(new Panel()),
+                                        new TableCell(labelWarning),
                                         new TableCell(cbAllIndexes)
                                     )
                                 }

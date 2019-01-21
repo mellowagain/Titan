@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
+  <title>Titan(1) - Advanced CS:GO report and commend bot</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#SYNOPSIS">SYNOPSIS</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#OPTIONS">OPTIONS</a>
+    <a href="#ENVIRONMENT">ENVIRONMENT</a>
+    <a href="#BUGS">BUGS</a>
+    <a href="#COPYRIGHT">COPYRIGHT</a>
+    <a href="#SEE-ALSO">SEE ALSO</a>
+  </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>Titan(1)</li>
+    <li class='tc'></li>
+    <li class='tr'>Titan(1)</li>
+  </ol>
+
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>Titan</code> - <span class="man-whatis">Advanced CS:GO report and commend bot</span>
+</p>
+
+<h2 id="SYNOPSIS">SYNOPSIS</h2>
+
+<p><code>titan</code> [<var>verb</var>] [<var>args</var> ...] <br />
+<code>titan</code> <code>report</code> <code>-t</code> <var>target</var> [<code>-m</code> <var>matchid</var>] ...] <br />
+<code>titan</code> <code>commend</code> <code>-t</code> <var>target</var> [...] <br /></p>
+
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
+
+<p><strong>Titan</strong> is an advanced Counter-Strike Global Offensive report and commendation bot.
+Its goal is to maintain a clean Matchmaking system by sending a target forcefully (by 11 reports) into Overwatch.
+It provides a advanced set of features and high efficiency compared to other report and commendation bots.</p>
+
+<p>In its default mode, <code>Titan</code> opens up a user-friendly clickable
+UI that can be used for reporting and commending aswell as adding
+multiple new bot accounts to Titans internal list.</p>
+
+<h2 id="OPTIONS">OPTIONS</h2>
+
+<p>These options control whether <strong>Titan</strong> should start using the UI or directly
+begin reporting / commending.</p>
+
+<dl>
+<dt class="flush"><code>report</code></dt><dd><p>Instructs <strong>Titan</strong> to automatically start reporting the provided target
+in a match provided by the Match ID.</p></dd>
+<dt class="flush"><code>commend</code></dt><dd><p>Instructs <strong>Titan</strong> to automatically start commending the provided target.</p></dd>
+</dl>
+
+
+<p>Verb arguments control what should happen and only work when with a provided
+verb (<code>report</code> and <code>commend</code>).</p>
+
+<dl>
+<dt><code>-t</code>, <code>--target</code></dt><dd><p>Required. Provides the target that should be reported or commended
+by <strong>Titan</strong>. Works for both <code>report</code> and <code>commend</code>.</p></dd>
+<dt><code>-m</code>, <code>--match</code></dt><dd><p>Optional. Provides the Match ID in which a target should be reported
+in by <strong>Titan</strong>. Only works with <code>report</code> verb.</p></dd>
+<dt><code>-i</code>, <code>--index</code></dt><dd><p>Optional. Provides the <code>accounts.json</code> index which instructs what
+accounts should be used for reporting / commending by <strong>Titan</strong>.
+Works for both <code>report</code> and <code>commend</code>.</p></dd>
+</dl>
+
+
+<p>These options control the reporting options. These only work with
+the <code>report</code> verb.</p>
+
+<dl>
+<dt><code>--abusivetext</code></dt><dd><p>Optional. If passed, the target will be reported for Abuse Text Chat.</p></dd>
+<dt><code>--abusivevoice</code></dt><dd><p>Optional. If passed, the target will be reported for Abuse Voice Chat.</p></dd>
+<dt><code>--griefing</code></dt><dd><p>Optional. If passed, the target will be reported for Griefing.</p></dd>
+<dt><code>--aimhacking</code></dt><dd><p>Optional. If passed, the target will be reported for Aim Hacking.</p></dd>
+<dt><code>--wallhacking</code></dt><dd><p>Optional. If passed, the target will be reported for Wall Hacking.</p></dd>
+<dt><code>--otherhacking</code></dt><dd><p>Optional. If passed, the target will be reported for Other Hacking.</p></dd>
+</dl>
+
+
+<p>These options control the commending options. These only work with
+the <code>commend</code> verb.</p>
+
+<dl>
+<dt><code>--leader</code></dt><dd><p>Optional. If passed, the target will be commended for being a leader.</p></dd>
+<dt><code>--friendly</code></dt><dd><p>Optional. If passed, the target will be commended for being friendly.</p></dd>
+<dt><code>--teacher</code></dt><dd><p>Optional. If passed, the target will be commended for being a teacher.</p></dd>
+</dl>
+
+
+<p>These option control the behaviour of <strong>Titan</strong>.</p>
+
+<dl>
+<dt><code>-f</code>, <code>--file</code></dt><dd><p>Optional. Provides path to <code>accounts.json</code> in which the bot accounts
+that are used by <strong>Titan</strong> for reporting and commending are listed.</p></dd>
+<dt><code>-s</code>, <code>--secure</code></dt><dd><p>Optional. If passed, console output will be secured so that no
+account information or other serious information will be printed.
+This can be used for taking screenshots or recording videos.</p></dd>
+<dt><code>-a</code>, <code>--admin</code></dt><dd><p>Optional. Allows <strong>Titan</strong> to be run as root.</p></dd>
+<dt><code>-g</code>, <code>--nosteamgroup</code></dt><dd><p>Optional. Disables automatic joining of the <strong>Titan</strong> Steam group
+with bot accounts.</p></dd>
+<dt><code>-b</code>, <code>--noblacklist</code></dt><dd><p>Optional. Disables the internal <strong>Titan</strong> blacklist that prevents
+people botting the owner and friends of this report and commend bot.</p></dd>
+</dl>
+
+
+<h2 id="ENVIRONMENT">ENVIRONMENT</h2>
+
+<dl>
+<dt><code>TITAN_WEB_API_KEY</code></dt><dd>If exists, <strong>Titan</strong> will prefer to use the Steam Web API key provided
+with that environment variable. If it is not set and the user
+inputted a Steam Web API key within <strong>Titan</strong>, it will be saved to
+this environment variable.</dd>
+</dl>
+
+
+<h2 id="BUGS">BUGS</h2>
+
+<p>Bugs within <strong>Titan</strong> can be reported on GitHub: https://github.com/Marc3842h/Titan</p>
+
+<h2 id="COPYRIGHT">COPYRIGHT</h2>
+
+<p><strong>Titan</strong> is licensed under the MIT license. Copyright (C) 2017-2018 Marc3842h</p>
+
+<h2 id="SEE-ALSO">SEE ALSO</h2>
+
+<p><span class="man-ref">steam<span class="s">(6)</span></span>, <span class="man-ref">mono<span class="s">(1)</span></span></p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>April 2018</li>
+    <li class='tr'>Titan(1)</li>
+  </ol>
+
+  </div>
+</body>
+</html>

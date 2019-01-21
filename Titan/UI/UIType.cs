@@ -5,7 +5,8 @@
 
         General,
         APIKeyInput,
-        TwoFactorAuthentification
+        TwoFactorAuthentification,
+        Victim
 
     }
 }
