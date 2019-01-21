@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog.Core;
 using Titan.Account;
@@ -314,17 +316,62 @@ namespace Titan.Managers
 
             if (Accounts.TryGetValue(index, out var accounts))
             {
-                
-                foreach (var acc in accounts)
+                // Prevent Steam rate limit issues
+                if (accounts.Count > 100)
                 {
-                    try
+                    _log.Warning("The selected index contains over 100 accounts. Titan will " +
+                                 "delay botting of some accounts to prevent Steam rate limit issues.");
+
+                    var chucked = accounts.ChunkBy(100);
+                    var list = new List<object>();
+
+                    for (var i = 0; i < chucked.Count; i++)
                     {
-                        Titan.Instance.ThreadManager.StartReport(acc, info);
+                        list.Add(new { Chunk = i, chucked[i].Count });
                     }
-                    catch (Exception ex)
+                    
+                    _log.Warning("Split up the accounts into chunks with size of {amount}." +
+                                 "Details: {@list}", chucked.Count, list);
+
+                    for (var i = 0; i < chucked.Count; i++)
                     {
-                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
-                            acc.JsonAccount.Username, ex.Message);
+                        var chunk = chucked[i];
+
+                        var localCounter = i;
+
+                        Task.Run(() =>
+                        {
+                            Thread.Sleep(TimeSpan.FromSeconds(localCounter * 10));
+                            _log.Information("Starting botting with chunk #{chunk} now.", localCounter);
+
+                            foreach (var acc in chunk)
+                            {
+                                try
+                                {
+                                    Titan.Instance.ThreadManager.StartReport(acc, info);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                                        acc.JsonAccount.Username, ex.Message);
+                                }
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    foreach (var acc in accounts)
+                    {
+                        try
+                        {
+                            Titan.Instance.ThreadManager.StartReport(acc, info);
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                                acc.JsonAccount.Username, ex.Message);
+                        }
                     }
                 }
             }
@@ -334,7 +381,7 @@ namespace Titan.Managers
                            "Does it exist?", Index);
                 return;
             }
-                
+
             Titan.Instance.VictimTracker.AddVictim(info.SteamID);
 
             if (!_indexEntries.ContainsKey(index) && index != -1)
@@ -354,17 +401,62 @@ namespace Titan.Managers
 
             if (Accounts.TryGetValue(index, out var accounts))
             {
-                
-                foreach (var acc in accounts)
+                // Prevent Steam rate limit issues
+                if (accounts.Count > 100)
                 {
-                    try
+                    _log.Warning("The selected index contains over 100 accounts. Titan will " +
+                                 "delay botting of some accounts to prevent Steam rate limit issues.");
+
+                    var chucked = accounts.ChunkBy(100);
+                    var list = new List<object>();
+
+                    for (var i = 0; i < chucked.Count; i++)
                     {
-                        Titan.Instance.ThreadManager.StartCommend(acc, info);
+                        list.Add(new { Chunk = i, chucked[i].Count });
                     }
-                    catch (Exception ex)
+                    
+                    _log.Warning("Split up the accounts into chunks with size of {amount}." +
+                                 "Details: {@List}", chucked.Count, list);
+
+                    for (var i = 0; i < chucked.Count; i++)
                     {
-                        _log.Error(ex, "Could not start botting for account {Account}: {Message}",
-                            acc.JsonAccount.Username, ex.Message);
+                        var chunk = chucked[i];
+
+                        var localCounter = i;
+
+                        Task.Run(() =>
+                        {
+                            Thread.Sleep(TimeSpan.FromSeconds(localCounter * 10));
+                            _log.Information("Starting botting with chunk #{chunk} now.", localCounter);
+
+                            foreach (var acc in chunk)
+                            {
+                                try
+                                {
+                                    Titan.Instance.ThreadManager.StartCommend(acc, info);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                                        acc.JsonAccount.Username, ex.Message);
+                                }
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    foreach (var acc in accounts)
+                    {
+                        try
+                        {
+                            Titan.Instance.ThreadManager.StartCommend(acc, info);
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Error(ex, "Could not start botting for account {Account}: {Message}",
+                                acc.JsonAccount.Username, ex.Message);
+                        }
                     }
                 }
             }

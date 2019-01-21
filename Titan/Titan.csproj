@@ -257,6 +257,7 @@
     <Compile Include="Util\CooldownUtil.cs" />
     <Compile Include="Util\ExitCodes.cs" />
     <Compile Include="Util\GameUtil.cs" />
+    <Compile Include="Util\ListUtil.cs" />
     <Compile Include="Util\ObjectCloner.cs" />
     <Compile Include="Util\RandomUtil.cs" />
     <Compile Include="Util\SharecodeUtil.cs" />
