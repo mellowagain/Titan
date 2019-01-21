@@ -10,34 +10,50 @@ from pathlib import Path
 import json
 import sys
 
+
 def main():
-    if len(sys.argv) != 2: # The first argument is always the script itself
-        print("Please provide a valid file to convert.")
+    if len(sys.argv) != 3:  # The first argument is always the script itself
+        print("Please provide a valid file and index amount to convert.")
         return -1
 
     if Path(sys.argv[1]).exists() is False:
         print("Please provide a EXISTING file to convert.")
         return -1
 
-    list = []
+    if not int(sys.argv[2]):
+        print("Please provide a valid amount of accounts per index!")
+        return -1
+
+    out = []
 
     try:
         targetFile = open("accounts.json", "w")
 
-        with open(sys.argv[1], "rU", encoding = "UTF-8") as sourceFile:
+        with open(sys.argv[1], "rU", encoding="UTF-8") as sourceFile:
             for line in sourceFile:
                 if line.find(":") != -1:
                     parts = line.split(":")
-                    list.append({ 
-                        "username": parts[0], 
-                        "password": parts[1].replace("\n", "") # https://www.python.org/dev/peps/pep-0278/
+                    out.append({
+                        "username": parts[0],
+                        "password": parts[1].strip()
                     })
 
-        # TODO: Add support for multiple indexes
-        data = { "indexes": [ { "accounts": [ {} ] } ] }
-        data["indexes"][0]["accounts"] = list
+        data = {"indexes": [{"accounts": [{}]}]}
+        cnt = len(out)
 
-        json.dump(data, targetFile, indent = 4)
+        slices = int(sys.argv[2])
+        amt = int(cnt / slices)
+        last = cnt % slices
+
+        for i in range(0, amt, 1):
+
+            if i < amt - 1:
+                data["indexes"][i]["accounts"] = out[i * slices: (i + 1) * slices]
+                data["indexes"].append({"accounts": [{}]})
+            else:
+                data["indexes"][i]["accounts"] = out[i * slices: i * slices + last]
+
+        json.dump(data, targetFile, indent=4)
 
         targetFile.close()
     except:
@@ -46,5 +62,7 @@ def main():
 
     return 0
 
+
 if __name__ == "__main__":
     exit(main())
+
