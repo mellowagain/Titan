@@ -6,7 +6,8 @@
         General,
         APIKeyInput,
         TwoFactorAuthentification,
-        Victim
+        Victim,
+        FilePicker
 
     }
 }

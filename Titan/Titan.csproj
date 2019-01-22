@@ -217,6 +217,8 @@
     <Compile Include="Bootstrap\Verbs\CommendOptions.cs" />
     <Compile Include="Bootstrap\Verbs\ReportOptions.cs" />
     <Compile Include="Config\Config.cs" />
+    <Compile Include="Import\AccountImporter.cs" />
+    <Compile Include="Import\Impl\GenericAccountListImporter.cs" />
     <Compile Include="Logging\TitanListener.cs" />
     <Compile Include="Meta\TitanPayloadInfo.cs" />
     <Compile Include="Native\Linux.cs" />

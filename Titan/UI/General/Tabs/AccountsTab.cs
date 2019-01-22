@@ -6,6 +6,8 @@ using Eto.Forms;
 using Serilog.Core;
 using Titan.Account;
 using Titan.Account.Impl;
+using Titan.Import;
+using Titan.Import.Impl;
 using Titan.Json;
 using Titan.Logging;
 using Titan.Util;
@@ -228,6 +230,61 @@ namespace Titan.UI.General.Tabs
                 }
             };
             
+            var btnImport = new Button { Text = "Import" };
+            btnImport.Click += (sender, args) =>
+            {
+                var dialog = new OpenFileDialog
+                {
+                    Title = "Select file to import",
+                    Filters =
+                    {
+                        new FileFilter("", "txt")
+                    },
+                    MultiSelect = false,
+                    CheckFileExists = true
+                };
+                
+                var result = UIManager.ShowForm(UIType.FilePicker, dialog);
+
+                if (result != DialogResult.Ok)
+                {
+                    return;
+                }
+                
+                AccountImporter importer = new GenericAccountListImporter(dialog.FileName);
+
+                var accounts = importer.ParseAccounts();
+
+                if (accounts.Count <= 0)
+                {
+                    UIManager.SendNotification("Titan", "No accounts were imported.");
+                    return;
+                }
+
+                foreach (var account in accounts)
+                {
+                    Titan.Instance.AccountManager.AddAccount(account);
+                }
+                
+                UIManager.SendNotification("Titan", "Successfully imported " + accounts.Count + " accounts.");
+
+                // Disable dummy mode now that accounts are here.
+                var tabControl = (TabControl) _generalUI.Content;
+                foreach (var page in tabControl.Pages)
+                {
+                    page.Enabled = true;
+                }
+
+                if (Titan.Instance.DummyMode)
+                {
+                    _log.Information("There are now accounts specified. Turning dummy mode {off}.", "off");
+                            
+                    Titan.Instance.DummyMode = false;
+                }
+                
+                RefreshList(ref grid);
+            };
+            
             return new TabPage
             {
                 Text = "Accounts",
@@ -264,6 +321,7 @@ namespace Titan.UI.General.Tabs
                                 new TableRow(
                                     new TableCell(new Panel(), true),
                                     new TableCell(new Panel(), true),
+                                    new TableCell(btnImport),
                                     new TableCell(btnRemove),
                                     new TableCell(btnAddUpdate)
                                 )

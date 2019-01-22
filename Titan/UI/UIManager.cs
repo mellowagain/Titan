@@ -114,6 +114,11 @@ namespace Titan.UI
             dialog.ShowModal();
         }
 
+        public DialogResult ShowForm(UIType ui, CommonDialog dialog)
+        {
+            return dialog.ShowDialog(_etoApp.MainForm);
+        }
+        
         public void HideForm(UIType ui)
         {
             if(_forms.TryGetValue(ui, out var form))
