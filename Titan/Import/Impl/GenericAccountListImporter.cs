@@ -16,7 +16,13 @@ namespace Titan.Import.Impl
 
         public override List<TitanAccount> ParseAccounts()
         {
-            List<TitanAccount> result = new List<TitanAccount>();
+            var result = new List<TitanAccount>();
+            
+            if (!System.IO.File.Exists(File))
+            {
+                return result;
+            }
+            
             var lines = System.IO.File.ReadLines(File);
 
             foreach (var line in lines)

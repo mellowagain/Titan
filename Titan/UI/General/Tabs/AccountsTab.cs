@@ -238,10 +238,9 @@ namespace Titan.UI.General.Tabs
                     Title = "Select file to import",
                     Filters =
                     {
-                        new FileFilter("", "txt")
+                        new FileFilter("Legacy account files", ".txt")
                     },
-                    MultiSelect = false,
-                    CheckFileExists = true
+                    MultiSelect = false
                 };
                 
                 var result = UIManager.ShowForm(UIType.FilePicker, dialog);
@@ -250,12 +249,17 @@ namespace Titan.UI.General.Tabs
                 {
                     return;
                 }
-                
-                AccountImporter importer = new GenericAccountListImporter(dialog.FileName);
 
+                if (!dialog.Filenames.Any())
+                {
+                    UIManager.SendNotification("Titan", "Please select a file.");
+                    return;
+                }
+
+                AccountImporter importer = new GenericAccountListImporter(dialog.Filenames.First());
                 var accounts = importer.ParseAccounts();
 
-                if (accounts.Count <= 0)
+                if (accounts == null || accounts.Count <= 0)
                 {
                     UIManager.SendNotification("Titan", "No accounts were imported.");
                     return;
@@ -265,7 +269,7 @@ namespace Titan.UI.General.Tabs
                 {
                     Titan.Instance.AccountManager.AddAccount(account);
                 }
-                
+
                 UIManager.SendNotification("Titan", "Successfully imported " + accounts.Count + " accounts.");
 
                 // Disable dummy mode now that accounts are here.
