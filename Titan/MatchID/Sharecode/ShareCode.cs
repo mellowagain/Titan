@@ -10,7 +10,7 @@ namespace Titan.MatchID.Sharecode
 {
     
     [Credit("akiver/CSGO-Demos-Manager")]
-    public class ShareCode
+    public static class ShareCode
     {
 
         private static Logger _log = LogCreator.Create();
@@ -20,22 +20,31 @@ namespace Titan.MatchID.Sharecode
 
         public static ShareCodeInfo Decode(string shareCode)
         {
-            if(_regex.IsMatch(shareCode))
+            if (_regex.IsMatch(shareCode))
             {
                 var code = shareCode.Remove(0, 4).Replace("-", "");
-                
-                var big = code.Reverse().Aggregate(BigInteger.Zero, (current, c) => 
-                    BigInteger.Multiply(current, _dictionary.Length) + _dictionary.IndexOf(c));
+
+                var big = code.Reverse().Aggregate(BigInteger.Zero, (current, c) => BigInteger.Multiply(current, _dictionary.Length) + _dictionary.IndexOf(c));
 
                 var matchIdBytes = new byte[sizeof(ulong)];
                 var outcomeIdBytes = new byte[sizeof(ulong)];
                 var tvPortIdBytes = new byte[sizeof(uint)];
 
-                var all = big.ToByteArray().Reverse().ToArray();
-                Array.Copy(all, 0, matchIdBytes, 0, sizeof(ulong));
+                var all = big.ToByteArray().ToArray();
+
+                if (all.Length == sizeof(ulong) + sizeof(ulong) + sizeof(ushort))
+                {
+                    all = all.Concat(new byte[] { 0 }).ToArray();
+                }
+
+                all = all.Reverse().ToArray();
+
                 Array.Copy(all, sizeof(ulong), outcomeIdBytes, 0, sizeof(ulong));
+                Array.Copy(all, 1, matchIdBytes, 0, sizeof(ulong));
                 Array.Copy(all, 2 * sizeof(ulong), tvPortIdBytes, 0, sizeof(ushort));
-                
+                Array.Copy(all, 1 + sizeof(ulong), outcomeIdBytes, 0, sizeof(ulong));
+                Array.Copy(all, 1 + 2 * sizeof(ulong), tvPortIdBytes, 0, sizeof(ushort));
+
                 return new ShareCodeInfo
                 {
                     MatchID = BitConverter.ToUInt64(matchIdBytes, 0),
@@ -43,7 +52,7 @@ namespace Titan.MatchID.Sharecode
                     Tokens = BitConverter.ToUInt32(tvPortIdBytes, 0)
                 };
             }
-            
+
             _log.Error("Could not decode {ShareCode} to valid ShareCodeInfo.", shareCode);
             return null;
         }
