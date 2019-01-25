@@ -14,6 +14,8 @@
     <AssemblyName>Titan</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,9 +38,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
     <DefineConstants>__UNIX__</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AtkSharp, Version=3.22.24.37, Culture=neutral, PublicKeyToken=null">
