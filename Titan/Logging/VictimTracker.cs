@@ -32,17 +32,22 @@ namespace Titan.Logging
             .WithIdentity("Victim Tracker Job", "Titan")
             .Build();
         
-        public ITrigger Trigger = TriggerBuilder.Create()
-            .WithIdentity("Victim Tracker Trigger", "Titan")
-            .StartNow()
-            .WithSimpleSchedule(x => x
-                .WithIntervalInMinutes(15)
-                .RepeatForever())
-            .Build();
+        public ITrigger Trigger;
 
         public VictimTracker()
         {
             _victims = GetVictimsFromFile();
+        }
+
+        public void InitTrigger()
+        {
+            Trigger = TriggerBuilder.Create()
+                .WithIdentity("Victim Tracker Trigger", "Titan")
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInMinutes(15)
+                    .RepeatForever())
+                .Build();
         }
         
         public void AddVictim(SteamID steamID)

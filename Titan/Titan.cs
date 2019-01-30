@@ -281,6 +281,9 @@ namespace Titan
 
             // Load after Forms were initialized
             Instance.WebHandle.Load();
+            
+            // VictimTracker depends on the web api key being loaded correctly.
+            Instance.VictimTracker.InitTrigger();
 
             var attribute = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>(); 
             var version = attribute != null ? attribute.InformationalVersion : 
