@@ -25,21 +25,26 @@ namespace Titan.Web
             ));
         }
 
+        public void Preload()
+        {
+            if (!_file.Exists)
+            {
+                return;
+            }
+
+            using (var reader = File.OpenText(_file.ToString()))
+            {
+                SWAKey = reader.ReadLine();
+            }
+
+            if (!Titan.Instance.Options.Secure)
+            {
+                _handle.Log.Debug("Preloaded key from {file} file: {key}", "steamapi.key", SWAKey);
+            }
+        }
+
         public void Load()
         {
-            if (_file.Exists)
-            {
-                using (var reader = File.OpenText(_file.ToString()))
-                {
-                    SWAKey = reader.ReadLine();
-                }
-
-                if (!Titan.Instance.Options.Secure)
-                {
-                    _handle.Log.Debug("Received key from {file} file: {key}", "steamapi.key", SWAKey);
-                }
-            } 
-            
             if (!string.IsNullOrEmpty(EnvironmentKey) && string.IsNullOrEmpty(SWAKey))
             {
                 SWAKey = EnvironmentKey;

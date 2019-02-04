@@ -56,7 +56,18 @@ namespace Titan.Account.Impl
             _steamConfig = SteamConfiguration.Create(builder =>
             {
                 builder.WithConnectionTimeout(TimeSpan.FromMinutes(1));
-                //builder.WithWebAPIKey(Titan.Instance.WebHandle.GetKey()); Is null at time of this creation - needs fix
+
+                var key = Titan.Instance.WebHandle.GetKey();
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    builder.WithWebAPIKey(key);
+                    _log.Debug("Initializing with preloaded API key.");
+                }
+                else
+                {
+                    _log.Debug("Initializing without API key.");
+                }
             });
             
             _sentry = new Sentry.Sentry(this);

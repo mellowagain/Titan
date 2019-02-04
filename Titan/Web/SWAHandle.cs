@@ -148,6 +148,11 @@ namespace Titan.Web
 
             return false;
         }
+        
+        public void Preload()
+        {
+            _keyManager.Preload();
+        }
 
         public void Load()
         {

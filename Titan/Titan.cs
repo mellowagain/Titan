@@ -265,7 +265,8 @@ namespace Titan
             Instance.ThreadManager = new ThreadManager();
 
             Instance.WebHandle = new SWAHandle();
-            
+            Instance.WebHandle.Preload();
+
             Instance.VictimTracker = new VictimTracker();
 
             AppDomain.CurrentDomain.ProcessExit += OnShutdown;
