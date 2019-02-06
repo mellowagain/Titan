@@ -52,11 +52,15 @@ namespace Titan.Logging
         
         public void AddVictim(SteamID steamID)
         {
+            _log.Information("Adding new user to victim tracker: {id}", steamID.ConvertToUInt64());
+        
             _victims.Add(new Victims.Victim
             {
                 SteamID = steamID.ConvertToUInt64(),
                 Timestamp = DateTime.Now.ToEpochTime()
             });
+            
+            SaveVictimsFile();
         }
 
         public bool IsVictim(SteamID steamID)
@@ -88,6 +92,8 @@ namespace Titan.Logging
 
         public void SaveVictimsFile()
         {
+            _file.Delete();
+
             using (var writer = new StreamWriter(_file.ToString(), false))
             {
                 if (_victims != null && _victims.Count > 0)
