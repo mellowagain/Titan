@@ -72,11 +72,11 @@ Task("Run-Unit-Tests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    XUnit2(GetFiles("./TitanTest/bin/" + config + "/TitanTest.dll"), new XUnit2Settings()
+    XUnit2(GetFiles("./TitanTest/bin/x64/" + config + "/TitanTest.dll"), new XUnit2Settings()
     {
         Parallelism = ParallelismOption.All,
         XmlReport = true,
-        OutputDirectory = "./TitanTest/bin/" + config + "/results"
+        OutputDirectory = "./TitanTest/bin/x64/" + config + "/results"
     });
 });
 
