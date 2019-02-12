@@ -50,14 +50,20 @@ Task("Build")
     if (IsRunningOnWindows())
     {
       // Use MSBuild
-      MSBuild("./Titan.sln", settings => settings.SetConfiguration(config));
+      MSBuild("./Titan.sln", new MSBuildSettings {
+              Configuration = config,
+              MSBuildPlatform = MSBuildPlatform.x64,
+              PlatformTarget = PlatformTarget.x64
+      });
     }
     else
     {
       // Use MSBuild 15 provided by Mono
       MSBuild("./Titan.sln", new MSBuildSettings {
               Configuration = config,
-              ToolPath = "/usr/lib/mono/msbuild/15.0/bin/MSBuild.dll"
+              ToolPath = "/usr/lib/mono/msbuild/15.0/bin/MSBuild.dll",
+              MSBuildPlatform = MSBuildPlatform.x64,
+              PlatformTarget = PlatformTarget.x64
       });
     }
 });
