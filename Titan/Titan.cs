@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
@@ -75,6 +76,22 @@ namespace Titan
             };
 
             Logger = LogCreator.Create();
+
+            #if __UNIX__
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Logger.Fatal("Titan has been compiled to run under Linux but is running on " +
+                                 "Windows. Please use the correct Titan version for your operating system. Exiting.");
+                    return (int) ExitCodes.WrongOS;
+                }
+            #else
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Logger.Fatal("Titan has been compiled to run under Windows but is running on " +
+                                 "Linux. Please use the correct Titan version for your operating system. Exiting.");
+                    return (int) ExitCodes.WrongOS;
+                }
+            #endif
 
             if (Environment.CurrentDirectory != Instance.Directory.ToString())
             {

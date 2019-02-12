@@ -17,7 +17,10 @@ namespace Titan.Util
         
         /* Botting failures */
         ReportFailed = 1 << 5,
-        CommendFailed = 1 << 6
-        
+        CommendFailed = 1 << 6,
+
+        /* What are you doing failures */
+        WrongOS = 1 << 7
+
     }
 }
