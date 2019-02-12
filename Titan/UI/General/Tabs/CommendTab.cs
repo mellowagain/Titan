@@ -45,7 +45,7 @@ namespace Titan.UI.General.Tabs
                 {
                     dropIndexes.Enabled = (bool) !cbAllIndexes.Checked;
 
-                    if (Titan.Instance.AccountManager.Count() > 00)
+                    if (Titan.Instance.AccountManager.Count() > 100)
                     {
                         labelWarning.Visible = (bool) cbAllIndexes.Checked;
                     }
