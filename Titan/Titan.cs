@@ -82,6 +82,9 @@ namespace Titan
                 {
                     Logger.Fatal("Titan has been compiled to run under Linux but is running on " +
                                  "Windows. Please use the correct Titan version for your operating system. Exiting.");
+
+                    Console.Write("Press any key to exit Titan...");
+                    Console.Read();
                     return (int) ExitCodes.WrongOS;
                 }
             #else
