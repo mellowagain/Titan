@@ -3,27 +3,19 @@
     <h1>Titan</h1>
 </div>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![Version](https://img.shields.io/github/release/Marc3842h/Titan/all.svg?label=version)](https://github.com/Marc3842h/Titan/releases)
-[![Appveyor](https://img.shields.io/appveyor/ci/Marc3842h/titan-kr2ki.svg?label=windows%20build)](https://ci.appveyor.com/project/Marc3842h/titan-kr2ki)
-[![Circle CI](https://img.shields.io/circleci/project/github/Marc3842h/Titan.svg?label=linux%20build)](https://circleci.com/gh/Marc3842h/Titan)
-[![Dependencies](https://img.shields.io/librariesio/github/Marc3842h/Titan.svg)](https://libraries.io/github/Marc3842h/Titan)
-[![Downloads](https://img.shields.io/github/downloads/Marc3842h/Titan/total.svg)](https://github.com/Marc3842h/Titan/releases)
-[![Discord](https://img.shields.io/discord/342308069897928706.svg?label=discord)](https://discord.me/titanbot)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
+<div align="center">
+    <a href="http://unmaintained.tech/"><img src="http://unmaintained.tech/badge.svg"></a>
+    <a href="https://github.com/Marc3842h/Titan/releases"><img src="https://img.shields.io/github/downloads/Marc3842h/Titan/total.svg"></a>
+    <a href="https://discord.me/titanbot"><img src="https://img.shields.io/discord/342308069897928706.svg?label=discord"></a>
+</div>
+  
 Titan `/ˈtaɪtən/` is a modern report & commendation bot for the 
 Source engine. It has been built from the ground up with 
 performance and easy-of-use in mind using modern technologies 
 like SteamKit.  
-  
-Report & Commend Bots in Counter-Strike: Global Offensive **are
-not patched**. Thanks to regulations from the EU (namely GDPR), Valve
-has to show all data, including players that you successfully reported.
-Botted players show up on this list so the CS:GO Game Coordinator accepted
-these reports which were botted. Valve has been known for trying to patch
-report bots in the past but failed as Titan still is working correctly.
 
+**Please note that this project is unmaintained and provided as-is. Thank you for your interest in the project.**
+  
 ## Features
 
 * Support for a graphical user interface (GUI) and command line.
